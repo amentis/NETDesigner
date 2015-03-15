@@ -6,7 +6,8 @@
 class RenderArea
 {
 public:
-  RenderArea();
+  enum Element {ArrowRegular, ArrowDotted, NodeBegin, NodeEnd, NodeRegular};
+  RenderArea(QWidget* parent = 0);
   ~RenderArea();
 };
 

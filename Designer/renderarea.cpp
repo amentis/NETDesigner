@@ -1,6 +1,6 @@
 #include "renderarea.h"
 
-RenderArea::RenderArea()
+RenderArea::RenderArea(QWidget* parent)
 {
 
 }

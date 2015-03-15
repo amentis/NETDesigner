@@ -15,12 +15,28 @@ TEMPLATE = app
 SOURCES += main.cpp \
     Designer/mainwindow.cpp \
     Designer/editor.cpp \
-    Designer/renderarea.cpp
+    Designer/renderarea.cpp \
+    PrimitivesLoader/base.cpp \
+    PrimitivesLoader/primitive.cpp \
+    NetGraph/arrow.cpp \
+    NetGraph/node.cpp \
+    NetGraph/ordinarynode.cpp \
+    NetGraph/proximitynode.cpp \
+    NetGraph/casenode.cpp \
+    NetGraph/netgraph.cpp
 
 HEADERS  += \
     Designer/mainwindow.h \
     Designer/editor.h \
-    Designer/renderarea.h
+    Designer/renderarea.h \
+    PrimitivesLoader/base.h \
+    PrimitivesLoader/primitive.h \
+    NetGraph/arrow.h \
+    NetGraph/node.h \
+    NetGraph/ordinarynode.h \
+    NetGraph/proximitynode.h \
+    NetGraph/casenode.h \
+    NetGraph/netgraph.h
 
 FORMS    += \
     Designer/mainwindow.ui
