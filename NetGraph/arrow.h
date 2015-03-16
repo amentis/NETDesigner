@@ -9,6 +9,9 @@ using namespace std;
 #include "../PrimitivesLoader/primitive.h"
 
 namespace NetGraph {
+
+  class Node;
+
   class Arrow
   {
   public:

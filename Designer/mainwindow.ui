@@ -1,7 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <author/>
- <comment/>
- <exportmacro/>
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
   <property name="geometry">
@@ -15,10 +13,143 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
-  <widget class="QMenuBar" name="menubar"/>
-  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="tabPosition">
+       <enum>QTabWidget::South</enum>
+      </property>
+      <property name="tabsClosable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="tab">
+       <attribute name="title">
+        <string>Tab 1</string>
+       </attribute>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>29</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>Fi&amp;le</string>
+    </property>
+    <addaction name="actionNew_Project"/>
+    <addaction name="actionOpen_Project"/>
+    <addaction name="actionClose_Project"/>
+    <addaction name="actionSave_Project"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuProject">
+    <property name="title">
+     <string>Pro&amp;ject</string>
+    </property>
+    <addaction name="actionAdd_Net"/>
+    <addaction name="actionRemove_Net"/>
+    <addaction name="actionSave_Current_Net"/>
+    <addaction name="actionSave_All_Nets"/>
+    <addaction name="separator"/>
+    <addaction name="actionAdd_Primitives_Base"/>
+   </widget>
+   <widget class="QMenu" name="menuBuild_Run">
+    <property name="title">
+     <string>B&amp;uild  Run</string>
+    </property>
+    <addaction name="actionBuild"/>
+    <addaction name="actionRun"/>
+    <addaction name="actionDebug"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuProject"/>
+   <addaction name="menuBuild_Run"/>
+  </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QDockWidget" name="NetsDockWidget">
+   <property name="features">
+    <set>QDockWidget::DockWidgetMovable</set>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="netsDockWidget"/>
+  </widget>
+  <action name="actionNew_Project">
+   <property name="text">
+    <string>&amp;New Project...</string>
+   </property>
+  </action>
+  <action name="actionOpen_Project">
+   <property name="text">
+    <string>&amp;Open Project...</string>
+   </property>
+  </action>
+  <action name="actionClose_Project">
+   <property name="text">
+    <string>&amp;Close Project</string>
+   </property>
+  </action>
+  <action name="actionSave_Project">
+   <property name="text">
+    <string>&amp;Save Project</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>&amp;Exit</string>
+   </property>
+  </action>
+  <action name="actionAdd_Net">
+   <property name="text">
+    <string>&amp;Add Net</string>
+   </property>
+  </action>
+  <action name="actionRemove_Net">
+   <property name="text">
+    <string>&amp;Remove Net</string>
+   </property>
+  </action>
+  <action name="actionSave_Current_Net">
+   <property name="text">
+    <string>&amp;Save Current Net</string>
+   </property>
+  </action>
+  <action name="actionSave_All_Nets">
+   <property name="text">
+    <string>Save All &amp;Nets</string>
+   </property>
+  </action>
+  <action name="actionAdd_Primitives_Base">
+   <property name="text">
+    <string>&amp;Browse Primitives Bases</string>
+   </property>
+  </action>
+  <action name="actionBuild">
+   <property name="text">
+    <string>&amp;Build</string>
+   </property>
+  </action>
+  <action name="actionRun">
+   <property name="text">
+    <string>&amp;Run</string>
+   </property>
+  </action>
+  <action name="actionDebug">
+   <property name="text">
+    <string>&amp;Debug</string>
+   </property>
+  </action>
  </widget>
- <pixmapfunction/>
+ <resources/>
  <connections/>
 </ui>

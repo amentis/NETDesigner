@@ -23,7 +23,9 @@ SOURCES += main.cpp \
     NetGraph/ordinarynode.cpp \
     NetGraph/proximitynode.cpp \
     NetGraph/casenode.cpp \
-    NetGraph/netgraph.cpp
+    NetGraph/netgraph.cpp \
+    NetGraph/startnode.cpp \
+    NetGraph/endnode.cpp
 
 HEADERS  += \
     Designer/mainwindow.h \
@@ -36,7 +38,9 @@ HEADERS  += \
     NetGraph/ordinarynode.h \
     NetGraph/proximitynode.h \
     NetGraph/casenode.h \
-    NetGraph/netgraph.h
+    NetGraph/netgraph.h \
+    NetGraph/startnode.h \
+    NetGraph/endnode.h
 
 FORMS    += \
     Designer/mainwindow.ui

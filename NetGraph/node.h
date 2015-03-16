@@ -5,10 +5,12 @@
 
 namespace NetGraph {
 
+  class Arrow;
+
   class Node
   {
   public:
-    enum NodeType {OrdynaryNode, ProximityNode, CaseNode};
+    enum NodeType {OrdinaryNode, ProximityNode, CaseNode, StartNode, EndNode};
     Node();
     ~Node();
   protected:
@@ -17,6 +19,7 @@ namespace NetGraph {
     Arrow* arrowIn;
     Arrow* arrowOut;
   };
+
 }
 
 #endif // NODE_H

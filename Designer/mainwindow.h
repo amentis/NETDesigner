@@ -17,6 +17,22 @@ public:
 
 private:
   Ui::MainWindow *ui;
+private slots:
+  void createProject();
+  void openProject();
+  void closeProject();
+  void saveProject();
+  void exit();
+
+  void addNet();
+  void removeNet();
+  void saveAllNets();
+  void saveNet();
+  void browsePrimitives();
+
+  void build();
+  void run();
+  void debug();
 };
 
 #endif // MAINWINDOW_H

@@ -1,6 +1,7 @@
 #ifndef EDITOR_H
 #define EDITOR_H
 
+#include <QWidget>
 
 class Editor : public QWidget
 {
