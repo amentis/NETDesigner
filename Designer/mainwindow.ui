@@ -18,16 +18,17 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="tabPosition">
-       <enum>QTabWidget::South</enum>
+       <enum>QTabWidget::North</enum>
+      </property>
+      <property name="tabShape">
+       <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="tabsClosable">
        <bool>true</bool>
       </property>
-      <widget class="QWidget" name="tab">
-       <attribute name="title">
-        <string>Tab 1</string>
-       </attribute>
-      </widget>
+      <property name="tabBarAutoHide">
+       <bool>false</bool>
+      </property>
      </widget>
     </item>
    </layout>
@@ -47,11 +48,14 @@
     </property>
     <addaction name="actionNew_Project"/>
     <addaction name="actionOpen_Project"/>
-    <addaction name="actionClose_Project"/>
     <addaction name="actionSave_Project"/>
+    <addaction name="actionClose_Project"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuProject">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="title">
      <string>Pro&amp;ject</string>
     </property>
@@ -60,11 +64,14 @@
     <addaction name="actionSave_Current_Net"/>
     <addaction name="actionSave_All_Nets"/>
     <addaction name="separator"/>
-    <addaction name="actionAdd_Primitives_Base"/>
+    <addaction name="actionBrowse_Primitives_Bases"/>
    </widget>
    <widget class="QMenu" name="menuBuild_Run">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="title">
-     <string>B&amp;uild  Run</string>
+     <string>B&amp;uild and  Run</string>
     </property>
     <addaction name="actionBuild"/>
     <addaction name="actionRun"/>
@@ -95,11 +102,17 @@
    </property>
   </action>
   <action name="actionClose_Project">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>&amp;Close Project</string>
    </property>
   </action>
   <action name="actionSave_Project">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>&amp;Save Project</string>
    </property>
@@ -110,41 +123,65 @@
    </property>
   </action>
   <action name="actionAdd_Net">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>&amp;Add Net</string>
    </property>
   </action>
   <action name="actionRemove_Net">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>&amp;Remove Net</string>
    </property>
   </action>
   <action name="actionSave_Current_Net">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>&amp;Save Current Net</string>
    </property>
   </action>
   <action name="actionSave_All_Nets">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Save All &amp;Nets</string>
    </property>
   </action>
-  <action name="actionAdd_Primitives_Base">
+  <action name="actionBrowse_Primitives_Bases">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>&amp;Browse Primitives Bases</string>
    </property>
   </action>
   <action name="actionBuild">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>&amp;Build</string>
    </property>
   </action>
   <action name="actionRun">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>&amp;Run</string>
    </property>
   </action>
   <action name="actionDebug">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>&amp;Debug</string>
    </property>

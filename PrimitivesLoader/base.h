@@ -11,10 +11,11 @@ namespace PrimitivesLoader
   {
   public:
     Base();
+    Base(string name);
+    string getName();
     ~Base();
   private:
-    string name;
-    string path;
+    string _name;
   };
 }
 

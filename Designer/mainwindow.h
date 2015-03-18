@@ -2,6 +2,17 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QFileDialog>
+#include <QString>
+#include <QDir>
+#include <QFile>
+#include <QErrorMessage>
+#include <QMessageBox>
+#include <QVector>
+#include <QIODevice>
+#include <QTextStream>
+
+#include "../PrimitivesLoader/base.h"
 
 namespace Ui {
   class MainWindow;
@@ -17,6 +28,10 @@ public:
 
 private:
   Ui::MainWindow *ui;
+  QString* projectDirectory;
+  QString mainNetName;
+  QVector<PrimitivesLoader::Base*>* projectBases;
+
 private slots:
   void createProject();
   void openProject();
@@ -33,6 +48,7 @@ private slots:
   void build();
   void run();
   void debug();
+
 };
 
 #endif // MAINWINDOW_H
