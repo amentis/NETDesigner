@@ -11,6 +11,7 @@
 #include <QVector>
 #include <QIODevice>
 #include <QTextStream>
+#include <QInputDialog>
 
 #include "../PrimitivesLoader/base.h"
 
@@ -49,6 +50,11 @@ private slots:
   void run();
   void debug();
 
+  void projectLoad();
+  void projectUnload();
+signals:
+  void projectLoaded();
+  void projectUnloaded();
 };
 
 #endif // MAINWINDOW_H

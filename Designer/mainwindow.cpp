@@ -27,6 +27,12 @@ MainWindow::MainWindow(QWidget *parent) :
   connect(ui->actionRun, SIGNAL(triggered()), this, SLOT(run()));
   connect(ui->actionDebug, SIGNAL(triggered()), this, SLOT(debug()));
 
+  connect(this, SIGNAL(projectLoaded()), this, SLOT(projectLoad()));
+  connect(this, SIGNAL(projectUnloaded()), this, SLOT(projectUnload()));
+
+  projectDirectory = NULL;
+  projectBases = NULL;
+
 }
 
 MainWindow::~MainWindow()
@@ -37,9 +43,9 @@ MainWindow::~MainWindow()
 void MainWindow::createProject()
 {
 
-  if (projectDirectory != NULL){
+  if (projectDirectory){
     closeProject();
-    if (projectDirectory != NULL)
+    if (projectDirectory)
       return;
   }
 
@@ -80,16 +86,15 @@ void MainWindow::createProject()
     }
     projectDirectory = new QString(dir.absolutePath());
     projectBases = new QVector<PrimitivesLoader::Base*>();
-    ui->actionSave_Project->setEnabled(false);
-    ui->actionClose_Project->setEnabled(true);
+    emit projectLoad();
   }
 }
 
 void MainWindow::openProject()
 {
-  if (projectDirectory != NULL){
+  if (projectDirectory){
     closeProject();
-    if (projectDirectory != NULL)
+    if (projectDirectory)
       return;
   }
 
@@ -121,7 +126,8 @@ void MainWindow::openProject()
 
   path.remove("/net.project");
   projectDirectory = &path;
-  ui->actionClose_Project->setEnabled(true);
+  emit projectLoaded();
+
 }
 
 void MainWindow::closeProject()
@@ -139,9 +145,7 @@ void MainWindow::closeProject()
       return;
     }
   }
-  delete projectDirectory;
-  delete projectBases;
-  ui->actionClose_Project->setEnabled(false);
+  emit projectUnloaded();
 }
 
 void MainWindow::saveProject()
@@ -172,7 +176,8 @@ void MainWindow::exit()
 
 void MainWindow::addNet()
 {
-
+    QString name = QInputDialog::getText(this, "Add Net", "Net name:");
+    //TODO: continue from here
 }
 
 void MainWindow::removeNet()
@@ -208,4 +213,35 @@ void MainWindow::run()
 void MainWindow::debug()
 {
 
+}
+
+void MainWindow::projectLoad()
+{
+    ui->actionClose_Project->setEnabled(true);
+
+    ui->menuProject->setEnabled(true);
+    ui->actionAdd_Net->setEnabled(true);
+    ui->actionBrowse_Primitives_Bases->setEnabled(true);
+
+    ui->menuBuild_Run->setEnabled(true);
+    ui->actionBuild->setEnabled(true);
+    ui->actionRun->setEnabled(true);
+    ui->actionDebug->setEnabled(true);
+}
+
+void MainWindow::projectUnload()
+{
+    delete projectDirectory;
+    projectDirectory = NULL;
+    delete projectBases;
+    projectBases = NULL;
+    ui->actionClose_Project->setEnabled(false);
+    ui->menuProject->setEnabled(false);
+    ui->actionAdd_Net->setEnabled(false);
+    ui->actionBrowse_Primitives_Bases->setEnabled(false);
+
+    ui->menuBuild_Run->setEnabled(false);
+    ui->actionBuild->setEnabled(false);
+    ui->actionRun->setEnabled(false);
+    ui->actionDebug->setEnabled(false);
 }
