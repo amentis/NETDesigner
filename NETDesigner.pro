@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui opengl
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -15,7 +15,6 @@ TEMPLATE = app
 SOURCES += main.cpp \
     Designer/mainwindow.cpp \
     Designer/editor.cpp \
-    Designer/renderarea.cpp \
     PrimitivesLoader/base.cpp \
     PrimitivesLoader/primitive.cpp \
     NetGraph/arrow.cpp \
@@ -30,7 +29,6 @@ SOURCES += main.cpp \
 HEADERS  += \
     Designer/mainwindow.h \
     Designer/editor.h \
-    Designer/renderarea.h \
     PrimitivesLoader/base.h \
     PrimitivesLoader/primitive.h \
     NetGraph/arrow.h \

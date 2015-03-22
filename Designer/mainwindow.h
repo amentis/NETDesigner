@@ -12,8 +12,15 @@
 #include <QIODevice>
 #include <QTextStream>
 #include <QInputDialog>
+#include <QRegularExpression>
+#include <QStringListModel>
+#include <QStringList>
+#include <QModelIndex>
+#include <QVariant>
 
 #include "../PrimitivesLoader/base.h"
+
+#include "editor.h"
 
 namespace Ui {
   class MainWindow;
@@ -32,6 +39,8 @@ private:
   QString* projectDirectory;
   QString mainNetName;
   QVector<PrimitivesLoader::Base*>* projectBases;
+  QStringListModel* netsListModel;
+  QStringList netsList;
 
 private slots:
   void createProject();
@@ -41,6 +50,7 @@ private slots:
   void exit();
 
   void addNet();
+  void openNet(QModelIndex index);
   void removeNet();
   void saveAllNets();
   void saveNet();

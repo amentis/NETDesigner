@@ -30,14 +30,21 @@ MainWindow::MainWindow(QWidget *parent) :
   connect(this, SIGNAL(projectLoaded()), this, SLOT(projectLoad()));
   connect(this, SIGNAL(projectUnloaded()), this, SLOT(projectUnload()));
 
+  connect(ui->netsListView, SIGNAL(clicked(QModelIndex)), this, SLOT(openNet(QModelIndex)));
+
   projectDirectory = NULL;
   projectBases = NULL;
+
+  netsListModel = new QStringListModel(this);
+  netsListModel->setStringList(netsList);
+  ui->netsListView->setModel(netsListModel);
 
 }
 
 MainWindow::~MainWindow()
 {
-  delete ui;
+    delete netsListModel;
+    delete ui;
 }
 
 void MainWindow::createProject()
@@ -125,7 +132,20 @@ void MainWindow::openProject()
   projectFile.close();
 
   path.remove("/net.project");
-  projectDirectory = &path;
+  projectDirectory = new QString(path);
+
+  QStringList filters;
+
+  filters << "*.net";
+  QDir projectDir(*projectDirectory);
+  QStringList files = projectDir.entryList(filters, QDir::Files);
+
+  for (int i = 0; i < files.size(); ++i) {
+      netsList.append(files.at(i));
+  }
+
+  netsListModel->setStringList(netsList);
+
   emit projectLoaded();
 
 }
@@ -177,7 +197,36 @@ void MainWindow::exit()
 void MainWindow::addNet()
 {
     QString name = QInputDialog::getText(this, "Add Net", "Net name:");
-    //TODO: continue from here
+
+    if (name.isEmpty() || name.contains(QRegularExpression("~`!@#$%^&*()_=+[{]}\\|\"\'<>/?")) ||
+            !name.at(0).isLetter()){
+        QErrorMessage msg;
+        msg.showMessage(tr("Invalid Net Name!"));
+        return;
+    }
+
+    QFile net(QString(*projectDirectory + "/" + name + ".net"));
+
+    net.open(QFile::WriteOnly | QIODevice::Truncate | QIODevice::Text);
+    net.close();
+
+    if (!net.exists()){
+        QErrorMessage msg;
+        msg.showMessage(tr("Could not write net!"));
+        return;
+    }
+
+    netsList.append(name);
+    netsListModel->setStringList(netsList);
+}
+
+void MainWindow::openNet(QModelIndex index)
+{
+    QString netName = index.data().toString();
+
+    Editor* editor = new Editor(ui->editorTabWidget);
+
+    ui->editorTabWidget->addTab(editor, netName);
 }
 
 void MainWindow::removeNet()
