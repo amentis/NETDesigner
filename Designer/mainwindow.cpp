@@ -31,6 +31,9 @@ MainWindow::MainWindow(QWidget *parent) :
   connect(this, SIGNAL(projectUnloaded()), this, SLOT(projectUnload()));
 
   connect(ui->netsListView, SIGNAL(clicked(QModelIndex)), this, SLOT(openNet(QModelIndex)));
+  connect(ui->editorTabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(closeNet(int)));
+
+  connect(this, SIGNAL(netCountModified()), this, SLOT(enableOrDisableRemoveNet()));
 
   projectDirectory = NULL;
   projectBases = NULL;
@@ -141,10 +144,12 @@ void MainWindow::openProject()
   QStringList files = projectDir.entryList(filters, QDir::Files);
 
   for (int i = 0; i < files.size(); ++i) {
-      netsList.append(files.at(i));
+      QString tmp = files.at(i);
+      tmp.remove(".net");
+      netsList.append(tmp);
   }
 
-  netsListModel->setStringList(netsList);
+  emit netCountModified();
 
   emit projectLoaded();
 
@@ -165,6 +170,11 @@ void MainWindow::closeProject()
       return;
     }
   }
+
+  netsList.clear();
+
+  emit netCountModified();
+
   emit projectUnloaded();
 }
 
@@ -217,21 +227,63 @@ void MainWindow::addNet()
     }
 
     netsList.append(name);
-    netsListModel->setStringList(netsList);
+
+    emit netCountModified();
 }
 
 void MainWindow::openNet(QModelIndex index)
 {
+
+    for (int i = 0; i < ui->editorTabWidget->count(); ++i) {
+        if (ui->editorTabWidget->tabText(i) == QString("&" + index.data().toString()))
+        {
+            ui->editorTabWidget->setCurrentIndex(i);
+            return;
+        }
+    }
+
     QString netName = index.data().toString();
 
     Editor* editor = new Editor(ui->editorTabWidget);
 
-    ui->editorTabWidget->addTab(editor, netName);
+    int newTabIndex = ui->editorTabWidget->addTab(editor, netName);
+    ui->editorTabWidget->setCurrentIndex(newTabIndex);
+
+    emit netCountModified();
+}
+
+void MainWindow::closeNet(int index)
+{
+    if (((Editor*)ui->editorTabWidget->widget(index))->isModified()){
+        if (!((Editor*)ui->editorTabWidget->widget(index))->save())
+            return;
+    }
+    ui->editorTabWidget->removeTab(index);
+
+    emit netCountModified();
 }
 
 void MainWindow::removeNet()
 {
+      QMessageBox::StandardButton confirm;
+      confirm = QMessageBox::question(
+            this, tr("NETDesigner"), tr("Are you sure you want to delete this net?"),
+            QMessageBox::Yes|QMessageBox::No);
+      QString netName = QString(ui->editorTabWidget->tabText(ui->editorTabWidget->currentIndex())).remove("&");
+      if (confirm == QMessageBox::Yes){
+        QFile file(QString(*projectDirectory + "/" + netName + ".net"));
+        if (!file.remove()){
+            QErrorMessage msg;
+            msg.showMessage(tr("Cannot delete net!"));
+            return;
+        }
+      } else if (confirm == QMessageBox::No){
+        return;
+      }
+      netsList.removeAll(netName);
+      closeNet(ui->editorTabWidget->currentIndex());
 
+      emit netCountModified();
 }
 
 void MainWindow::saveAllNets()
@@ -262,6 +314,17 @@ void MainWindow::run()
 void MainWindow::debug()
 {
 
+}
+
+void MainWindow::enableOrDisableRemoveNet()
+{
+    if (ui->editorTabWidget->count() > 0){
+        ui->actionRemove_Net->setEnabled(true);
+    } else {
+        ui->actionRemove_Net->setEnabled(false);
+    }
+
+    netsListModel->setStringList(netsList);
 }
 
 void MainWindow::projectLoad()

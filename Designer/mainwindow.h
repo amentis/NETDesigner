@@ -42,6 +42,8 @@ private:
   QStringListModel* netsListModel;
   QStringList netsList;
 
+  int tabIndex;
+
 private slots:
   void createProject();
   void openProject();
@@ -51,6 +53,7 @@ private slots:
 
   void addNet();
   void openNet(QModelIndex index);
+  void closeNet(int index);
   void removeNet();
   void saveAllNets();
   void saveNet();
@@ -60,11 +63,14 @@ private slots:
   void run();
   void debug();
 
+  void enableOrDisableRemoveNet();
+
   void projectLoad();
   void projectUnload();
 signals:
   void projectLoaded();
   void projectUnloaded();
+  void netCountModified();
 };
 
 #endif // MAINWINDOW_H

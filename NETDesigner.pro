@@ -24,7 +24,8 @@ SOURCES += main.cpp \
     NetGraph/casenode.cpp \
     NetGraph/netgraph.cpp \
     NetGraph/startnode.cpp \
-    NetGraph/endnode.cpp
+    NetGraph/endnode.cpp \
+    Designer/canvas.cpp
 
 HEADERS  += \
     Designer/mainwindow.h \
@@ -38,7 +39,8 @@ HEADERS  += \
     NetGraph/casenode.h \
     NetGraph/netgraph.h \
     NetGraph/startnode.h \
-    NetGraph/endnode.h
+    NetGraph/endnode.h \
+    Designer/canvas.h
 
 FORMS    += \
     Designer/mainwindow.ui
