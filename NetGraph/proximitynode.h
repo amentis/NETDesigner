@@ -8,16 +8,17 @@ using namespace std;
 
 #include "node.h"
 
-namespace NetGraph {
-  class ProximityNode : public Node
-  {
-  public:
+namespace NetGraph
+{
+class ProximityNode : public Node
+{
+public:
     ProximityNode();
     ~ProximityNode();
-  private:
+private:
     string nodeExpression;
     vector<string> arrowExpressions;
-  };
+};
 }
 
 #endif // PROXIMITYNODE_H

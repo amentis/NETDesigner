@@ -3,22 +3,23 @@
 
 #include "arrow.h"
 
-namespace NetGraph {
+namespace NetGraph
+{
 
-  class Arrow;
+class Arrow;
 
-  class Node
-  {
-  public:
+class Node
+{
+public:
     enum NodeType {OrdinaryNode, ProximityNode, CaseNode, StartNode, EndNode};
     Node();
     ~Node();
-  protected:
+protected:
     NodeType type;
-  private:
+private:
     Arrow* arrowIn;
     Arrow* arrowOut;
-  };
+};
 
 }
 

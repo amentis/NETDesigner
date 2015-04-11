@@ -8,16 +8,17 @@ using namespace std;
 
 #include "node.h"
 
-namespace NetGraph {
-  class CaseNode : public Node
-  {
-  public:
+namespace NetGraph
+{
+class CaseNode : public Node
+{
+public:
     CaseNode();
     ~CaseNode();
-  private:
+private:
     string expression;
     vector<int> arrowConstants;
-  };
+};
 }
 
 #endif // CASENODE_H

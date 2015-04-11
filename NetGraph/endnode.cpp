@@ -1,15 +1,16 @@
 #include "endnode.h"
 
-namespace NetGraph {
-  EndNode::EndNode()
-  {
+namespace NetGraph
+{
+EndNode::EndNode()
+{
 
-  }
+}
 
-  EndNode::~EndNode()
-  {
+EndNode::~EndNode()
+{
 
-  }
+}
 
 
 }

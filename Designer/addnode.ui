@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>AddNode</class>
+ <widget class="QWidget" name="AddNode">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>203</width>
+    <height>119</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QComboBox" name="comboBox">
+     <item>
+      <property name="text">
+       <string>Ordinary Node</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Case Node</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Proximity Node</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Start Node</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>End Node</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLineEdit" name="expression"/>
+   </item>
+   <item>
+    <widget class="QPushButton" name="submit">
+     <property name="text">
+      <string>Submit</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

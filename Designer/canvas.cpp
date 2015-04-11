@@ -2,15 +2,14 @@
 
 
 
-Canvas::Canvas(Editor *editorWidget, QWidget *parent) : QOpenGLWidget(parent)
+Canvas::Canvas(Editor *editorWidget, QWidget *parent) : QOpenGLWidget(parent), editor(editorWidget)
 {
-    editor = editorWidget;
     setAutoFillBackground(true);
 }
 
 Canvas::~Canvas()
 {
-
+    delete editor;
 }
 
 void Canvas::paintEvent(QPaintEvent *event)

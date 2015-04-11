@@ -1,15 +1,16 @@
 #include "proximitynode.h"
 
-namespace NetGraph {
-  ProximityNode::ProximityNode()
-  {
+namespace NetGraph
+{
+ProximityNode::ProximityNode()
+{
 
-  }
+}
 
-  ProximityNode::~ProximityNode()
-  {
+ProximityNode::~ProximityNode()
+{
 
-  }
+}
 
 
 }
