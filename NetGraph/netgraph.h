@@ -3,15 +3,16 @@
 
 #include "startnode.h"
 
-namespace NetGraph {
-  class NetGraph
-  {
-  private:
+namespace NetGraph
+{
+class NetGraph
+{
+private:
     StartNode* start;
-  public:
+public:
     NetGraph();
     ~NetGraph();
-  };
+};
 }
 
 #endif // NETGRAPH_H

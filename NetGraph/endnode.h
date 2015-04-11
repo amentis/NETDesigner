@@ -3,13 +3,14 @@
 
 #include "node.h"
 
-namespace NetGraph {
-  class EndNode : public Node
-  {
-  public:
+namespace NetGraph
+{
+class EndNode : public Node
+{
+public:
     EndNode();
     ~EndNode();
-  };
+};
 }
 
 #endif // ENDNODE_H

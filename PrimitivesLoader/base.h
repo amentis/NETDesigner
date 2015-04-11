@@ -7,16 +7,16 @@ using namespace std;
 
 namespace PrimitivesLoader
 {
-  class Base
-  {
-  public:
+class Base
+{
+public:
     Base();
-    Base(string name);
-    string getName();
+    Base(const string& name);
+    const string *getName();
     ~Base();
-  private:
-    string _name;
-  };
+private:
+    string* _name;
+};
 }
 
 #endif // BASE_H

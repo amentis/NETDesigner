@@ -10,17 +10,17 @@ using namespace std;
 
 namespace PrimitivesLoader
 {
-  class Primitive
-  {
-  public:
-    enum ArgumentType {Int, Real, String, Bool};
+class Primitive
+{
+public:
+    enum class ArgumentType {Int, Real, String, Bool};
     Primitive();
     ~Primitive();
-  private:
+private:
     vector<ArgumentType> arguments;
     Base base;
     string name;
-  };
+};
 }
 
 #endif // PRIMITIVE_H

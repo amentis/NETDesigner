@@ -2,25 +2,26 @@
 
 namespace PrimitivesLoader
 {
-  Base::Base()
-  {
+Base::Base()
+{
 
-  }
+}
 
-  Base::Base(string name)
-  {
-    _name = name;
-  }
+Base::Base(const string& name)
+{
+    _name = new string(name);
+}
 
-  string Base::getName()
-  {
+const string* Base::getName()
+{
     return _name;
-  }
+}
 
-  Base::~Base()
-  {
+Base::~Base()
+{
 
-  }
+}
+
 
 
 }

@@ -1,15 +1,16 @@
 #include "arrow.h"
 
-namespace NetGraph {
-  Arrow::Arrow()
-  {
+namespace NetGraph
+{
+Arrow::Arrow()
+{
 
-  }
+}
 
-  Arrow::~Arrow()
-  {
+Arrow::~Arrow()
+{
 
-  }
+}
 
 
 }

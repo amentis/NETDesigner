@@ -5,6 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui opengl
+CONFIG += c++11
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -25,7 +26,8 @@ SOURCES += main.cpp \
     NetGraph/netgraph.cpp \
     NetGraph/startnode.cpp \
     NetGraph/endnode.cpp \
-    Designer/canvas.cpp
+    Designer/canvas.cpp \
+    Designer/addnode.cpp
 
 HEADERS  += \
     Designer/mainwindow.h \
@@ -40,7 +42,9 @@ HEADERS  += \
     NetGraph/netgraph.h \
     NetGraph/startnode.h \
     NetGraph/endnode.h \
-    Designer/canvas.h
+    Designer/canvas.h \
+    Designer/addnode.h
 
 FORMS    += \
-    Designer/mainwindow.ui
+    Designer/mainwindow.ui \
+    Designer/addnode.ui

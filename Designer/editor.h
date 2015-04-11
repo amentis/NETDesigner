@@ -14,14 +14,14 @@ class Canvas;
 
 class Editor : public QWidget
 {
-  Q_OBJECT
+    Q_OBJECT
 
 private:
     Canvas* canvas;
     bool modified;
 public:
-  explicit Editor(QWidget *parent = 0);
-  ~Editor();
+    explicit Editor(QWidget *parent = 0);
+    ~Editor();
     bool isModified();
     bool save();
     void paint(QPainter* painter, QPaintEvent* event);

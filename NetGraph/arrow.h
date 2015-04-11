@@ -8,21 +8,22 @@ using namespace std;
 #include "node.h"
 #include "../PrimitivesLoader/primitive.h"
 
-namespace NetGraph {
+namespace NetGraph
+{
 
-  class Node;
+class Node;
 
-  class Arrow
-  {
-  public:
+class Arrow
+{
+public:
     Arrow();
     ~Arrow();
-  private:
+private:
     vector<PrimitivesLoader::Primitive> primitives;
     bool leadsToSubnet;
     Node* source;
     Node* destination;
-  };
+};
 
 }
 

@@ -3,13 +3,14 @@
 
 #include "node.h"
 
-namespace NetGraph {
-  class OrdinaryNode: public Node
-  {
-  public:
+namespace NetGraph
+{
+class OrdinaryNode: public Node
+{
+public:
     OrdinaryNode();
     ~OrdinaryNode();
-  };
+};
 
 }
 

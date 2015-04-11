@@ -3,13 +3,14 @@
 
 #include "node.h"
 
-namespace NetGraph {
-  class StartNode : public Node
-  {
-  public:
+namespace NetGraph
+{
+class StartNode : public Node
+{
+public:
     StartNode();
     ~StartNode();
-  };
+};
 }
 
 #endif // STARTNODE_H

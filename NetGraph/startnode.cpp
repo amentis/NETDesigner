@@ -1,15 +1,16 @@
 #include "startnode.h"
 
-namespace NetGraph {
-  StartNode::StartNode()
-  {
+namespace NetGraph
+{
+StartNode::StartNode()
+{
 
-  }
+}
 
-  StartNode::~StartNode()
-  {
+StartNode::~StartNode()
+{
 
-  }
+}
 
 
 }
