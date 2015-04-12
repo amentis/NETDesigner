@@ -1,7 +1,7 @@
 #ifndef NETGRAPH_H
 #define NETGRAPH_H
 
-#include "startnode.h"
+#include "systemnodes.h"
 
 namespace NetGraph
 {

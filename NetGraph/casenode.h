@@ -13,10 +13,12 @@ namespace NetGraph
 class CaseNode : public Node
 {
 public:
-    CaseNode();
+    CaseNode(string *expression);
+    CaseNode(string& expression);
+    CaseNode(string&& expression);
     ~CaseNode();
 private:
-    string expression;
+    string* _expression;
     vector<int> arrowConstants;
 };
 }

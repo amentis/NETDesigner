@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>AddNode</class>
  <widget class="QWidget" name="AddNode">
+  <property name="windowModality">
+   <enum>Qt::WindowModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -10,8 +13,14 @@
     <height>119</height>
    </rect>
   </property>
+  <property name="focusPolicy">
+   <enum>Qt::StrongFocus</enum>
+  </property>
+  <property name="contextMenuPolicy">
+   <enum>Qt::NoContextMenu</enum>
+  </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Add Node</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>

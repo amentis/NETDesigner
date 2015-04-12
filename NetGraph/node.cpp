@@ -12,5 +12,9 @@ Node::~Node()
 
 }
 
+void Node::setPosition(QPoint *pos)
+{
+    position = pos;
+}
 
 }

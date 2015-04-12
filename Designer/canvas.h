@@ -4,8 +4,12 @@
 #include <QOpenGLWidget>
 #include <QPaintEvent>
 #include <QPainter>
+#include <QRect>
 
 #include "editor.h"
+#include "addnode.h"
+
+#include "../NetGraph/node.h"
 
 class Editor;
 
@@ -21,6 +25,9 @@ public:
 
 private:
     Editor* editor;
+
+    AddNode* addNodeDialog;
+    QRect* dialogRect;
 };
 
 #endif // CANVAS_H

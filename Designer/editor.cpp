@@ -7,11 +7,16 @@ Editor::Editor(QWidget *parent) : QWidget(parent)
     layout->addWidget(canvas);
     setLayout(layout);
     modified = false;
+
+    nodes = new QVector<NetGraph::Node*>;
+    arrows = new QVector<NetGraph::Arrow*>;
 }
 
 Editor::~Editor()
 {
-
+    delete canvas;
+    delete nodes;
+    delete arrows;
 }
 
 bool Editor::isModified()
@@ -21,11 +26,16 @@ bool Editor::isModified()
 
 bool Editor::save()
 {
-    //implement save, is ok = true
+    //TODO: implement save, is ok = true
     return true;
+}
+
+void Editor::addNode(NetGraph::Node *node)
+{
+    nodes->append(node);
 }
 
 void Editor::paint(QPainter *painter, QPaintEvent *event)
 {
-}
 
+}

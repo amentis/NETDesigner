@@ -143,10 +143,9 @@ void MainWindow::openProject()
     QDir projectDir(*projectDirectory);
     QStringList files = projectDir.entryList(filters, QDir::Files);
 
-    for (int i = 0; i < files.size(); ++i) {
-        QString tmp = files.at(i);
-        tmp.remove(".net");
-        netsList.append(tmp);
+    for (auto& file : files){
+        file.remove(".net");
+        netsList.append(file);
     }
 
     emit netCountModified();
@@ -188,8 +187,8 @@ void MainWindow::saveProject()
 
     stream << mainNetName;
 
-    for (int i = 0; i < projectBases->size(); ++i) {
-        stream << QString(projectBases->at(i)->getName()->c_str());
+    for (const auto& base : *projectBases){
+        stream << QString(base->getName()->c_str());
     }
 
     projectFile.close();

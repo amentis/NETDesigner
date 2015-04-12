@@ -13,10 +13,12 @@ namespace NetGraph
 class ProximityNode : public Node
 {
 public:
-    ProximityNode();
+    ProximityNode(string *expression);
+    ProximityNode(string & expression);
+    ProximityNode(string && expression);
     ~ProximityNode();
 private:
-    string nodeExpression;
+    string* nodeExpression;
     vector<string> arrowExpressions;
 };
 }

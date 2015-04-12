@@ -5,8 +5,12 @@
 #include <QBoxLayout>
 #include <QPainter>
 #include <QPaintEvent>
+#include <QMouseEvent>
+#include <QVector>
 
 #include "../NetGraph/netgraph.h"
+#include "../NetGraph/node.h"
+#include "../NetGraph/arrow.h"
 
 #include "canvas.h"
 
@@ -18,12 +22,19 @@ class Editor : public QWidget
 
 private:
     Canvas* canvas;
+
+    QVector<NetGraph::Node*>* nodes;
+    QVector<NetGraph::Arrow*>* arrows;
+
     bool modified;
 public:
     explicit Editor(QWidget *parent = 0);
     ~Editor();
     bool isModified();
     bool save();
+
+    void addNode(NetGraph::Node* node);
+
     void paint(QPainter* painter, QPaintEvent* event);
 
 signals:
