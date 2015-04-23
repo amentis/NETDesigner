@@ -5,8 +5,6 @@
 
 using namespace std;
 
-namespace PrimitivesLoader
-{
 class Base
 {
 public:
@@ -17,6 +15,5 @@ public:
 private:
     string* _name;
 };
-}
 
 #endif // BASE_H

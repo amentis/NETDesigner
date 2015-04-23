@@ -4,7 +4,6 @@
 #include <QOpenGLWidget>
 #include <QPaintEvent>
 #include <QPainter>
-#include <QRect>
 
 #include "editor.h"
 

@@ -8,8 +8,6 @@
 
 using namespace std;
 
-namespace PrimitivesLoader
-{
 class Primitive
 {
 public:
@@ -21,6 +19,5 @@ private:
     Base base;
     string name;
 };
-}
 
 #endif // PRIMITIVE_H

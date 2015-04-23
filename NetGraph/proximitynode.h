@@ -1,26 +1,23 @@
 #ifndef PROXIMITYNODE_H
 #define PROXIMITYNODE_H
 
-#include <string>
-#include <vector>
-
-using namespace std;
+#include <QString>
+#include <QVector>
 
 #include "node.h"
 
-namespace NetGraph
-{
 class ProximityNode : public Node
 {
 public:
-    ProximityNode(string *expression);
-    ProximityNode(string & expression);
-    ProximityNode(string && expression);
+    ProximityNode(QString *expression);
+    ProximityNode(QString & expression);
+    ProximityNode(QString && expression);
     ~ProximityNode();
+
+    void paint(QPainter *painter) Q_DECL_OVERRIDE;
 private:
-    string* nodeExpression;
-    vector<string> arrowExpressions;
+    QString* nodeExpression;
+    QVector<QString> arrowExpressions;
 };
-}
 
 #endif // PROXIMITYNODE_H

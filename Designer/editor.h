@@ -2,21 +2,25 @@
 #define EDITOR_H
 
 #include <QWidget>
-#include <QBoxLayout>
+#include <QVector>
 #include <QPainter>
 #include <QPaintEvent>
 #include <QMouseEvent>
-#include <QVector>
 #include <QPoint>
+#include <QBoxLayout>
 
-#include "../NetGraph/netgraph.h"
-#include "../NetGraph/node.h"
-#include "../NetGraph/arrow.h"
+class Canvas;
+#include "NetGraph/node.h"
+#include "NetGraph/startnode.h"
+#include "NetGraph/casenode.h"
+#include "NetGraph/endnode.h"
+#include "NetGraph/ordinarynode.h"
+#include "NetGraph/proximitynode.h"
+#include "NetGraph/arrow.h"
+#include "NetGraph/netgraph.h"
 
 #include "canvas.h"
 #include "addnode.h"
-
-class Canvas;
 
 class Editor : public QWidget
 {
@@ -25,8 +29,7 @@ class Editor : public QWidget
 private:
     Canvas* canvas;
 
-    QVector<NetGraph::Node*>* nodes;
-    QVector<NetGraph::Arrow*>* arrows;
+    NetGraph* netGraph;
 
     AddNode* addNodeDialog;
     bool addNodeDialogOpened;
@@ -41,7 +44,7 @@ public:
     bool save();
 
     void mousePressEvent(QMouseEvent* event) Q_DECL_OVERRIDE;
-    void paint(QPainter* painter, QPaintEvent* event);
+    void paint(QPainter* painter);
 
 signals:
 

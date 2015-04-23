@@ -3,20 +3,12 @@
 
 #include "node.h"
 
-namespace NetGraph
-{
 class StartNode : public Node
 {
 public:
     StartNode();
     ~StartNode();
+    void paint(QPainter *painter) Q_DECL_OVERRIDE;
 };
-class EndNode : public Node
-{
-public:
-    EndNode();
-    ~EndNode();
-};
-}
 
 #endif // SYSTEMNODES_H

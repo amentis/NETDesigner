@@ -16,6 +16,6 @@ void Canvas::paintEvent(QPaintEvent *event)
     painter.begin(this);
     painter.setRenderHint(QPainter::Antialiasing);
     painter.fillRect(event->rect(), QBrush(QColor(255,255,255,255)));
-    editor->paint(&painter, event);
+    editor->paint(&painter);
     painter.end();
 }

@@ -2,11 +2,14 @@
 #define NODE_H
 
 #include <QPoint>
+#include <QPainter>
+#include <QPaintEvent>
+
+#include <QBrush>
+#include <QColor>
+#include <QPen>
 
 #include "arrow.h"
-
-namespace NetGraph
-{
 
 class Arrow;
 
@@ -18,15 +21,16 @@ public:
     ~Node();
     void setPosition(QPoint* pos);
 
-    static Node* createNode(NodeType nodeType, string* expression, bool proximityIsFloat);
+    virtual void paint(QPainter *painter);
+
+    static Node* createNode(NodeType nodeType, QString* expression, bool proximityIsFloat);
+
+    NodeType type() const;
 protected:
-    NodeType type;
-private:
+    NodeType mType;
     QPoint* position;
     Arrow* arrowIn;
     Arrow* arrowOut;
 };
-
-}
 
 #endif // NODE_H

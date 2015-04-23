@@ -39,7 +39,7 @@ private:
     Ui::MainWindow *ui;
     QString* projectDirectory;
     QString mainNetName;
-    QVector<PrimitivesLoader::Base*>* projectBases;
+    QVector<Base*>* projectBases;
     QStringListModel* netsListModel;
     QStringList netsList;
 

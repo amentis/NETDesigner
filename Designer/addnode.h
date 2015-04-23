@@ -2,14 +2,18 @@
 #define ADDNODE_H
 
 #include <QDialog>
+#include <QString>
 #include <QPoint>
 #include <QMouseEvent>
+#include <QStandardItemModel>
+#include <QStandardItem>
 
 #include "../NetGraph/node.h"
 #include "../NetGraph/ordinarynode.h"
 #include "../NetGraph/casenode.h"
 #include "../NetGraph/proximitynode.h"
-#include "../NetGraph/systemnodes.h"
+#include "../NetGraph/startnode.h"
+#include "../NetGraph/endnode.h"
 
 namespace Ui
 {
@@ -23,12 +27,12 @@ class AddNode : public QDialog
 public:
     explicit AddNode(QWidget *parent = 0);
     ~AddNode();
-    NetGraph::Node * getResult();
+    Node * getResult();
 
 private:
     Ui::AddNode *ui;
 
-    NetGraph::Node* result;
+    Node* result;
     unsigned short resultType;
     QString* resultExpression;
 

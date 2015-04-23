@@ -93,7 +93,7 @@ void MainWindow::createProject()
             return;
         }
         projectDirectory = new QString(dir.absolutePath());
-        projectBases = new QVector<PrimitivesLoader::Base*>();
+        projectBases = new QVector<Base*>();
         emit projectLoad();
     }
 }
@@ -124,10 +124,10 @@ void MainWindow::openProject()
 
     mainNetName = stream.readLine();
 
-    projectBases = new QVector<PrimitivesLoader::Base*>();
+    projectBases = new QVector<Base*>();
 
     while (!stream.atEnd()){
-        projectBases->append(new PrimitivesLoader::Base(stream.readLine().toStdString()));
+        projectBases->append(new Base(stream.readLine().toStdString()));
     }
 
     projectFile.close();

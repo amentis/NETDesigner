@@ -8,8 +8,7 @@ Editor::Editor(QWidget *parent) : QWidget(parent)
     setLayout(layout);
     modified = false;
 
-    nodes = new QVector<NetGraph::Node*>;
-    arrows = new QVector<NetGraph::Arrow*>;
+    netGraph = new NetGraph();
 
     addNodeDialog = new AddNode(this);
     connect(addNodeDialog, &AddNode::accepted, this, &Editor::addNode);
@@ -21,8 +20,6 @@ Editor::Editor(QWidget *parent) : QWidget(parent)
 Editor::~Editor()
 {
     delete canvas;
-    delete nodes;
-    delete arrows;
 }
 
 bool Editor::isModified()
@@ -38,16 +35,25 @@ bool Editor::save()
 
 void Editor::addNode()
 {
-    NetGraph::Node * node = addNodeDialog->getResult();
+    Node* node = addNodeDialog->getResult();
     node->setPosition(nodePosition);
-    nodes->append(node);
+    netGraph->addNode(node);
+    canvas->repaint();
 }
 
 
 
-void Editor::paint(QPainter *painter, QPaintEvent *event)
+void Editor::paint(QPainter *painter)
 {
-
+    for (const auto& node : *netGraph->getNodes()){
+        switch (node->type()) {
+        case Node::NodeType::StartNode: (dynamic_cast<StartNode*>(node))->paint(painter); break;
+        case Node::NodeType::EndNode: (dynamic_cast<EndNode*>(node))->paint(painter); break;
+        case Node::NodeType::OrdinaryNode: (dynamic_cast<OrdinaryNode*>(node))->paint(painter); break;
+        case Node::NodeType::CaseNode: (dynamic_cast<CaseNode*>(node))->paint(painter); break;
+        case Node::NodeType::ProximityNode: (dynamic_cast<ProximityNode*>(node))->paint(painter); break;
+        }
+    }
 }
 
 void Editor::mousePressEvent(QMouseEvent *event)
@@ -55,7 +61,7 @@ void Editor::mousePressEvent(QMouseEvent *event)
     if (event->button() == Qt::LeftButton){
         if (!addNodeDialogOpened){
             addNodeDialog->move(QWidget::mapToGlobal(event->pos()));
-            nodePosition = new QPoint(event->pos());
+            nodePosition = new QPoint(QWidget::mapToParent(event->pos()));
             addNodeDialog->show();
             addNodeDialogOpened = true;
         } else {

@@ -1,15 +1,10 @@
 #ifndef ARROW_H
 #define ARROW_H
 
-#include <vector>
-
-using namespace std;
+#include <QVector>
 
 #include "node.h"
 #include "../PrimitivesLoader/primitive.h"
-
-namespace NetGraph
-{
 
 class Node;
 
@@ -19,12 +14,10 @@ public:
     Arrow();
     ~Arrow();
 private:
-    vector<PrimitivesLoader::Primitive> primitives;
+    QVector<Primitive> primitives;
     bool leadsToSubnet;
     Node* source;
     Node* destination;
 };
-
-}
 
 #endif // ARROW_H

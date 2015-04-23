@@ -3,15 +3,13 @@
 
 #include "node.h"
 
-namespace NetGraph
-{
 class OrdinaryNode: public Node
 {
 public:
     OrdinaryNode();
     ~OrdinaryNode();
-};
 
-}
+    void paint(QPainter *painter) Q_DECL_OVERRIDE;
+};
 
 #endif // ORDINARYNODE_H

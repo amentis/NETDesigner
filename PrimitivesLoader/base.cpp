@@ -1,7 +1,5 @@
 #include "base.h"
 
-namespace PrimitivesLoader
-{
 Base::Base()
 {
 
@@ -19,9 +17,5 @@ const string* Base::getName()
 
 Base::~Base()
 {
-
-}
-
-
 
 }

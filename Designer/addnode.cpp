@@ -16,14 +16,14 @@ AddNode::~AddNode()
     delete ui;
 }
 
-NetGraph::Node *AddNode::getResult()
+Node *AddNode::getResult()
 {
     switch (ui->comboBox->currentIndex()){
-            case 0: result = (NetGraph::Node*) (new NetGraph::OrdinaryNode()); break;
-            case 1: result = (NetGraph::Node*) (new NetGraph::CaseNode(ui->expression->text().toStdString())); break;
-            case 2: result = (NetGraph::Node*) (new NetGraph::ProximityNode(ui->expression->text().toStdString())); break;
-            case 4: result = (NetGraph::Node*) (new NetGraph::StartNode()); break;
-            case 5: result = (NetGraph::Node*) (new NetGraph::EndNode()); break;
+            case 0: result = (Node*) (new OrdinaryNode()); break;
+            case 1: result = (Node*) (new CaseNode(ui->expression->text())); break;
+            case 2: result = (Node*) (new ProximityNode(ui->expression->text())); break;
+            case 3: result = (Node*) (new StartNode()); break;
+            case 4: result = (Node*) (new EndNode()); break;
             }
     return result;
 }
@@ -38,7 +38,7 @@ void AddNode::close()
 
 void AddNode::checkExpressionField(int index)
 {
-    if (index == 0){
+    if (index != 1 && index != 2){
         ui->expression->hide();
     } else {
         ui->expression->show();
