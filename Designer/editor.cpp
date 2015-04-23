@@ -10,6 +10,12 @@ Editor::Editor(QWidget *parent) : QWidget(parent)
 
     nodes = new QVector<NetGraph::Node*>;
     arrows = new QVector<NetGraph::Arrow*>;
+
+    addNodeDialog = new AddNode(this);
+    connect(addNodeDialog, &AddNode::accepted, this, &Editor::addNode);
+    addNodeDialogOpened = false;
+
+    nodePosition = nullptr;
 }
 
 Editor::~Editor()
@@ -30,12 +36,31 @@ bool Editor::save()
     return true;
 }
 
-void Editor::addNode(NetGraph::Node *node)
+void Editor::addNode()
 {
+    NetGraph::Node * node = addNodeDialog->getResult();
+    node->setPosition(nodePosition);
     nodes->append(node);
 }
+
+
 
 void Editor::paint(QPainter *painter, QPaintEvent *event)
 {
 
+}
+
+void Editor::mousePressEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::LeftButton){
+        if (!addNodeDialogOpened){
+            addNodeDialog->move(QWidget::mapToGlobal(event->pos()));
+            nodePosition = new QPoint(event->pos());
+            addNodeDialog->show();
+            addNodeDialogOpened = true;
+        } else {
+            addNodeDialog->close();
+            addNodeDialogOpened = false;
+        }
+    }
 }

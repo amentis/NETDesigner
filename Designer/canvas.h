@@ -7,9 +7,6 @@
 #include <QRect>
 
 #include "editor.h"
-#include "addnode.h"
-
-#include "../NetGraph/node.h"
 
 class Editor;
 
@@ -21,13 +18,9 @@ public:
     Canvas(Editor* editorWidget, QWidget * parent = 0);
     ~Canvas();
     void paintEvent(QPaintEvent * event) Q_DECL_OVERRIDE;
-    void mousePressEvent(QMouseEvent* event) Q_DECL_OVERRIDE;
 
 private:
     Editor* editor;
-
-    AddNode* addNodeDialog;
-    QRect* dialogRect;
 };
 
 #endif // CANVAS_H

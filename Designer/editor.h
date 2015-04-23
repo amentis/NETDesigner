@@ -7,12 +7,14 @@
 #include <QPaintEvent>
 #include <QMouseEvent>
 #include <QVector>
+#include <QPoint>
 
 #include "../NetGraph/netgraph.h"
 #include "../NetGraph/node.h"
 #include "../NetGraph/arrow.h"
 
 #include "canvas.h"
+#include "addnode.h"
 
 class Canvas;
 
@@ -26,6 +28,11 @@ private:
     QVector<NetGraph::Node*>* nodes;
     QVector<NetGraph::Arrow*>* arrows;
 
+    AddNode* addNodeDialog;
+    bool addNodeDialogOpened;
+
+    QPoint* nodePosition;
+
     bool modified;
 public:
     explicit Editor(QWidget *parent = 0);
@@ -33,13 +40,13 @@ public:
     bool isModified();
     bool save();
 
-    void addNode(NetGraph::Node* node);
-
+    void mousePressEvent(QMouseEvent* event) Q_DECL_OVERRIDE;
     void paint(QPainter* painter, QPaintEvent* event);
 
 signals:
 
 public slots:
+    void addNode();
 };
 
 #endif // EDITOR_H

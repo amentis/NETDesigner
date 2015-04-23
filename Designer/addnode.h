@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <QPoint>
+#include <QMouseEvent>
 
 #include "../NetGraph/node.h"
 #include "../NetGraph/ordinarynode.h"
@@ -20,21 +21,23 @@ class AddNode : public QDialog
     Q_OBJECT
 
 public:
-    explicit AddNode(QPoint* pos, QWidget *parent = 0);
+    explicit AddNode(QWidget *parent = 0);
     ~AddNode();
-    NetGraph::Node *run(QRect* rect);
-    void close();
+    NetGraph::Node * getResult();
 
 private:
     Ui::AddNode *ui;
-    QPoint* position;
 
+    NetGraph::Node* result;
     unsigned short resultType;
     QString* resultExpression;
 
+public slots:
+    void close();
+
 private slots:
     void checkExpressionField(int index);
-    void submit();
 };
+
 
 #endif // ADDNODE_H
