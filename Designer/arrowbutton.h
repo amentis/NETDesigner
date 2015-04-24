@@ -9,11 +9,6 @@
 #include <QPen>
 
 #include "../NetGraph/node.h"
-#include "../NetGraph/casenode.h"
-#include "../NetGraph/endnode.h"
-#include "../NetGraph/ordinarynode.h"
-#include "../NetGraph/proximitynode.h"
-#include "../NetGraph/startnode.h"
 
 class ArrowButton : public QObject
 {

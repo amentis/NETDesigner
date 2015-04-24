@@ -46,13 +46,7 @@ void ArrowButton::setVisible(bool visible, Node *selected)
         return;
     if (visible){
         QRect* nodeRect;
-        switch (selected->type()) {
-        case Node::NodeType::StartNode: nodeRect = (dynamic_cast<StartNode*>(selected))->rect(); break;
-        case Node::NodeType::EndNode: nodeRect = (dynamic_cast<EndNode*>(selected))->rect(); break;
-        case Node::NodeType::OrdinaryNode: nodeRect = (dynamic_cast<OrdinaryNode*>(selected))->rect(); break;
-        case Node::NodeType::CaseNode: nodeRect = (dynamic_cast<CaseNode*>(selected))->rect(); break;
-        case Node::NodeType::ProximityNode: nodeRect = (dynamic_cast<ProximityNode*>(selected))->rect(); break;
-        }
+        nodeRect = selected->rect();
         if (!nodeRect)
             return;
         delete mRect;

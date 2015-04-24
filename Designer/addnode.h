@@ -7,11 +7,6 @@
 #include <QMouseEvent>
 
 #include "../NetGraph/node.h"
-#include "../NetGraph/ordinarynode.h"
-#include "../NetGraph/casenode.h"
-#include "../NetGraph/proximitynode.h"
-#include "../NetGraph/startnode.h"
-#include "../NetGraph/endnode.h"
 
 namespace Ui
 {
@@ -30,7 +25,6 @@ public:
 private:
     Ui::AddNode *ui;
 
-    Node* result;
     unsigned short resultType;
     QString* resultExpression;
 

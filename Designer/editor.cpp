@@ -76,13 +76,7 @@ void Editor::addNode()
 void Editor::paint(QPainter *painter)
 {
     for (const auto& node : *netGraph->getNodes()){
-        switch (node->type()) {
-        case Node::NodeType::StartNode: (dynamic_cast<StartNode*>(node))->paint(painter); break;
-        case Node::NodeType::EndNode: (dynamic_cast<EndNode*>(node))->paint(painter); break;
-        case Node::NodeType::OrdinaryNode: (dynamic_cast<OrdinaryNode*>(node))->paint(painter); break;
-        case Node::NodeType::CaseNode: (dynamic_cast<CaseNode*>(node))->paint(painter); break;
-        case Node::NodeType::ProximityNode: (dynamic_cast<ProximityNode*>(node))->paint(painter); break;
-        }
+        node->paint(painter);
     }
     arrowButton->paint(painter);
 }

@@ -20,13 +20,8 @@ SOURCES += main.cpp \
     PrimitivesLoader/primitive.cpp \
     NetGraph/arrow.cpp \
     NetGraph/node.cpp \
-    NetGraph/ordinarynode.cpp \
-    NetGraph/proximitynode.cpp \
-    NetGraph/casenode.cpp \
     Designer/canvas.cpp \
     Designer/addnode.cpp \
-    NetGraph/startnode.cpp \
-    NetGraph/endnode.cpp \
     Designer/arrowbutton.cpp \
     NetGraph/netgraph.cpp
 
@@ -37,12 +32,7 @@ HEADERS  += \
     PrimitivesLoader/primitive.h \
     NetGraph/arrow.h \
     NetGraph/node.h \
-    NetGraph/ordinarynode.h \
-    NetGraph/proximitynode.h \
-    NetGraph/casenode.h \
     Designer/canvas.h \
-    NetGraph/startnode.h \
-    NetGraph/endnode.h \
     Designer/addnode.h \
     Designer/arrowbutton.h \
     NetGraph/netgraph.h

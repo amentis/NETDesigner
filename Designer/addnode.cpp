@@ -2,7 +2,7 @@
 #include "ui_addnode.h"
 
 AddNode::AddNode(QWidget *parent) :
-    QDialog(parent), ui(new Ui::AddNode), result(nullptr)
+    QDialog(parent), ui(new Ui::AddNode)
 {
     ui->setupUi(this);
     connect(ui->comboBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &AddNode::checkExpressionField);
@@ -18,14 +18,15 @@ AddNode::~AddNode()
 
 Node *AddNode::getResult()
 {
+    Node::NodeType type;
     switch (ui->comboBox->currentIndex()){
-            case 0: result = (Node*) (new OrdinaryNode()); break;
-            case 1: result = (Node*) (new CaseNode(ui->expression->text())); break;
-            case 2: result = (Node*) (new ProximityNode(ui->expression->text())); break;
-            case 3: result = (Node*) (new StartNode()); break;
-            case 4: result = (Node*) (new EndNode()); break;
+            case 0: type = Node::NodeType::OrdinaryNode; break;
+            case 1: type = Node::NodeType::CaseNode; break;
+            case 2: type = Node::NodeType::ProximityNode; break;
+            case 3: type = Node::NodeType::StartNode; break;
+            case 4: type = Node::NodeType::EndNode; break;
             }
-    return result;
+    return new Node(type, ui->expression->text());
 }
 
 void AddNode::close()

@@ -21,32 +21,39 @@ NetGraph::~NetGraph()
 void NetGraph::addNode(Node *newNode, QPoint *position)
 {
 
-    switch (newNode->type()) {
-    case Node::NodeType::StartNode:
+    if (newNode->type() == Node::NodeType::StartNode){
         if (hasStartNode())
             return;
-        start = (dynamic_cast<StartNode*>(newNode));
-        start->setPosition(position);
-        break;
-    case Node::NodeType::EndNode:
+        start = newNode;
+    }
+
+    if (newNode->type() == Node::NodeType::EndNode){
         if (hasEndNode())
             return;
-        end = (dynamic_cast<EndNode*>(newNode));
-        end->setPosition(position);
-        break;
-    case Node::NodeType::OrdinaryNode:
-        (dynamic_cast<OrdinaryNode*>(newNode))->setPosition(position);
-        break;
-    case Node::NodeType::CaseNode:
-        (dynamic_cast<CaseNode*>(newNode))->setPosition(position);
-        break;
-    case Node::NodeType::ProximityNode:
-        (dynamic_cast<ProximityNode*>(newNode))->setPosition(position);
-        break;
+        end = newNode;
     }
+
+    newNode->setPosition(position);
 
     nodes->append(newNode);
     emit contentModified();
+}
+
+void NetGraph::editNode(Node* target, Node::NodeType newType, QString *expression)
+{
+    if (newType == Node::NodeType::StartNode){
+        if (hasStartNode())
+            return;
+        start = target;
+    }
+
+    if (newType == Node::NodeType::EndNode){
+        if (hasEndNode())
+            return;
+        end = target;
+    }
+    target->setType(newType);
+    target->setExpression(expression);
 }
 
 void NetGraph::removeNode(Node *node)

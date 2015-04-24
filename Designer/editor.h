@@ -12,11 +12,6 @@
 
 class Canvas;
 #include "NetGraph/node.h"
-#include "NetGraph/startnode.h"
-#include "NetGraph/casenode.h"
-#include "NetGraph/endnode.h"
-#include "NetGraph/ordinarynode.h"
-#include "NetGraph/proximitynode.h"
 #include "NetGraph/arrow.h"
 #include "NetGraph/netgraph.h"
 

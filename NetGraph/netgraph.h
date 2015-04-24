@@ -5,12 +5,7 @@
 #include <QVector>
 #include <QPoint>
 
-#include "startnode.h"
-#include "endnode.h"
 #include "node.h"
-#include "ordinarynode.h"
-#include "proximitynode.h"
-#include "casenode.h"
 
 class NetGraph : public QObject
 {
@@ -21,6 +16,7 @@ public:
     ~NetGraph();
 
     void addNode(Node *newNode, QPoint* position);
+    void editNode(Node* target, Node::NodeType newType, QString* expression);
     void removeNode(Node *node);
     const QVector<Node *> *getNodes();
 
@@ -31,8 +27,8 @@ private:
     QVector<Node*>* nodes;
     QVector<Arrow*>* arrows;
 
-    StartNode* start;
-    EndNode* end;
+    Node* start;
+    Node* end;
 
 signals:
     void contentModified();
