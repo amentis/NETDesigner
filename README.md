@@ -5,20 +5,20 @@ TODO: provide more information about Net.
 
 Written on Qt5.4, C++11.
 
-## Designer
+### Designer
 Frontend for the IDE
 
-## NetGraph 
+### NetGraph 
 Programatic representation of the language elements (Nodes, Arrows, Graph)
 
-# TODO:
+## TODO:
 
-## PrimitivesLoader
+### PrimitivesLoader
 Subsystem for loading primitives written in lower-level languages in the graph
 
-## Compiler
+### Compiler
 Compiler and linker for the Net language and its primitives
 
-## Debugger
+### Debugger
 Debugger for the Net language
 
