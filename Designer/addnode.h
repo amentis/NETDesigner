@@ -20,7 +20,13 @@ class AddNode : public QDialog
 public:
     explicit AddNode(QWidget *parent = 0);
     ~AddNode();
-    Node * getResult();
+    void getResult(Node *&node, Node::NodeType& type, QString *&expression);
+    void getResult(Node *&node);
+
+    void showEditMode(Node* node);
+    void showAddMode();
+
+    bool isEditMode();
 
 private:
     Ui::AddNode *ui;
@@ -28,8 +34,8 @@ private:
     unsigned short resultType;
     QString* resultExpression;
 
-public slots:
-    void close();
+    bool mEditMode;
+    Node* editable;
 
 private slots:
     void checkExpressionField(int index);

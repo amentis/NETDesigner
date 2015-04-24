@@ -38,7 +38,7 @@ private:
 
     bool modified;
 
-    void operateAddNodeDialog(QMouseEvent* event);
+    void operateAddNodeDialog(QMouseEvent* event, bool editMode = false, Node *editable = nullptr);
     void operateDeleteNodeDialog(Node* selected);
 
 public:
@@ -51,10 +51,13 @@ public:
     void mouseMove(QMouseEvent * event);
     void paint(QPainter* painter);
 
+    void addNode();
+    void editNode();
+
 signals:
 
 public slots:
-    void addNode();
+    void addOrEditNode();
 };
 
 #endif // EDITOR_H

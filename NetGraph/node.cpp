@@ -1,6 +1,11 @@
 #include "node.h"
 
 
+Node::Node()
+{
+
+}
+
 Node::Node(NodeType type, QString *expression):
     mType(type), mExpression(expression)
 {
@@ -48,6 +53,11 @@ void Node::setExpression(QString *newExpression)
 {
     delete mExpression;
     mExpression = newExpression;
+}
+
+QString *Node::expression()
+{
+    return mExpression;
 }
 
 Node::NodeType Node::type() const

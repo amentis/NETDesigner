@@ -17,6 +17,7 @@ class Node
 {
 public:
     enum class NodeType {OrdinaryNode, ProximityNode, CaseNode, StartNode, EndNode};
+    Node();
     Node(NodeType type, QString* expression);
     Node(NodeType type, QString&& expression);
     ~Node();
@@ -26,9 +27,11 @@ public:
 
     void setType(NodeType newType);
     void setExpression(QString* newExpression);
+    QString *expression();
 
     NodeType type() const;
     QRect* rect();
+
 private:
     void setRect();
 

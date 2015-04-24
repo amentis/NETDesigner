@@ -1,14 +1,17 @@
 #include "editor.h"
 
-void Editor::operateAddNodeDialog(QMouseEvent *event)
+void Editor::operateAddNodeDialog(QMouseEvent *event, bool editMode, Node* editable)
 {
     if (!addNodeDialogOpened){
         addNodeDialog->move(QWidget::mapToGlobal(event->pos()));
         nodePosition = new QPoint(QWidget::mapToParent(event->pos()));
-        addNodeDialog->show();
+        if (editMode)
+            addNodeDialog->showEditMode(editable);
+        else
+            addNodeDialog->showAddMode();
         addNodeDialogOpened = true;
     } else {
-        addNodeDialog->close();
+        addNodeDialog->hide();
         addNodeDialogOpened = false;
     }
 }
@@ -36,7 +39,7 @@ Editor::Editor(QWidget *parent) : QWidget(parent)
     connect(netGraph, &NetGraph::contentModified, canvas, static_cast<void (Canvas::*)()>(&Canvas::repaint));
 
     addNodeDialog = new AddNode(this);
-    connect(addNodeDialog, &AddNode::accepted, this, &Editor::addNode);
+    connect(addNodeDialog, &AddNode::accepted, this, &Editor::addOrEditNode);
     addNodeDialogOpened = false;
 
     arrowButton = new ArrowButton();
@@ -67,8 +70,26 @@ bool Editor::save()
 
 void Editor::addNode()
 {
-    Node* node = addNodeDialog->getResult();
+    Node* node;
+    addNodeDialog->getResult(node);
     netGraph->addNode(node, nodePosition);
+}
+
+void Editor::editNode()
+{
+    Node* node;
+    Node::NodeType type;
+    QString* expression;
+    addNodeDialog->getResult(node, type, expression);
+    netGraph->editNode(node, type, expression);
+}
+
+void Editor::addOrEditNode()
+{
+    if (addNodeDialog->isEditMode())
+        editNode();
+    else
+        addNode();
 }
 
 
@@ -85,7 +106,9 @@ void Editor::mousePress(QMouseEvent *event)
 {
     for (const auto& node : *netGraph->getNodes()) {
         if (node->rect()->contains(QWidget::mapToParent(event->pos()))){
-            if (event->button() == Qt::RightButton){
+            if (event->button() == Qt::LeftButton){
+                operateAddNodeDialog(event, true, node);
+            } else if (event->button() == Qt::RightButton){
                 operateDeleteNodeDialog(node);
             }
             return;

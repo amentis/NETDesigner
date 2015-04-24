@@ -16,9 +16,8 @@ AddNode::~AddNode()
     delete ui;
 }
 
-Node *AddNode::getResult()
+void AddNode::getResult(Node*& node, Node::NodeType& type, QString*& expression)
 {
-    Node::NodeType type;
     switch (ui->comboBox->currentIndex()){
             case 0: type = Node::NodeType::OrdinaryNode; break;
             case 1: type = Node::NodeType::CaseNode; break;
@@ -26,16 +25,55 @@ Node *AddNode::getResult()
             case 3: type = Node::NodeType::StartNode; break;
             case 4: type = Node::NodeType::EndNode; break;
             }
-    return new Node(type, ui->expression->text());
+
+    if (mEditMode){
+        node = editable;
+        expression = new QString(ui->expression->text());
+    } else {
+        node = new Node(type, ui->expression->text());
+    }
 }
 
-void AddNode::close()
+void AddNode::getResult(Node*& node)
 {
+    QString* tmp;
+    Node::NodeType type;
+    getResult(node, type, tmp);
+}
+
+
+void AddNode::showEditMode(Node *node)
+{
+    mEditMode = true;
+
+    editable = node;
+
+    switch (node->type()) {
+    case Node::NodeType::OrdinaryNode: ui->comboBox->setCurrentIndex(0);break;
+        case Node::NodeType::CaseNode: ui->comboBox->setCurrentIndex(1);break;
+        case Node::NodeType::ProximityNode: ui->comboBox->setCurrentIndex(2);break;
+        case Node::NodeType::StartNode: ui->comboBox->setCurrentIndex(3);break;
+        case Node::NodeType::EndNode: ui->comboBox->setCurrentIndex(4);break;
+    }
+    ui->expression->setText(*node->expression());
+
+    this->show();
+}
+
+void AddNode::showAddMode()
+{
+    mEditMode = false;
+
     ui->comboBox->setCurrentIndex(0);
     ui->expression->clear();
-    this->hide();
+
+    this->show();
 }
 
+bool AddNode::isEditMode()
+{
+    return mEditMode;
+}
 
 void AddNode::checkExpressionField(int index)
 {

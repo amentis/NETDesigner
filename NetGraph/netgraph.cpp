@@ -54,6 +54,7 @@ void NetGraph::editNode(Node* target, Node::NodeType newType, QString *expressio
     }
     target->setType(newType);
     target->setExpression(expression);
+    emit contentModified();
 }
 
 void NetGraph::removeNode(Node *node)
