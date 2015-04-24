@@ -10,6 +10,11 @@ OrdinaryNode::~OrdinaryNode()
 
 }
 
+void OrdinaryNode::setRect()
+{
+    mRect = new QRect(position->x() - 50, position->y() - 35, 100, 70);
+}
+
 void OrdinaryNode::paint(QPainter *painter)
 {
     QBrush outline(Qt::black);

@@ -8,6 +8,7 @@
 #include <QMouseEvent>
 #include <QPoint>
 #include <QBoxLayout>
+#include <QMessageBox>
 
 class Canvas;
 #include "NetGraph/node.h"
@@ -21,6 +22,8 @@ class Canvas;
 
 #include "canvas.h"
 #include "addnode.h"
+#include "arrowbutton.h"
+
 
 class Editor : public QWidget
 {
@@ -34,16 +37,23 @@ private:
     AddNode* addNodeDialog;
     bool addNodeDialogOpened;
 
+    ArrowButton* arrowButton;
+
     QPoint* nodePosition;
 
     bool modified;
+
+    void operateAddNodeDialog(QMouseEvent* event);
+    void operateDeleteNodeDialog(Node* selected);
+
 public:
     explicit Editor(QWidget *parent = 0);
     ~Editor();
     bool isModified();
     bool save();
 
-    void mousePressEvent(QMouseEvent* event) Q_DECL_OVERRIDE;
+    void mousePress(QMouseEvent* event);
+    void mouseMove(QMouseEvent * event);
     void paint(QPainter* painter);
 
 signals:

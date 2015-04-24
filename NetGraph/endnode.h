@@ -7,10 +7,11 @@ class EndNode : public Node
 {
 public:
 
-    void paint(QPainter *painter) Q_DECL_OVERRIDE;
-
     EndNode();
     ~EndNode();
+
+    void setRect() Q_DECL_OVERRIDE;
+    void paint(QPainter *painter) Q_DECL_OVERRIDE;
 };
 
 #endif // ENDNODE_H

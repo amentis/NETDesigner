@@ -9,6 +9,7 @@ public:
     OrdinaryNode();
     ~OrdinaryNode();
 
+    void setRect() Q_DECL_OVERRIDE;
     void paint(QPainter *painter) Q_DECL_OVERRIDE;
 };
 

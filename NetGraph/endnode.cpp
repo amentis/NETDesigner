@@ -1,5 +1,22 @@
 #include "endnode.h"
 
+
+EndNode::EndNode()
+{
+    mType = NodeType::EndNode;
+}
+
+EndNode::~EndNode()
+{
+
+}
+
+void EndNode::setRect()
+{
+    mRect = new QRect(position->x() - 35, position->y() - 35, 70, 70);
+}
+
+
 void EndNode::paint(QPainter *painter)
 {
     QBrush outline(Qt::black);
@@ -20,14 +37,4 @@ void EndNode::paint(QPainter *painter)
     painter->setBrush(fillInner);
 
     painter->drawEllipse(position->x() - 10, position->y() - 10, 20, 20);
-}
-
-EndNode::EndNode()
-{
-    mType = NodeType::EndNode;
-}
-
-EndNode::~EndNode()
-{
-
 }

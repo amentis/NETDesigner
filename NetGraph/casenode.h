@@ -14,6 +14,7 @@ public:
     CaseNode(QString&& expression);
     ~CaseNode();
 
+    void setRect() Q_DECL_OVERRIDE;
     void paint(QPainter *painter) Q_DECL_OVERRIDE;
 private:
     QString* _expression;

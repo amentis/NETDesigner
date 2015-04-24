@@ -14,6 +14,7 @@ public:
     ProximityNode(QString && expression);
     ~ProximityNode();
 
+    void setRect() Q_DECL_OVERRIDE;
     void paint(QPainter *painter) Q_DECL_OVERRIDE;
 private:
     QString* nodeExpression;

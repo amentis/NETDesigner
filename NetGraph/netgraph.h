@@ -1,7 +1,9 @@
 #ifndef NETGRAPH_H
 #define NETGRAPH_H
 
+#include <QObject>
 #include <QVector>
+#include <QPoint>
 
 #include "startnode.h"
 #include "endnode.h"
@@ -10,8 +12,21 @@
 #include "proximitynode.h"
 #include "casenode.h"
 
-class NetGraph
+class NetGraph : public QObject
 {
+    Q_OBJECT
+
+public:
+    explicit NetGraph(QObject* parent = 0);
+    ~NetGraph();
+
+    void addNode(Node *newNode, QPoint* position);
+    void removeNode(Node *node);
+    const QVector<Node *> *getNodes();
+
+    bool hasStartNode();
+    bool hasEndNode();
+
 private:
     QVector<Node*>* nodes;
     QVector<Arrow*>* arrows;
@@ -19,15 +34,9 @@ private:
     StartNode* start;
     EndNode* end;
 
-public:
-    NetGraph();
-    ~NetGraph();
+signals:
+    void contentModified();
 
-    void addNode(Node *newNode);
-    const QVector<Node *> *getNodes();
-
-    bool hasStartNode();
-    bool hasEndNode();
 };
 
 #endif // NETGRAPH_H

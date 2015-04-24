@@ -23,11 +23,12 @@ SOURCES += main.cpp \
     NetGraph/ordinarynode.cpp \
     NetGraph/proximitynode.cpp \
     NetGraph/casenode.cpp \
-    NetGraph/netgraph.cpp \
     Designer/canvas.cpp \
     Designer/addnode.cpp \
     NetGraph/startnode.cpp \
-    NetGraph/endnode.cpp
+    NetGraph/endnode.cpp \
+    Designer/arrowbutton.cpp \
+    NetGraph/netgraph.cpp
 
 HEADERS  += \
     Designer/mainwindow.h \
@@ -39,11 +40,12 @@ HEADERS  += \
     NetGraph/ordinarynode.h \
     NetGraph/proximitynode.h \
     NetGraph/casenode.h \
-    NetGraph/netgraph.h \
     Designer/canvas.h \
-    Designer/addnode.h \
     NetGraph/startnode.h \
-    NetGraph/endnode.h
+    NetGraph/endnode.h \
+    Designer/addnode.h \
+    Designer/arrowbutton.h \
+    NetGraph/netgraph.h
 
 FORMS    += \
     Designer/mainwindow.ui \

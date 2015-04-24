@@ -5,8 +5,6 @@
 #include <QString>
 #include <QPoint>
 #include <QMouseEvent>
-#include <QStandardItemModel>
-#include <QStandardItem>
 
 #include "../NetGraph/node.h"
 #include "../NetGraph/ordinarynode.h"

@@ -10,6 +10,11 @@ StartNode::~StartNode()
 
 }
 
+void StartNode::setRect()
+{
+    mRect = new QRect(position->x() - 40, position->y() - 40, 80, 80);
+}
+
 void StartNode::paint(QPainter *painter)
 {
     QBrush outline(Qt::black);
@@ -20,9 +25,9 @@ void StartNode::paint(QPainter *painter)
     painter->setBrush(fill);
 
     painter->setPen(outer);
-    painter->drawRect(position->x() - 25, position->y() - 25, 50, 50);
+    painter->drawRect(position->x() - 20, position->y() - 20, 40, 40);
 
     QPen inner(outline, 1);
     painter->setPen(inner);
-    painter->drawRect(position->x() - 20, position->y() - 20, 40, 40);
+    painter->drawRect(position->x() - 15, position->y() - 15, 30, 30);
 }

@@ -16,6 +16,11 @@ CaseNode::~CaseNode()
 
 }
 
+void CaseNode::setRect()
+{
+    mRect = new QRect(position->x() - 60, position->y() - 25, 120, 50);
+}
+
 void CaseNode::paint(QPainter *painter)
 {
 
@@ -27,10 +32,10 @@ void CaseNode::paint(QPainter *painter)
     painter->setPen(out);
     painter->setBrush(fill);
 
-    QPoint points[] = {QPoint(position->x() - 20, position->y() - 25),
-                       QPoint(position->x() + 60, position->y() - 25),
-                       QPoint(position->x() + 20, position->y() + 25),
-                       QPoint(position->x() - 60, position->y() + 25)};
+    QPoint points[] = {QPoint(position->x() - 60, position->y() - 25),
+                       QPoint(position->x() + 20, position->y() - 25),
+                       QPoint(position->x() + 60, position->y() + 25),
+                       QPoint(position->x() - 20, position->y() + 25)};
 
     painter->drawPolygon(points, 4);
 

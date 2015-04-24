@@ -13,6 +13,11 @@ ProximityNode::~ProximityNode()
 
 }
 
+void ProximityNode::setRect()
+{
+    mRect = new QRect(position->x() - 45, position->y() - 35, 90, 70);
+}
+
 void ProximityNode::paint(QPainter *painter)
 {
     QBrush outline(Qt::black);

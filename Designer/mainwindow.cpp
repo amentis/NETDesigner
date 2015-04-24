@@ -341,9 +341,9 @@ void MainWindow::projectLoad()
 void MainWindow::projectUnload()
 {
     delete projectDirectory;
-    projectDirectory = NULL;
+    projectDirectory = nullptr;
     delete projectBases;
-    projectBases = NULL;
+    projectBases = nullptr;
     ui->actionClose_Project->setEnabled(false);
     ui->menuProject->setEnabled(false);
     ui->actionAdd_Net->setEnabled(false);
