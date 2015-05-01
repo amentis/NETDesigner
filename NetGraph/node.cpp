@@ -7,7 +7,9 @@ Node::Node()
 }
 
 Node::Node(NodeType type, QString *expression):
-    mType(type), mExpression(expression)
+    mType(type), mExpression(expression), position(nullptr),
+    arrowsIn(new QVector<Arrow*>()), arrowsOut(new QVector<Arrow*>()),
+    mRect(nullptr), mTightRect(nullptr)
 {
     switch (mType) {
     case NodeType::StartNode: break;
@@ -31,6 +33,7 @@ void Node::setPosition(QPoint *pos)
 {
     position = pos;
     setRect();
+    setTightRect();
 }
 
 void Node::paint(QPainter *painter)
@@ -70,6 +73,21 @@ QRect *Node::rect()
     return mRect;
 }
 
+QRect *Node::tightRect()
+{
+    return mTightRect;
+}
+
+void Node::addArrowIn(Arrow *newArrow)
+{
+    arrowsIn->append(newArrow);
+}
+
+void Node::addArrowOut(Arrow *newArrow)
+{
+    arrowsOut->append(newArrow);
+}
+
 void Node::setRect()
 {
     switch (mType) {
@@ -87,6 +105,27 @@ void Node::setRect()
         break;
     case NodeType::ProximityNode:
         mRect = new QRect(position->x() - 45, position->y() - 35, 90, 70);
+        break;
+    }
+}
+
+void Node::setTightRect()
+{
+    switch(mType){
+    case NodeType::StartNode:
+        mTightRect = new QRect(position->x() - 20, position->y() - 20, 40, 40);
+        break;
+    case NodeType::EndNode:
+        mTightRect = new QRect(position->x() - 20, position->y() - 20, 40, 40);
+        break;
+    case NodeType::CaseNode:
+        mTightRect = new QRect(position->x() - 40, position->y() - 25, 80, 50);
+        break;
+    case NodeType::OrdinaryNode:
+        mTightRect = new QRect(position->x() - 40, position->y() - 25, 80, 50);
+        break;
+    case NodeType::ProximityNode:
+        mTightRect = new QRect(position->x() - 45, position->y() - 35, 90, 70);
         break;
     }
 }

@@ -16,7 +16,7 @@ AddNode::~AddNode()
     delete ui;
 }
 
-void AddNode::getResult(Node*& node, Node::NodeType& type, QString*& expression)
+void AddNode::getResult(Node *&node, Node::NodeType& type, QString*& expression)
 {
     switch (ui->comboBox->currentIndex()){
             case 0: type = Node::NodeType::OrdinaryNode; break;

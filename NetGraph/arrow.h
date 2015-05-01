@@ -2,6 +2,11 @@
 #define ARROW_H
 
 #include <QVector>
+#include <QPainter>
+#include <QBrush>
+#include <QPen>
+#include <QPoint>
+#include <math.h>
 
 #include "node.h"
 #include "../PrimitivesLoader/primitive.h"
@@ -12,12 +17,16 @@ class Arrow
 {
 public:
     Arrow();
+    Arrow(Node* from, Node* to, QString* expression = nullptr);
     ~Arrow();
+
+    void paint(QPainter * painter);
 private:
-    QVector<Primitive> primitives;
+    QVector<Primitive*> *mPrimitives;
     bool leadsToSubnet;
-    Node* source;
-    Node* destination;
+    Node* mFrom;
+    Node* mTo;
+    QString* mExpression;
 };
 
 #endif // ARROW_H

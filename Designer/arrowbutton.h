@@ -20,20 +20,31 @@ public:
     QRect* rect();
     Node* getSelected();
     void paint(QPainter* painter);
+    bool active();
 
 private:
     QRect* mRect;
     Node* mSelected;
+    Node* mTarget;
+    QRect* mTargetRect;
     bool mVisible;
     bool mHovered;
+    bool mActive;
+    bool mHasTarget;
 
 signals:
     void visibleChanged();
     void hoveredChanged();
+    void activeChanged();
+    void hasTargetChanged();
+    void updated();
+    void arrowAddRequest(Node* from, Node* to, QString* expression = nullptr);
 
 public slots:
     void setVisible(bool visible, Node* selected);
     void setHovered(bool hovered);
+    void setActive(bool active);
+    void setTarget(bool hasTarget, Node* target = nullptr);
 };
 
 #endif // ARROWBUTTON_H

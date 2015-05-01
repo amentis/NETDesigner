@@ -72,6 +72,27 @@ const QVector<Node*>* NetGraph::getNodes()
     return nodes;
 }
 
+void NetGraph::addArrow(Node *from, Node *to, QString *expression)
+{
+    arrows->append(new Arrow(from, to, expression));
+    emit contentModified();
+}
+
+void NetGraph::editArrow(QVector<Primitive *> added, QVector<Primitive *> removed)
+{
+
+}
+
+void NetGraph::removeArrow(Arrow *arrow)
+{
+    arrows->removeAll(arrow);
+}
+
+const QVector<Arrow *> *NetGraph::getArrows()
+{
+    return arrows;
+}
+
 bool NetGraph::hasStartNode()
 {
     return (start);

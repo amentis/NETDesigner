@@ -8,6 +8,7 @@
 #include <QBrush>
 #include <QColor>
 #include <QPen>
+#include <QVector>
 
 #include "arrow.h"
 
@@ -31,9 +32,14 @@ public:
 
     NodeType type() const;
     QRect* rect();
+    QRect* tightRect();
+
+    void addArrowIn(Arrow* newArrow);
+    void addArrowOut(Arrow* newArrow);
 
 private:
     void setRect();
+    void setTightRect();
 
     void paintStartNode(QPainter *painter);
     void paintEndNode(QPainter *painter);
@@ -44,9 +50,10 @@ private:
     NodeType mType;
     QString* mExpression;
     QPoint* position;
-    Arrow* arrowIn;
-    Arrow* arrowOut;
-    QRect* mRect;
+    QVector<Arrow*> *arrowsIn;
+    QVector<Arrow*> *arrowsOut;
+    QRect* mRect; // for placing arrowButton
+    QRect* mTightRect; // for placing arrows
 };
 
 #endif // NODE_H

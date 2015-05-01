@@ -26,34 +26,23 @@ void Editor::operateDeleteNodeDialog(Node *selected)
     }
 }
 
-Editor::Editor(QWidget *parent) : QWidget(parent)
+Editor::Editor(QWidget *parent) : QWidget(parent),
+    canvas(new Canvas(this,this)), netGraph(new NetGraph(this)), addNodeDialog(new AddNode(this)),
+    addNodeDialogOpened(false), arrowButton(new ArrowButton()), nodePosition(nullptr),
+    currentMousePosition(nullptr), modified(false)
 {
     QBoxLayout* layout = new QBoxLayout(QBoxLayout::TopToBottom, this);
-    canvas = new Canvas(this, this);
     layout->addWidget(canvas);
     setLayout(layout);
-    modified = false;
-
-    netGraph = new NetGraph(this);
 
     connect(netGraph, &NetGraph::contentModified, canvas, static_cast<void (Canvas::*)()>(&Canvas::repaint));
-
-    addNodeDialog = new AddNode(this);
     connect(addNodeDialog, &AddNode::accepted, this, &Editor::addOrEditNode);
-    addNodeDialogOpened = false;
-
-    arrowButton = new ArrowButton();
-
-    connect(arrowButton, &ArrowButton::visibleChanged, canvas, static_cast<void (Canvas::*)()>(&Canvas::repaint));
-    connect(arrowButton, &ArrowButton::hoveredChanged, canvas, static_cast<void (Canvas::*)()>(&Canvas::repaint));
-
-    nodePosition = nullptr;
-
+    connect(arrowButton, &ArrowButton::updated, canvas, static_cast<void (Canvas::*)()>(&Canvas::repaint));
+    connect(arrowButton, &ArrowButton::arrowAddRequest, netGraph, &NetGraph::addArrow);
 }
 
 Editor::~Editor()
 {
-    delete canvas;
     delete arrowButton;
 }
 
@@ -99,11 +88,37 @@ void Editor::paint(QPainter *painter)
     for (const auto& node : *netGraph->getNodes()){
         node->paint(painter);
     }
+
+    for (const auto& arrow : *netGraph->getArrows()){
+        arrow->paint(painter);
+    }
+
     arrowButton->paint(painter);
+
+    if (arrowButton->active()){
+        QBrush brush(Qt::black);
+        QPen pen(brush, 1);
+        painter->setPen(pen);
+        if (currentMousePosition)
+            painter->drawLine(arrowButton->rect()->topRight(), *currentMousePosition);
+    }
+
 }
 
 void Editor::mousePress(QMouseEvent *event)
 {
+
+    if (!arrowButton->active()){
+        if (arrowButton->rect())
+            if (arrowButton->rect()->contains(QWidget::mapToParent(event->pos()))){
+                arrowButton->setActive(true);
+                return;
+            }
+    } else {
+        arrowButton->setActive(false);
+        return;
+    }
+
     for (const auto& node : *netGraph->getNodes()) {
         if (node->rect()->contains(QWidget::mapToParent(event->pos()))){
             if (event->button() == Qt::LeftButton){
@@ -129,14 +144,29 @@ void Editor::mouseMove(QMouseEvent *event)
             break;
         }
     }
+
     if (selected){
-        arrowButton->setVisible(true, selected);
-        if (arrowButton->rect()->contains(QWidget::mapToParent(event->pos()))){
-            arrowButton->setHovered(true);
+        if (arrowButton->active()){
+            arrowButton->setTarget(true, selected);
         } else {
-            arrowButton->setHovered(false);
+            arrowButton->setVisible(true, selected);
+            if (arrowButton->rect()->contains(QWidget::mapToParent(event->pos()))){
+                arrowButton->setHovered(true);
+            } else {
+                arrowButton->setHovered(false);
+            }
         }
     } else {
         arrowButton->setVisible(false, nullptr);
+        if (arrowButton->active()){
+            arrowButton->setTarget(false);
+        }
+    }
+
+    if (arrowButton->active()){
+        delete currentMousePosition;
+        currentMousePosition = new QPoint(event->pos());
+        canvas->repaint();
+
     }
 }

@@ -36,6 +36,8 @@ private:
 
     QPoint* nodePosition;
 
+    QPoint* currentMousePosition;
+
     bool modified;
 
     void operateAddNodeDialog(QMouseEvent* event, bool editMode = false, Node *editable = nullptr);
