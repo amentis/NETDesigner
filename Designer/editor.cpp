@@ -29,7 +29,7 @@ void Editor::operateDeleteNodeDialog(Node *selected)
 Editor::Editor(QWidget *parent) : QWidget(parent),
     canvas(new Canvas(this,this)), netGraph(new NetGraph(this)), addNodeDialog(new AddNode(this)),
     addNodeDialogOpened(false), arrowButton(new ArrowButton()), nodePosition(nullptr),
-    currentMousePosition(nullptr), modified(false)
+    modified(false)
 {
     QBoxLayout* layout = new QBoxLayout(QBoxLayout::TopToBottom, this);
     layout->addWidget(canvas);
@@ -38,7 +38,7 @@ Editor::Editor(QWidget *parent) : QWidget(parent),
     connect(netGraph, &NetGraph::contentModified, canvas, static_cast<void (Canvas::*)()>(&Canvas::repaint));
     connect(addNodeDialog, &AddNode::accepted, this, &Editor::addOrEditNode);
     connect(arrowButton, &ArrowButton::updated, canvas, static_cast<void (Canvas::*)()>(&Canvas::repaint));
-    connect(arrowButton, &ArrowButton::arrowAddRequest, netGraph, &NetGraph::addArrow);
+    connect(arrowButton, &ArrowButton::arrowAddRequest, this, &Editor::checkArrowAddRequest);
 }
 
 Editor::~Editor()
@@ -81,6 +81,23 @@ void Editor::addOrEditNode()
         addNode();
 }
 
+void Editor::checkArrowAddRequest(Node *from, Node *to)
+{
+    if (from->type() == Node::NodeType::CaseNode){
+        AddArrowExpressionDialog dialog(true, this);
+        if (dialog.exec() == QDialog::Accepted){
+            netGraph->addArrow(from, to, new QString(dialog.expression()));
+        }
+    } else if (from->type() == Node::NodeType::ProximityNode){
+        AddArrowExpressionDialog dialog(false, this);
+        if (dialog.exec() == QDialog::Accepted){
+            netGraph->addArrow(from, to, new QString(dialog.expression()));
+        }
+    } else {
+        netGraph->addArrow(from, to);
+    }
+}
+
 
 
 void Editor::paint(QPainter *painter)
@@ -94,14 +111,6 @@ void Editor::paint(QPainter *painter)
     }
 
     arrowButton->paint(painter);
-
-    if (arrowButton->active()){
-        QBrush brush(Qt::black);
-        QPen pen(brush, 1);
-        painter->setPen(pen);
-        if (currentMousePosition)
-            painter->drawLine(arrowButton->rect()->topRight(), *currentMousePosition);
-    }
 
 }
 
@@ -161,12 +170,5 @@ void Editor::mouseMove(QMouseEvent *event)
         if (arrowButton->active()){
             arrowButton->setTarget(false);
         }
-    }
-
-    if (arrowButton->active()){
-        delete currentMousePosition;
-        currentMousePosition = new QPoint(event->pos());
-        canvas->repaint();
-
     }
 }

@@ -21,12 +21,23 @@ public:
     ~Arrow();
 
     void paint(QPainter * painter);
+
+    bool intersects(QPoint* point);
 private:
     QVector<Primitive*> *mPrimitives;
     bool leadsToSubnet;
     Node* mFrom;
     Node* mTo;
     QString* mExpression;
+
+    void calculatePathsAndRect();
+
+    QVector<QRect>* rects;
+    QPoint* drawPath;
+    unsigned drawPathLength;
+    QPoint* drawHead;
+    QPoint* labelPosition;
+
 };
 
 #endif // ARROW_H

@@ -8,7 +8,7 @@ Node::Node()
 
 Node::Node(NodeType type, QString *expression):
     mType(type), mExpression(expression), position(nullptr),
-    arrowsIn(new QVector<Arrow*>()), arrowsOut(new QVector<Arrow*>()),
+    mArrowsIn(new QVector<Arrow*>()), mArrowsOut(new QVector<Arrow*>()),
     mRect(nullptr), mTightRect(nullptr)
 {
     switch (mType) {
@@ -80,12 +80,22 @@ QRect *Node::tightRect()
 
 void Node::addArrowIn(Arrow *newArrow)
 {
-    arrowsIn->append(newArrow);
+    mArrowsIn->append(newArrow);
 }
 
 void Node::addArrowOut(Arrow *newArrow)
 {
-    arrowsOut->append(newArrow);
+    mArrowsOut->append(newArrow);
+}
+
+const QVector<Arrow *> *Node::arrowsIn()
+{
+    return mArrowsIn;
+}
+
+const QVector<Arrow *> *Node::arrowsOut()
+{
+    return mArrowsOut;
 }
 
 void Node::setRect()

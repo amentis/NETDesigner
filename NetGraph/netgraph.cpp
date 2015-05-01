@@ -63,8 +63,15 @@ void NetGraph::removeNode(Node *node)
         start = nullptr;
     if (node->type() == Node::NodeType::EndNode)
         end = nullptr;
-    if (nodes->removeAll(node))
-        emit contentModified();
+
+    for (const auto& arrow : *node->arrowsIn()) {
+        arrows->removeAll(arrow);
+    }
+    for (const auto& arrow : *node->arrowsOut()) {
+        arrows->removeAll(arrow);
+    }
+    nodes->removeAll(node);
+    emit contentModified();
 }
 
 const QVector<Node*>* NetGraph::getNodes()

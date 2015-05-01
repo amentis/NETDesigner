@@ -1,12 +1,19 @@
 #include "arrow.h"
 
 Arrow::Arrow() :
-    mPrimitives(new QVector<Primitive*>()), leadsToSubnet(false), mFrom(nullptr), mTo (nullptr), mExpression(nullptr) {}
+    mPrimitives(new QVector<Primitive*>()), leadsToSubnet(false), mFrom(nullptr), mTo (nullptr),
+    mExpression(nullptr), rects(new QVector<QRect>), drawPath(nullptr), drawHead(nullptr), labelPosition(nullptr)
+{
+    calculatePathsAndRect();
+}
 
 Arrow::Arrow(Node *from, Node *to, QString *expression) :
-mPrimitives(new QVector<Primitive*>), leadsToSubnet(false), mFrom(from), mTo(to), mExpression(expression) {
+mPrimitives(new QVector<Primitive*>), leadsToSubnet(false), mFrom(from), mTo(to),
+  mExpression(expression), rects(new QVector<QRect>),drawPath(nullptr), drawHead(nullptr), labelPosition(nullptr)
+{
     mFrom->addArrowOut(this);
     mTo->addArrowIn(this);
+    calculatePathsAndRect();
 }
 
 Arrow::~Arrow()
@@ -24,105 +31,164 @@ void Arrow::paint(QPainter *painter)
     }
     painter->setPen(pen);
 
+    painter->drawPolyline(drawPath, drawPathLength);
+
+    painter->setBrush(brush);
+
+    painter->drawPolygon(drawHead, 3);
+
+    if (mFrom->type() == Node::NodeType::CaseNode || mFrom->type() == Node::NodeType::ProximityNode)
+        painter->drawText(*labelPosition, *mExpression);
+}
+
+bool Arrow::intersects(QPoint *point)
+{
+    for (const auto& rect : *rects){
+        if (rect.contains(*point)){
+            return true;
+        }
+    }
+    return false;
+}
+
+void Arrow::calculatePathsAndRect()
+{
+    if (!rects->isEmpty())
+        rects->clear();
+    if (drawPath)
+        delete drawPath;
+    if (drawHead)
+        delete drawHead;
+    if (labelPosition)
+        delete labelPosition;
+
     bool fromIsLeftFromTo;
     bool fromIsHigherThanTo;
     bool targetIsSide;
 
-    fromIsLeftFromTo =  (mFrom->tightRect()->x() < mTo->tightRect()->x());
+    fromIsLeftFromTo = (mFrom->tightRect()->x() < mTo->tightRect()->x());
 
     fromIsHigherThanTo = (mFrom->tightRect()->center().y() < mTo->tightRect()->center().y());
 
     int xDistance = abs(mFrom->tightRect()->center().x() - mTo->tightRect()->center().x());
     int yDistance = abs(mFrom->tightRect()->center().y() - mTo->tightRect()->center().y());
 
-    //draw arrow body
+    //arrow body
 
     if (abs(xDistance - yDistance) < 50){
         //side of from, top/bottom of to
         targetIsSide = false;
-        painter->drawLine((fromIsLeftFromTo)? mFrom->tightRect()->right() : mFrom->tightRect()->left(),
-                          mFrom->tightRect()->center().y(),
-                          mTo->tightRect()->center().x(),
-                          mFrom->tightRect()->center().y());
-        painter->drawLine(mTo->tightRect()->center().x(),
-                          mFrom->tightRect()->center().y(),
-                          mTo->tightRect()->center().x(),
-                          (mFrom->tightRect()->center().y() < mTo->tightRect()->center().y())?
-                              mTo->tightRect()->top() : mTo->tightRect()->bottom());
+
+        drawPath = new QPoint[3];
+        drawPathLength = 3;
+
+        drawPath[0] = QPoint((fromIsLeftFromTo)? mFrom->tightRect()->right() : mFrom->tightRect()->left(),
+                              mFrom->tightRect()->center().y());
+        drawPath[1] = QPoint(mTo->tightRect()->center().x(),
+                             mFrom->tightRect()->center().y());
+        drawPath[2] = QPoint(mTo->tightRect()->center().x(),
+                             (mFrom->tightRect()->center().y() < mTo->tightRect()->center().y())?
+                                 mTo->tightRect()->top() : mTo->tightRect()->bottom());
+
+        //rects
+        rects->append(QRect((fromIsLeftFromTo)? drawPath[0].x() : drawPath[1].x(),
+                      drawPath[0].y() - 2,
+                abs(drawPath[0].x() - drawPath[1].x()),
+                          4));
+        rects->append(QRect(drawPath[1].x() - 2,
+                      (fromIsHigherThanTo)? drawPath[1].y() : drawPath[2].y(),
+                4,
+                          abs(drawPath[1].y() - drawPath[2].y())));
 
     } else if (xDistance < yDistance){
         //top to bottom
         targetIsSide = false;
         if (fromIsHigherThanTo){
-            painter->drawLine(mFrom->tightRect()->center().x(),
-                              mFrom->tightRect()->bottom(),
-                              mFrom->tightRect()->center().x(),
-                              mTo->tightRect()->top() + (mFrom->tightRect()->bottom() - mTo->tightRect()->top())/2);
-            painter->drawLine(mFrom->tightRect()->center().x(),
-                              mTo->tightRect()->top() + (mFrom->tightRect()->bottom() - mTo->tightRect()->top())/2,
-                              mTo->tightRect()->center().x(),
-                              mTo->tightRect()->top() + (mFrom->tightRect()->bottom() - mTo->tightRect()->top())/2);
-            painter->drawLine(mTo->tightRect()->center().x(),
-                              mTo->tightRect()->top() + (mFrom->tightRect()->bottom() - mTo->tightRect()->top())/2,
-                              mTo->tightRect()->center().x(),
-                              mTo->tightRect()->top());
+            drawPath = new QPoint[4];
+            drawPathLength = 4;
+            drawPath[0] = QPoint(mFrom->tightRect()->center().x(),
+                                 mFrom->tightRect()->bottom());
+            drawPath[1] = QPoint(mFrom->tightRect()->center().x(),
+                                 mTo->tightRect()->top() + (mFrom->tightRect()->bottom() - mTo->tightRect()->top())/2);
+
+            drawPath[2] = QPoint(mTo->tightRect()->center().x(),
+                                 mTo->tightRect()->top() + (mFrom->tightRect()->bottom() - mTo->tightRect()->top())/2);
+            drawPath[3] = QPoint(mTo->tightRect()->center().x(),
+                                 mTo->tightRect()->top());
         } else {
-            painter->drawLine(mFrom->tightRect()->center().x(),
-                              mFrom->tightRect()->top(),
-                              mFrom->tightRect()->center().x(),
-                              mTo->tightRect()->bottom() + (mFrom->tightRect()->top() - mTo->tightRect()->bottom())/2);
-            painter->drawLine(mFrom->tightRect()->center().x(),
-                              mTo->tightRect()->bottom() + (mFrom->tightRect()->top() - mTo->tightRect()->bottom())/2,
-                              mTo->tightRect()->center().x(),
-                              mTo->tightRect()->bottom() + (mFrom->tightRect()->top() - mTo->tightRect()->bottom())/2);
-            painter->drawLine(mTo->tightRect()->center().x(),
-                              mTo->tightRect()->bottom() + (mFrom->tightRect()->top() - mTo->tightRect()->bottom())/2,
-                              mTo->tightRect()->center().x(),
-                              mTo->tightRect()->bottom());
+            drawPath = new QPoint[4];
+            drawPathLength = 4;
+            drawPath[0] = QPoint(mFrom->tightRect()->center().x(),
+                                mFrom->tightRect()->top());
+            drawPath[1] = QPoint(mFrom->tightRect()->center().x(),
+                                 mTo->tightRect()->bottom() + (mFrom->tightRect()->top() - mTo->tightRect()->bottom())/2);
+            drawPath[2] = QPoint(mTo->tightRect()->center().x(),
+                                 mTo->tightRect()->bottom() + (mFrom->tightRect()->top() - mTo->tightRect()->bottom())/2);
+            drawPath[3] = QPoint(mTo->tightRect()->center().x(),
+                                 mTo->tightRect()->bottom());
+            //TODO: rect
         }
     } else {
         //side of from, side of to
         targetIsSide = true;
-        painter->drawLine((fromIsLeftFromTo)? mFrom->tightRect()->right() : mFrom->tightRect()->left(),
-                          mFrom->tightRect()->center().y(),
-                          mFrom->tightRect()->right() + (mTo->tightRect()->left() - mFrom->tightRect()->right())/2,
-                          mFrom->tightRect()->center().y());
-        painter->drawLine(mFrom->tightRect()->right() + (mTo->tightRect()->left() - mFrom->tightRect()->right())/2,
-                          mFrom->tightRect()->center().y(),
-                          mFrom->tightRect()->right() + (mTo->tightRect()->left() - mFrom->tightRect()->right())/2,
-                          mTo->tightRect()->center().y());
-        painter->drawLine(mFrom->tightRect()->right() + (mTo->tightRect()->left() - mFrom->tightRect()->right())/2,
-                          mTo->tightRect()->center().y(),
-                          (fromIsLeftFromTo)? mTo->tightRect()->left() : mTo->tightRect()->right(),
-                          mTo->tightRect()->center().y());
+        drawPath = new QPoint[4];
+        drawPathLength = 4;
+        drawPath[0] = QPoint((fromIsLeftFromTo)? mFrom->tightRect()->right() : mFrom->tightRect()->left(),
+                             mFrom->tightRect()->center().y());
+        drawPath[1] = QPoint(mFrom->tightRect()->right() + (mTo->tightRect()->left() - mFrom->tightRect()->right())/2,
+                             mFrom->tightRect()->center().y());
+        drawPath[2] = QPoint(mFrom->tightRect()->right() + (mTo->tightRect()->left() - mFrom->tightRect()->right())/2,
+                             mTo->tightRect()->center().y());
+        drawPath[3] = QPoint((fromIsLeftFromTo)? mTo->tightRect()->left() : mTo->tightRect()->right(),
+                             mTo->tightRect()->center().y());
+        //TODO: rect
     }
 
     //draw arrow head
 
-    painter->setBrush(brush);
+    drawHead = new QPoint[3];
+
     if (targetIsSide){
         if (fromIsLeftFromTo){
-            QPoint points[] = {QPoint(mTo->tightRect()->left() - 6, mTo->tightRect()->center().y() + 3),
-                              QPoint(mTo->tightRect()->left(), mTo->tightRect()->center().y()),
-                              QPoint(mTo->tightRect()->left() - 6, mTo->tightRect()->center().y() - 3)};
-            painter->drawPolygon(points, 3);
+            drawHead[0] = QPoint(mTo->tightRect()->left() - 6, mTo->tightRect()->center().y() + 3);
+            drawHead[1] = QPoint(mTo->tightRect()->left(), mTo->tightRect()->center().y());
+            drawHead[2] = QPoint(mTo->tightRect()->left() - 6, mTo->tightRect()->center().y() - 3);
         } else {
-            QPoint points[] = {QPoint(mTo->tightRect()->right() + 6, mTo->tightRect()->center().y() + 3),
-                              QPoint(mTo->tightRect()->right(), mTo->tightRect()->center().y()),
-                              QPoint(mTo->tightRect()->right() + 6, mTo->tightRect()->center().y() - 3)};
-            painter->drawPolygon(points, 3);
+            drawHead[0] = QPoint(mTo->tightRect()->right() + 6, mTo->tightRect()->center().y() + 3);
+            drawHead[1] = QPoint(mTo->tightRect()->right(), mTo->tightRect()->center().y());
+            drawHead[2] = QPoint(mTo->tightRect()->right() + 6, mTo->tightRect()->center().y() - 3);
         }
     } else {
         if (fromIsHigherThanTo){
-            QPoint points[] = {QPoint(mTo->tightRect()->center().x() + 3, mTo->tightRect()->top() - 6),
-                              QPoint(mTo->tightRect()->center().x(), mTo->tightRect()->top()),
-                              QPoint(mTo->tightRect()->center().x() - 3, mTo->tightRect()->top() - 6)};
-            painter->drawPolygon(points, 3);
+            drawHead[0] = QPoint(mTo->tightRect()->center().x() + 3, mTo->tightRect()->top() - 6);
+            drawHead[1] = QPoint(mTo->tightRect()->center().x(), mTo->tightRect()->top());
+            drawHead[2] = QPoint(mTo->tightRect()->center().x() - 3, mTo->tightRect()->top() - 6);
         } else {
-            QPoint points[] = {QPoint(mTo->tightRect()->center().x() + 3, mTo->tightRect()->bottom() + 6),
-                              QPoint(mTo->tightRect()->center().x(), mTo->tightRect()->bottom()),
-                              QPoint(mTo->tightRect()->center().x() - 3, mTo->tightRect()->bottom() + 6)};
-            painter->drawPolygon(points, 3);
+            drawHead[0] = QPoint(mTo->tightRect()->center().x() + 3, mTo->tightRect()->bottom() + 6);
+            drawHead[1] = QPoint(mTo->tightRect()->center().x(), mTo->tightRect()->bottom());
+            drawHead[2] = QPoint(mTo->tightRect()->center().x() - 3, mTo->tightRect()->bottom() + 6);
         }
     }
+
+    //draw expression/constant
+    if (mFrom->type() == Node::NodeType::CaseNode || mFrom->type() == Node::NodeType::ProximityNode){
+        if (targetIsSide){
+            if (fromIsLeftFromTo){
+                labelPosition = new QPoint(mFrom->tightRect()->right() + 5,
+                                           mFrom->tightRect()->center().y() - 3);
+            } else {
+                labelPosition = new QPoint(mFrom->tightRect()->left() - 5,
+                                           mFrom->tightRect()->center().y() - 3);
+            }
+        } else {
+            if (fromIsHigherThanTo){
+                labelPosition = new QPoint(mFrom->tightRect()->center().x() + 3,
+                                           mFrom->tightRect()->bottom() - 5);
+            } else {
+                labelPosition = new QPoint(mFrom->tightRect()->center().x() + 3,
+                                           mFrom->tightRect()->top() + 5);
+            }
+        }
+    }
+
 }

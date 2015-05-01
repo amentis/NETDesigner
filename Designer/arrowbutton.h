@@ -38,7 +38,7 @@ signals:
     void activeChanged();
     void hasTargetChanged();
     void updated();
-    void arrowAddRequest(Node* from, Node* to, QString* expression = nullptr);
+    void arrowAddRequest(Node* from, Node* to);
 
 public slots:
     void setVisible(bool visible, Node* selected);

@@ -18,6 +18,7 @@ class Canvas;
 #include "canvas.h"
 #include "addnode.h"
 #include "arrowbutton.h"
+#include "addarrowexpressiondialog.h"
 
 
 class Editor : public QWidget
@@ -35,8 +36,6 @@ private:
     ArrowButton* arrowButton;
 
     QPoint* nodePosition;
-
-    QPoint* currentMousePosition;
 
     bool modified;
 
@@ -60,6 +59,7 @@ signals:
 
 public slots:
     void addOrEditNode();
+    void checkArrowAddRequest(Node* from, Node* to);
 };
 
 #endif // EDITOR_H

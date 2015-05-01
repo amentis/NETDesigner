@@ -37,6 +37,8 @@ public:
     void addArrowIn(Arrow* newArrow);
     void addArrowOut(Arrow* newArrow);
 
+    const QVector<Arrow*>* arrowsIn();
+    const QVector<Arrow *>* arrowsOut();
 private:
     void setRect();
     void setTightRect();
@@ -50,8 +52,8 @@ private:
     NodeType mType;
     QString* mExpression;
     QPoint* position;
-    QVector<Arrow*> *arrowsIn;
-    QVector<Arrow*> *arrowsOut;
+    QVector<Arrow*> *mArrowsIn;
+    QVector<Arrow*> *mArrowsOut;
     QRect* mRect; // for placing arrowButton
     QRect* mTightRect; // for placing arrows
 };

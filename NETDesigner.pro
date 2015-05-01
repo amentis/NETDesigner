@@ -23,7 +23,8 @@ SOURCES += main.cpp \
     Designer/canvas.cpp \
     Designer/addnode.cpp \
     Designer/arrowbutton.cpp \
-    NetGraph/netgraph.cpp
+    NetGraph/netgraph.cpp \
+    Designer/addarrowexpressiondialog.cpp
 
 HEADERS  += \
     Designer/mainwindow.h \
@@ -35,8 +36,10 @@ HEADERS  += \
     Designer/canvas.h \
     Designer/addnode.h \
     Designer/arrowbutton.h \
-    NetGraph/netgraph.h
+    NetGraph/netgraph.h \
+    Designer/addarrowexpressiondialog.h
 
 FORMS    += \
     Designer/mainwindow.ui \
-    Designer/addnode.ui
+    Designer/addnode.ui \
+    Designer/addarrowexpressiondialog.ui
