@@ -19,6 +19,9 @@ void Arrow::paint(QPainter *painter)
 {
     QBrush brush(Qt::black);
     QPen pen(brush, 1);
+    if (leadsToSubnet){
+        pen.setStyle(Qt::DashLine);
+    }
     painter->setPen(pen);
 
     bool fromIsLeftFromTo;
