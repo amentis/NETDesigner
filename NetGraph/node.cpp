@@ -78,6 +78,17 @@ QRect *Node::tightRect()
     return mTightRect;
 }
 
+void Node::removeArrowIn(Arrow *arrow) const
+{
+    mArrowsIn->removeAll(arrow);
+}
+
+void Node::removeArrowOut(Arrow *arrow) const
+{
+    mArrowsOut->removeAll(arrow);
+}
+
+
 void Node::addArrowIn(Arrow *newArrow)
 {
     mArrowsIn->append(newArrow);

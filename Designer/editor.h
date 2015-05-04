@@ -41,6 +41,7 @@ private:
 
     void operateAddNodeDialog(QMouseEvent* event, bool editMode = false, Node *editable = nullptr);
     void operateDeleteNodeDialog(Node* selected);
+    void operateDeleteArrowDialog(Arrow* selected);
 
 public:
     explicit Editor(QWidget *parent = 0);

@@ -22,7 +22,10 @@ public:
 
     void paint(QPainter * painter);
 
-    bool intersects(QPoint* point);
+    bool contains(const QPoint &point);
+
+    const Node* from();
+    const Node* to();
 private:
     QVector<Primitive*> *mPrimitives;
     bool leadsToSubnet;

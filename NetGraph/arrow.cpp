@@ -41,14 +41,24 @@ void Arrow::paint(QPainter *painter)
         painter->drawText(*labelPosition, *mExpression);
 }
 
-bool Arrow::intersects(QPoint *point)
+bool Arrow::contains(const QPoint &point)
 {
     for (const auto& rect : *rects){
-        if (rect.contains(*point)){
+        if (rect.contains(point)){
             return true;
         }
     }
     return false;
+}
+
+const Node *Arrow::from()
+{
+    return mFrom;
+}
+
+const Node *Arrow::to()
+{
+    return mTo;
 }
 
 void Arrow::calculatePathsAndRect()
@@ -92,12 +102,12 @@ void Arrow::calculatePathsAndRect()
 
         //rects
         rects->append(QRect((fromIsLeftFromTo)? drawPath[0].x() : drawPath[1].x(),
-                      drawPath[0].y() - 2,
+                      drawPath[0].y() - 3,
                 abs(drawPath[0].x() - drawPath[1].x()),
-                          4));
-        rects->append(QRect(drawPath[1].x() - 2,
+                          6));
+        rects->append(QRect(drawPath[1].x() - 3,
                       (fromIsHigherThanTo)? drawPath[1].y() : drawPath[2].y(),
-                4,
+                6,
                           abs(drawPath[1].y() - drawPath[2].y())));
 
     } else if (xDistance < yDistance){
@@ -115,6 +125,20 @@ void Arrow::calculatePathsAndRect()
                                  mTo->tightRect()->top() + (mFrom->tightRect()->bottom() - mTo->tightRect()->top())/2);
             drawPath[3] = QPoint(mTo->tightRect()->center().x(),
                                  mTo->tightRect()->top());
+            //rects
+            rects->append(QRect(drawPath[0].x() - 3,
+                    drawPath[0].y(),
+                    6,
+                    abs(drawPath[1].y() - drawPath[0].y())));
+            rects->append(QRect((fromIsLeftFromTo)? drawPath[1].x() : drawPath[2].x(),
+                          drawPath[1].y() - 3,
+                    abs(drawPath[2].x() - drawPath[1].x()),
+                              5));
+            rects->append(QRect(drawPath[2].x() - 3,
+                    drawPath[2].y(),
+                    6,
+                    abs(drawPath[3].y() - drawPath[2].y())));
+
         } else {
             drawPath = new QPoint[4];
             drawPathLength = 4;
@@ -126,7 +150,19 @@ void Arrow::calculatePathsAndRect()
                                  mTo->tightRect()->bottom() + (mFrom->tightRect()->top() - mTo->tightRect()->bottom())/2);
             drawPath[3] = QPoint(mTo->tightRect()->center().x(),
                                  mTo->tightRect()->bottom());
-            //TODO: rect
+            //rects
+            rects->append(QRect(drawPath[1].x() - 3,
+                    drawPath[1].y(),
+                    6,
+                    abs(drawPath[0].y() - drawPath[1].y())));
+            rects->append(QRect((fromIsLeftFromTo)? drawPath[1].x() : drawPath[2].x(),
+                          drawPath[1].y() - 3,
+                    abs(drawPath[2].x() - drawPath[1].x()),
+                              6));
+            rects->append(QRect(drawPath[3].x() - 3,
+                    drawPath[3].y(),
+                    6,
+                    abs(drawPath[2].y() - drawPath[3].y())));
         }
     } else {
         //side of from, side of to
@@ -141,7 +177,19 @@ void Arrow::calculatePathsAndRect()
                              mTo->tightRect()->center().y());
         drawPath[3] = QPoint((fromIsLeftFromTo)? mTo->tightRect()->left() : mTo->tightRect()->right(),
                              mTo->tightRect()->center().y());
-        //TODO: rect
+        //rects
+        rects->append(QRect((fromIsLeftFromTo)? drawPath[0].x() : drawPath[1].x(),
+                      drawPath[0].y() - 2,
+                abs(drawPath[0].x() - drawPath[1].x()),
+                          4));
+        rects->append(QRect(drawPath[1].x() - 2,
+                      (fromIsHigherThanTo)? drawPath[1].y() : drawPath[2].y(),
+                4,
+                          abs(drawPath[2].y() - drawPath[1].y())));
+        rects->append(QRect((fromIsLeftFromTo)? drawPath[2].x() : drawPath[3].x(),
+                      drawPath[2].y() - 2,
+                abs(drawPath[2].x() - drawPath[3].x()),
+                          4));
     }
 
     //draw arrow head

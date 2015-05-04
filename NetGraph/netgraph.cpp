@@ -92,6 +92,8 @@ void NetGraph::editArrow(QVector<Primitive *> added, QVector<Primitive *> remove
 
 void NetGraph::removeArrow(Arrow *arrow)
 {
+    arrow->from()->removeArrowOut(arrow);
+    arrow->to()->removeArrowIn(arrow);
     arrows->removeAll(arrow);
 }
 

@@ -26,6 +26,16 @@ void Editor::operateDeleteNodeDialog(Node *selected)
     }
 }
 
+void Editor::operateDeleteArrowDialog(Arrow *selected)
+{
+    QMessageBox::StandardButton confirm;
+    confirm = QMessageBox::question(this, tr("NetDesigner"), tr("Are you sure you want to delete this arrow?"),
+                                    QMessageBox::Yes | QMessageBox::No);
+    if (confirm == QMessageBox::Yes){
+        netGraph->removeArrow(selected);
+    }
+}
+
 Editor::Editor(QWidget *parent) : QWidget(parent),
     canvas(new Canvas(this,this)), netGraph(new NetGraph(this)), addNodeDialog(new AddNode(this)),
     addNodeDialogOpened(false), arrowButton(new ArrowButton()), nodePosition(nullptr),
@@ -126,6 +136,17 @@ void Editor::mousePress(QMouseEvent *event)
     } else {
         arrowButton->setActive(false);
         return;
+    }
+
+    for (const auto& arrow : *netGraph->getArrows()){
+        if (arrow->contains(QWidget::mapToParent(event->pos()))){
+            if (event->button() == Qt::LeftButton){
+                //TODO: edit arrow
+            } else if (event->button() == Qt::RightButton){
+                operateDeleteArrowDialog(arrow);
+            }
+            return;
+        }
     }
 
     for (const auto& node : *netGraph->getNodes()) {

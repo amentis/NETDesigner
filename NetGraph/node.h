@@ -34,6 +34,8 @@ public:
     QRect* rect();
     QRect* tightRect();
 
+    void removeArrowIn(Arrow* arrow) const;
+    void removeArrowOut(Arrow* arrow) const;
     void addArrowIn(Arrow* newArrow);
     void addArrowOut(Arrow* newArrow);
 
