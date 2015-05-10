@@ -24,8 +24,10 @@ public:
 
     bool contains(const QPoint &point);
 
-    const Node* from();
-    const Node* to();
+    Node* from();
+    Node* to();
+    QString *expression();
+
 private:
     QVector<Primitive*> *mPrimitives;
     bool leadsToSubnet;

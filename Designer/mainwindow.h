@@ -17,6 +17,7 @@
 #include <QStringList>
 #include <QModelIndex>
 #include <QVariant>
+#include <QTextStream>
 
 #include "../PrimitivesLoader/base.h"
 
@@ -43,6 +44,9 @@ private:
     QStringListModel* netsListModel;
     QStringList netsList;
 
+    bool mModified;
+
+    void saveNet(Editor* editor);
     int tabIndex;
 
 private slots:
@@ -68,6 +72,14 @@ private slots:
 
     void projectLoad();
     void projectUnload();
+
+    void help();
+    void about();
+
+    void modified();
+    void saved();
+
+    void checkTabModified(int index);
 signals:
     void projectLoaded();
     void projectUnloaded();

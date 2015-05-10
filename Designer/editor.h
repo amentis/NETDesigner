@@ -9,6 +9,7 @@
 #include <QPoint>
 #include <QBoxLayout>
 #include <QMessageBox>
+#include <QTextStream>
 
 class Canvas;
 #include "NetGraph/node.h"
@@ -28,7 +29,7 @@ class Editor : public QWidget
 private:
     Canvas* canvas;
 
-    NetGraph* netGraph;
+    NetGraph* mNetGraph;
 
     AddNode* addNodeDialog;
     bool addNodeDialogOpened;
@@ -37,7 +38,7 @@ private:
 
     QPoint* nodePosition;
 
-    bool modified;
+    bool mModified;
 
     void operateAddNodeDialog(QMouseEvent* event, bool editMode = false, Node *editable = nullptr);
     void operateDeleteNodeDialog(Node* selected);
@@ -47,7 +48,8 @@ public:
     explicit Editor(QWidget *parent = 0);
     ~Editor();
     bool isModified();
-    bool save();
+    void save(QTextStream& stream);
+    void load(QTextStream& stream);
 
     void mousePress(QMouseEvent* event);
     void mouseMove(QMouseEvent * event);
@@ -57,8 +59,11 @@ public:
     void editNode();
 
 signals:
+    void modification();
 
 public slots:
+    void modified();
+    void saved();
     void addOrEditNode();
     void checkArrowAddRequest(Node* from, Node* to);
 };

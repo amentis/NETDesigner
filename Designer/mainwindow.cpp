@@ -2,8 +2,8 @@
 #include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    QMainWindow(parent), ui(new Ui::MainWindow), projectDirectory(nullptr), projectBases(nullptr), netsListModel(new QStringListModel(this)), mModified(false), tabIndex(0)
+
 {
     ui->setupUi(this);
     this->showMaximized();
@@ -17,7 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->actionAdd_Net, &QAction::triggered, this, &MainWindow::addNet);
     connect(ui->actionRemove_Net, &QAction::triggered, this, &MainWindow::removeNet);
-    connect(ui->actionSave_Current_Net, &QAction::triggered, this, &MainWindow::saveNet);
+    connect(ui->actionSave_Current_Net, &QAction::triggered, this, static_cast<void(MainWindow::*)()>(&MainWindow::saveNet));
     connect(ui->actionSave_All_Nets, &QAction::triggered, this, &MainWindow::saveAllNets);
     connect(ui->actionBrowse_Primitives_Bases, &QAction::triggered, this, &MainWindow::browsePrimitives);
 
@@ -25,18 +25,19 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionRun, &QAction::triggered, this, &MainWindow::run);
     connect(ui->actionDebug, &QAction::triggered, this, &MainWindow::debug);
 
+    connect(ui->actionHelp, &QAction::triggered, this, &MainWindow::help);
+    connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::about);
+
     connect(this, &MainWindow::projectLoaded, this, &MainWindow::projectLoad);
     connect(this, &MainWindow::projectUnloaded, this, &MainWindow::projectUnload);
 
     connect(ui->netsListView, &QListView::clicked, this, &MainWindow::openNet);
     connect(ui->editorTabWidget, &QTabWidget::tabCloseRequested, this, &MainWindow::closeNet);
 
+    connect(ui->editorTabWidget, &QTabWidget::currentChanged, this, &MainWindow::checkTabModified);
+
     connect(this, &MainWindow::netCountModified, this, &MainWindow::enableOrDisableRemoveNet);
 
-    projectDirectory = NULL;
-    projectBases = NULL;
-
-    netsListModel = new QStringListModel(this);
     netsListModel->setStringList(netsList);
     ui->netsListView->setModel(netsListModel);
 
@@ -243,6 +244,19 @@ void MainWindow::openNet(QModelIndex index)
 
     Editor* editor = new Editor(ui->editorTabWidget);
 
+    QFile file(QString(*projectDirectory + "/" +
+                       netName + ".net").remove("&").remove("*"));
+
+    file.open(QFile::Text | QFile::ReadOnly);
+
+    QTextStream stream(&file);
+
+    editor->load(stream);
+
+    file.close();
+
+    connect(editor, &Editor::modification, this, &MainWindow::modified);
+
     int newTabIndex = ui->editorTabWidget->addTab(editor, netName);
     ui->editorTabWidget->setCurrentIndex(newTabIndex);
 
@@ -251,10 +265,22 @@ void MainWindow::openNet(QModelIndex index)
 
 void MainWindow::closeNet(int index)
 {
-    if (((Editor*)ui->editorTabWidget->widget(index))->isModified()){
-        if (!((Editor*)ui->editorTabWidget->widget(index))->save())
+    Editor* editor = ((Editor*)ui->editorTabWidget->widget(index));
+    if (editor->isModified()){
+        QMessageBox::StandardButton confirm;
+        confirm = QMessageBox::question(this, tr("NETDesigner"), tr("Net modified. Do you want to save your progress?"),
+                                        QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+
+        if (confirm == QMessageBox::Yes){
+            saveNet();
+        }
+        if (confirm == QMessageBox::No){
+            saved();
+        }
+        if (confirm == QMessageBox::Cancel)
             return;
     }
+    disconnect(editor, &Editor::modification, this, &MainWindow::modified);
     ui->editorTabWidget->removeTab(index);
 
     emit netCountModified();
@@ -266,7 +292,7 @@ void MainWindow::removeNet()
     confirm = QMessageBox::question(
                 this, tr("NETDesigner"), tr("Are you sure you want to delete this net?"),
                 QMessageBox::Yes|QMessageBox::No);
-    QString netName = QString(ui->editorTabWidget->tabText(ui->editorTabWidget->currentIndex())).remove("&");
+    QString netName = QString(ui->editorTabWidget->tabText(ui->editorTabWidget->currentIndex())).remove("&").remove("*");
     if (confirm == QMessageBox::Yes){
         QFile file(QString(*projectDirectory + "/" + netName + ".net"));
         if (!file.remove()){
@@ -278,19 +304,43 @@ void MainWindow::removeNet()
         return;
     }
     netsList.removeAll(netName);
+    QWidget* currentWidget = ui->editorTabWidget->currentWidget();
     closeNet(ui->editorTabWidget->currentIndex());
+    if (currentWidget == ui->editorTabWidget->currentWidget())
+        return;
 
     emit netCountModified();
 }
 
 void MainWindow::saveAllNets()
 {
-
+    for (int i = 0; i < ui->editorTabWidget->tabBar()->count(); i++){
+        Editor* editor = (Editor*)ui->editorTabWidget->widget(i);
+        if (editor->isModified())
+            saveNet(editor);
+    }
+    ui->actionSave_All_Nets->setEnabled(false);
 }
 
 void MainWindow::saveNet()
 {
+    saveNet((Editor*)ui->editorTabWidget->currentWidget());
+}
 
+void MainWindow::saveNet(Editor *editor)
+{
+    QFile file(QString(*projectDirectory + "/"
+                       + ui->editorTabWidget->tabText(
+                           ui->editorTabWidget->currentIndex()) + ".net").remove("&").remove("*"));
+    file.open(QFile::Text | QFile::WriteOnly | QFile::Truncate);
+
+    QTextStream stream(&file);
+
+    editor->save(stream);
+
+    file.close();
+
+    saved();
 }
 
 void MainWindow::browsePrimitives()
@@ -353,4 +403,60 @@ void MainWindow::projectUnload()
     ui->actionBuild->setEnabled(false);
     ui->actionRun->setEnabled(false);
     ui->actionDebug->setEnabled(false);
+}
+
+void MainWindow::help()
+{
+    QMessageBox::about(this, tr("NETDesigner help"), tr("Left mouse button anywhere on the canvas creates a node. Left-clicking that node again edits that node. Right-click to delete. Hover on any node to make the add-arrow button show. Click it and click on another node to create an arrow. Right-click the arrow to delete it, left-click to edit"));
+}
+
+void MainWindow::about()
+{
+    QMessageBox::about(this, tr("About NETDesigner"), tr("NETDesigner is an IDE for the Net language. The IDE is developed by Ivan Bratoev as a thesis project for his bachelor's degree in Computer Science in Ruse University Angel Kanchev"));
+}
+
+void MainWindow::modified()
+{
+    if (!mModified){
+        ui->actionSave_All_Nets->setEnabled(true);
+        checkTabModified(ui->editorTabWidget->currentIndex());
+
+        int index = ui->editorTabWidget->currentIndex();
+        int listViewIndex = netsList.indexOf(ui->editorTabWidget->tabText(index).remove("&"));
+        ui->editorTabWidget->setTabText(index, "*" + ui->editorTabWidget->tabText(index));
+        netsList.removeAt(listViewIndex);
+        netsList.insert(listViewIndex, ui->editorTabWidget->tabText(index).remove("&"));
+
+        netsListModel->setStringList(netsList);
+        ui->netsListView->setModel(netsListModel);
+        mModified = true;
+    }
+}
+
+void MainWindow::saved()
+{
+    if (mModified){
+        int index = ui->editorTabWidget->currentIndex();
+        int listViewIndex = netsList.indexOf(ui->editorTabWidget->tabText(index).remove("&"));
+        ui->editorTabWidget->setTabText(index, ui->editorTabWidget->tabText(index).remove("*"));
+        netsList.removeAt(listViewIndex);
+        netsList.insert(listViewIndex, ui->editorTabWidget->tabText(index).remove("&"));
+
+        netsListModel->setStringList(netsList);
+        ui->netsListView->setModel(netsListModel);
+
+        mModified = false;
+
+        checkTabModified(ui->editorTabWidget->currentIndex());
+    }
+}
+
+void MainWindow::checkTabModified(int index)
+{
+    if (index == -1)
+        return;
+    if (((Editor*)ui->editorTabWidget->widget(index))->isModified())
+        ui->actionSave_Current_Net->setEnabled(true);
+    else
+        ui->actionSave_Current_Net->setEnabled(false);
 }

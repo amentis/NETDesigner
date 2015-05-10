@@ -243,3 +243,8 @@ void Node::paintProximityNode(QPainter *painter)
 
     painter->drawText(QRect(position->x() - 50, position->y() - 20, 100, 40), Qt::AlignCenter, *mExpression);
 }
+QPoint *Node::getPosition()
+{
+    return position;
+}
+

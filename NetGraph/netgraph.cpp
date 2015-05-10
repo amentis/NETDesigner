@@ -111,3 +111,61 @@ bool NetGraph::hasEndNode()
 {
     return (end);
 }
+
+void NetGraph::saveToStream(QTextStream &stream)
+{
+    for (const auto& node: *nodes){
+        stream << nodes->indexOf(node) << ":"
+               << (int)node->type() << ":";
+        if (node->expression()){
+            stream << *node->expression();
+        } else {
+            stream << " ";
+        }
+        stream << ":"
+               << node->getPosition()->x() << "," << node->getPosition()->y() << ";";
+    }
+
+    stream << "\n";
+
+    for (const auto&arrow : *arrows){
+        stream << nodes->indexOf(arrow->from()) << ":"
+               << nodes->indexOf(arrow->to()) << ":";
+        if (arrow->expression()){
+            stream << *arrow->expression();
+        } else {
+            stream << " ";
+        }
+            stream << ";";
+        //primitives
+    }
+}
+
+bool NetGraph::loadFromStream(QTextStream &stream)
+{
+    QString nodesLine = stream.readLine();
+    if (nodesLine.isNull())
+        return false;
+    QString arrowsLine = stream.readLine();
+    if (arrowsLine.isNull())
+        return false;
+    for (const auto& string : nodesLine.split(";", QString::SkipEmptyParts)){
+        QStringList element = string.split(":", QString::KeepEmptyParts);
+        Node* node = new Node((Node::NodeType)element.at(1).toInt(),
+                              new QString(element.at(2)));
+        if (node->type() == Node::NodeType::StartNode)
+            start = node;
+        if (node->type() == Node::NodeType::EndNode)
+            end = node;
+        QStringList point = element.at(3).split(",", QString::SkipEmptyParts);
+        node->setPosition(new QPoint(point.at(0).toInt(), point.at(1).toInt()));
+        nodes->insert(element.at(0).toInt(), node);
+    }
+    for (const auto& string : arrowsLine.split(";", QString::SkipEmptyParts)){
+        QStringList element = string.split(":", QString::KeepEmptyParts);
+        arrows->append(new Arrow(nodes->at(element.at(0).toInt()),
+                                 nodes->at(element.at(1).toInt()),
+                                 new QString(element.at(1))));
+    }
+    return true;
+}

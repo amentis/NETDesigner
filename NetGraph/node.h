@@ -23,6 +23,7 @@ public:
     Node(NodeType type, QString&& expression);
     ~Node();
     void setPosition(QPoint* pos);
+    QPoint *getPosition();
 
     void paint(QPainter *painter);
 
@@ -41,6 +42,7 @@ public:
 
     const QVector<Arrow*>* arrowsIn();
     const QVector<Arrow *>* arrowsOut();
+
 private:
     void setRect();
     void setTightRect();

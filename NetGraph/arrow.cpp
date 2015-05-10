@@ -51,15 +51,20 @@ bool Arrow::contains(const QPoint &point)
     return false;
 }
 
-const Node *Arrow::from()
+Node *Arrow::from()
 {
     return mFrom;
 }
 
-const Node *Arrow::to()
+Node *Arrow::to()
 {
     return mTo;
 }
+QString *Arrow::expression()
+{
+    return mExpression;
+}
+
 
 void Arrow::calculatePathsAndRect()
 {

@@ -5,6 +5,8 @@
 #include <QVector>
 #include <QPoint>
 #include <QString>
+#include <QTextStream>
+#include <QStringList>
 
 #include "node.h"
 #include "arrow.h"
@@ -28,6 +30,9 @@ public:
 
     bool hasStartNode();
     bool hasEndNode();
+
+    void saveToStream(QTextStream& stream);
+    bool loadFromStream(QTextStream& stream);
 
 private:
     QVector<Node*>* nodes;
