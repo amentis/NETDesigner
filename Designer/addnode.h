@@ -2,16 +2,15 @@
 #define ADDNODE_H
 
 #include <QDialog>
-#include <QString>
-#include <QPoint>
-#include <QMouseEvent>
 
-#include "../NetGraph/node.h"
+#include "NetGraph/node.h"
 
 namespace Ui
 {
 class AddNode;
 }
+
+class QString;
 
 class AddNode : public QDialog
 {
@@ -26,16 +25,16 @@ public:
     void showEditMode(Node* node);
     void showAddMode();
 
-    bool isEditMode();
+    bool editMode();
 
 private:
     Ui::AddNode *ui;
 
-    unsigned short resultType;
-    QString* resultExpression;
+    unsigned short mResultType;
+    QString* mResultExpression;
 
     bool mEditMode;
-    Node* editable;
+    Node* mEditable;
 
 private slots:
     void checkExpressionField(int index);

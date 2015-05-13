@@ -2,7 +2,8 @@
 #define ADDARROWEXPRESSIONDIALOG_H
 
 #include <QDialog>
-#include <QString>
+
+class QString;
 
 namespace Ui {
 class AddArrowExpressionDialog;
@@ -16,7 +17,7 @@ public:
     explicit AddArrowExpressionDialog(bool isCase, QWidget *parent = 0);
     ~AddArrowExpressionDialog();
 
-    const QString expression();
+    QString* expression();
 
 private:
     Ui::AddArrowExpressionDialog *ui;

@@ -1,8 +1,10 @@
 #include "canvas.h"
 
-#include <QDebug>
+#include <QtGui>
 
-Canvas::Canvas(Editor *editorWidget, QWidget *parent) : QOpenGLWidget(parent), editor(editorWidget)
+#include "editor.h"
+
+Canvas::Canvas(Editor *editorWidget, QWidget *parent) : QOpenGLWidget(parent), mEditor(editorWidget)
 {
     setAutoFillBackground(true);
     setMouseTracking(true);
@@ -24,16 +26,16 @@ void Canvas::paintEvent(QPaintEvent *event)
     painter.setRenderHint(QPainter::HighQualityAntialiasing);
     painter.setRenderHint(QPainter::SmoothPixmapTransform);
     painter.fillRect(event->rect(), QBrush(QColor(255,255,255,255)));
-    editor->paint(&painter);
+    mEditor->paint(&painter);
     painter.end();
 }
 
 void Canvas::mouseMoveEvent(QMouseEvent *event)
 {
-    editor->mouseMove(event);
+    mEditor->mouseMove(event);
 }
 
 void Canvas::mousePressEvent(QMouseEvent *event)
 {
-    editor->mousePress(event);
+    mEditor->mousePress(event);
 }

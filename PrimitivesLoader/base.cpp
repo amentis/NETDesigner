@@ -1,21 +1,22 @@
 #include "base.h"
 
-Base::Base()
+Base::Base() : mName(nullptr)
 {
 
-}
-
-Base::Base(const string& name)
-{
-    _name = new string(name);
-}
-
-const string* Base::getName()
-{
-    return _name;
 }
 
 Base::~Base()
 {
+    delete mName;
+}
 
+
+Base::Base(const string& name)
+{
+    mName = new string(name);
+}
+
+const string* Base::getName()
+{
+    return mName;
 }

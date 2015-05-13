@@ -1,5 +1,17 @@
 #include "editor.h"
 
+#include <QtGui>
+#include <QtWidgets>
+
+#include "NetGraph/node.h"
+#include "NetGraph/arrow.h"
+#include "NetGraph/netgraph.h"
+
+#include "addnode.h"
+#include "arrowbutton.h"
+#include "addarrowexpressiondialog.h"
+
+#include "canvas.h"
 
 void Editor::operateAddNodeDialog(QMouseEvent *event, bool editMode, Node* editable)
 {
@@ -38,25 +50,25 @@ void Editor::operateDeleteArrowDialog(Arrow *selected)
 }
 
 Editor::Editor(QWidget *parent) : QWidget(parent),
-    canvas(new Canvas(this,this)), mNetGraph(new NetGraph(this)), addNodeDialog(new AddNode(this)),
-    addNodeDialogOpened(false), arrowButton(new ArrowButton()), nodePosition(nullptr),
+    mCanvas(new Canvas(this,this)), mNetGraph(new NetGraph(this)), addNodeDialog(new AddNode(this)),
+    addNodeDialogOpened(false), arrowButton(new ArrowButton(this)), nodePosition(nullptr),
     mModified(false)
 {
     QBoxLayout* layout = new QBoxLayout(QBoxLayout::TopToBottom, this);
-    layout->addWidget(canvas);
+    layout->addWidget(mCanvas);
     setLayout(layout);
 
     connect(mNetGraph, &NetGraph::contentModified, this, &Editor::modification);
     connect(this, &Editor::modification, this, &Editor::modified);
-    connect(this, &Editor::modification, canvas, static_cast<void (Canvas::*)()>(&Canvas::repaint));
+    connect(this, &Editor::modification, mCanvas, static_cast<void (Canvas::*)()>(&Canvas::repaint));
     connect(addNodeDialog, &AddNode::accepted, this, &Editor::addOrEditNode);
-    connect(arrowButton, &ArrowButton::updated, canvas, static_cast<void (Canvas::*)()>(&Canvas::repaint));
+    connect(arrowButton, &ArrowButton::updated, mCanvas, static_cast<void (Canvas::*)()>(&Canvas::repaint));
     connect(arrowButton, &ArrowButton::arrowAddRequest, this, &Editor::checkArrowAddRequest);
 }
 
 Editor::~Editor()
 {
-    delete arrowButton;
+    delete nodePosition;
 }
 
 bool Editor::isModified()
@@ -104,7 +116,7 @@ void Editor::saved()
 
 void Editor::addOrEditNode()
 {
-    if (addNodeDialog->isEditMode())
+    if (addNodeDialog->editMode())
         editNode();
     else
         addNode();
@@ -115,12 +127,12 @@ void Editor::checkArrowAddRequest(Node *from, Node *to)
     if (from->type() == Node::NodeType::CaseNode){
         AddArrowExpressionDialog dialog(true, this);
         if (dialog.exec() == QDialog::Accepted){
-            mNetGraph->addArrow(from, to, new QString(dialog.expression()));
+            mNetGraph->addArrow(from, to, dialog.expression());
         }
     } else if (from->type() == Node::NodeType::ProximityNode){
         AddArrowExpressionDialog dialog(false, this);
         if (dialog.exec() == QDialog::Accepted){
-            mNetGraph->addArrow(from, to, new QString(dialog.expression()));
+            mNetGraph->addArrow(from, to, dialog.expression());
         }
     } else {
         mNetGraph->addArrow(from, to);
@@ -131,11 +143,11 @@ void Editor::checkArrowAddRequest(Node *from, Node *to)
 
 void Editor::paint(QPainter *painter)
 {
-    for (const auto& node : *mNetGraph->getNodes()){
+    for (const auto& node : *mNetGraph->nodes()){
         node->paint(painter);
     }
 
-    for (const auto& arrow : *mNetGraph->getArrows()){
+    for (const auto& arrow : *mNetGraph->arrows()){
         arrow->paint(painter);
     }
 
@@ -157,7 +169,7 @@ void Editor::mousePress(QMouseEvent *event)
         return;
     }
 
-    for (const auto& arrow : *mNetGraph->getArrows()){
+    for (const auto& arrow : *mNetGraph->arrows()){
         if (arrow->contains(QWidget::mapToParent(event->pos()))){
             if (event->button() == Qt::LeftButton){
                 //TODO: edit arrow
@@ -168,7 +180,7 @@ void Editor::mousePress(QMouseEvent *event)
         }
     }
 
-    for (const auto& node : *mNetGraph->getNodes()) {
+    for (const auto& node : *mNetGraph->nodes()) {
         if (node->rect()->contains(QWidget::mapToParent(event->pos()))){
             if (event->button() == Qt::LeftButton){
                 operateAddNodeDialog(event, true, node);
@@ -187,7 +199,7 @@ void Editor::mousePress(QMouseEvent *event)
 void Editor::mouseMove(QMouseEvent *event)
 {
     Node* selected = nullptr;
-    for (const auto& node : *mNetGraph->getNodes()) {
+    for (const auto& node : *mNetGraph->nodes()) {
         if (node->rect()->contains(QWidget::mapToParent(event->pos()))){
             selected = node;
             break;

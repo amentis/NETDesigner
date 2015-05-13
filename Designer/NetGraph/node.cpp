@@ -1,37 +1,34 @@
 #include "node.h"
 
+#include <QtGui>
 
-Node::Node()
-{
+#include "arrow.h"
 
-}
+Node::Node(QObject *parent) : QObject(parent), mType(NodeType::OrdinaryNode) , mExpression(nullptr),
+    mPosition(nullptr), mArrowsIn(new QVector<Arrow*>()), mArrowsOut(new QVector<Arrow*>()),
+    mRect(nullptr), mTightRect(nullptr) {}
 
-Node::Node(NodeType type, QString *expression):
-    mType(type), mExpression(expression), position(nullptr),
+Node::Node(NodeType type, QString *expression, QObject *parent): QObject(parent),
+    mType(type), mExpression(expression), mPosition(nullptr),
     mArrowsIn(new QVector<Arrow*>()), mArrowsOut(new QVector<Arrow*>()),
-    mRect(nullptr), mTightRect(nullptr)
-{
-    switch (mType) {
-    case NodeType::StartNode: break;
-    case NodeType::EndNode: break;
-    case NodeType::CaseNode: break;
-    case NodeType::OrdinaryNode: break;
-    case NodeType::ProximityNode: break;
-    }
-}
+    mRect(nullptr), mTightRect(nullptr) {}
 
-Node::Node(Node::NodeType type, QString &&expression) :
-    Node(type, new QString(expression)) {}
+Node::Node(Node::NodeType type, QString &&expression, QObject *parent) :
+    Node(type, new QString(expression), parent) {}
 
 Node::~Node()
 {
+    delete mExpression;
+    delete mPosition;
+    delete arrowsIn();
+    delete arrowsOut();
     delete mRect;
-    delete position;
+    delete mTightRect;
 }
 
 void Node::setPosition(QPoint *pos)
 {
-    position = pos;
+    mPosition = pos;
     setRect();
     setTightRect();
 }
@@ -113,19 +110,19 @@ void Node::setRect()
 {
     switch (mType) {
     case NodeType::StartNode:
-        mRect = new QRect(position->x() - 40, position->y() - 40, 80, 80);
+        mRect = new QRect(mPosition->x() - 40, mPosition->y() - 40, 80, 80);
         break;
     case NodeType::EndNode:
-        mRect = new QRect(position->x() - 35, position->y() - 35, 70, 70);
+        mRect = new QRect(mPosition->x() - 35, mPosition->y() - 35, 70, 70);
         break;
     case NodeType::CaseNode:
-        mRect = new QRect(position->x() - 60, position->y() - 25, 120, 50);
+        mRect = new QRect(mPosition->x() - 60, mPosition->y() - 25, 120, 50);
         break;
     case NodeType::OrdinaryNode:
-        mRect = new QRect(position->x() - 50, position->y() - 35, 100, 70);
+        mRect = new QRect(mPosition->x() - 50, mPosition->y() - 35, 100, 70);
         break;
     case NodeType::ProximityNode:
-        mRect = new QRect(position->x() - 45, position->y() - 35, 90, 70);
+        mRect = new QRect(mPosition->x() - 45, mPosition->y() - 35, 90, 70);
         break;
     }
 }
@@ -134,19 +131,19 @@ void Node::setTightRect()
 {
     switch(mType){
     case NodeType::StartNode:
-        mTightRect = new QRect(position->x() - 20, position->y() - 20, 40, 40);
+        mTightRect = new QRect(mPosition->x() - 20, mPosition->y() - 20, 40, 40);
         break;
     case NodeType::EndNode:
-        mTightRect = new QRect(position->x() - 20, position->y() - 20, 40, 40);
+        mTightRect = new QRect(mPosition->x() - 20, mPosition->y() - 20, 40, 40);
         break;
     case NodeType::CaseNode:
-        mTightRect = new QRect(position->x() - 40, position->y() - 25, 80, 50);
+        mTightRect = new QRect(mPosition->x() - 40, mPosition->y() - 25, 80, 50);
         break;
     case NodeType::OrdinaryNode:
-        mTightRect = new QRect(position->x() - 40, position->y() - 25, 80, 50);
+        mTightRect = new QRect(mPosition->x() - 40, mPosition->y() - 25, 80, 50);
         break;
     case NodeType::ProximityNode:
-        mTightRect = new QRect(position->x() - 45, position->y() - 35, 90, 70);
+        mTightRect = new QRect(mPosition->x() - 45, mPosition->y() - 35, 90, 70);
         break;
     }
 }
@@ -161,11 +158,11 @@ void Node::paintStartNode(QPainter *painter)
     painter->setBrush(fill);
 
     painter->setPen(outer);
-    painter->drawRect(position->x() - 20, position->y() - 20, 40, 40);
+    painter->drawRect(mPosition->x() - 20, mPosition->y() - 20, 40, 40);
 
     QPen inner(outline, 1);
     painter->setPen(inner);
-    painter->drawRect(position->x() - 15, position->y() - 15, 30, 30);
+    painter->drawRect(mPosition->x() - 15, mPosition->y() - 15, 30, 30);
 }
 
 void Node::paintEndNode(QPainter *painter)
@@ -182,12 +179,12 @@ void Node::paintEndNode(QPainter *painter)
     painter->setPen(pen);
     painter->setBrush(fillOuter);
 
-    painter->drawEllipse(position->x() - 20, position->y() - 20, 40, 40);
+    painter->drawEllipse(mPosition->x() - 20, mPosition->y() - 20, 40, 40);
 
     painter->setPen(penInner);
     painter->setBrush(fillInner);
 
-    painter->drawEllipse(position->x() - 10, position->y() - 10, 20, 20);
+    painter->drawEllipse(mPosition->x() - 10, mPosition->y() - 10, 20, 20);
 }
 
 void Node::paintOrdinaryNode(QPainter *painter)
@@ -201,7 +198,7 @@ void Node::paintOrdinaryNode(QPainter *painter)
     painter->setPen(out);
     painter->setBrush(fill);
 
-    painter->drawEllipse(position->x() - 40, position->y() - 25, 80, 50);
+    painter->drawEllipse(mPosition->x() - 40, mPosition->y() - 25, 80, 50);
 }
 
 void Node::paintCaseNode(QPainter *painter)
@@ -214,14 +211,14 @@ void Node::paintCaseNode(QPainter *painter)
     painter->setPen(out);
     painter->setBrush(fill);
 
-    QPoint points[] = {QPoint(position->x() - 60, position->y() - 25),
-                       QPoint(position->x() + 20, position->y() - 25),
-                       QPoint(position->x() + 60, position->y() + 25),
-                       QPoint(position->x() - 20, position->y() + 25)};
+    QPoint points[] = {QPoint(mPosition->x() - 60, mPosition->y() - 25),
+                       QPoint(mPosition->x() + 20, mPosition->y() - 25),
+                       QPoint(mPosition->x() + 60, mPosition->y() + 25),
+                       QPoint(mPosition->x() - 20, mPosition->y() + 25)};
 
     painter->drawPolygon(points, 4);
 
-    painter->drawText(QRect(position->x() - 50, position->y() - 20, 100, 40), Qt::AlignCenter, *mExpression);
+    painter->drawText(QRect(mPosition->x() - 50, mPosition->y() - 20, 100, 40), Qt::AlignCenter, *mExpression);
 }
 
 void Node::paintProximityNode(QPainter *painter)
@@ -234,17 +231,17 @@ void Node::paintProximityNode(QPainter *painter)
     painter->setPen(out);
     painter->setBrush(fill);
 
-    QPoint points[] = {QPoint(position->x(), position->y() - 35),
-                       QPoint(position->x() + 45, position->y()),
-                       QPoint(position->x(), position->y() + 35),
-                       QPoint(position->x() - 45, position->y())};
+    QPoint points[] = {QPoint(mPosition->x(), mPosition->y() - 35),
+                       QPoint(mPosition->x() + 45, mPosition->y()),
+                       QPoint(mPosition->x(), mPosition->y() + 35),
+                       QPoint(mPosition->x() - 45, mPosition->y())};
 
     painter->drawPolygon(points, 4);
 
-    painter->drawText(QRect(position->x() - 50, position->y() - 20, 100, 40), Qt::AlignCenter, *mExpression);
+    painter->drawText(QRect(mPosition->x() - 50, mPosition->y() - 20, 100, 40), Qt::AlignCenter, *mExpression);
 }
-QPoint *Node::getPosition()
+QPoint *Node::position()
 {
-    return position;
+    return mPosition;
 }
 

@@ -4,9 +4,9 @@
 #include <vector>
 #include <string>
 
-#include "base.h"
-
 using namespace std;
+
+class Base;
 
 class Primitive
 {
@@ -15,9 +15,9 @@ public:
     Primitive();
     ~Primitive();
 private:
-    vector<ArgumentType> arguments;
-    Base base;
-    string name;
+    vector<ArgumentType>* mArguments;
+    Base* mBase;
+    string* mName;
 };
 
 #endif // PRIMITIVE_H
