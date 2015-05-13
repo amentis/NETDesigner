@@ -1,35 +1,36 @@
 #ifndef ARROW_H
 #define ARROW_H
 
+#include <QObject>
 #include <QVector>
-#include <QPainter>
-#include <QBrush>
-#include <QPen>
-#include <QPoint>
-#include <math.h>
 
-#include "node.h"
-#include "../PrimitivesLoader/primitive.h"
+class QPoint;
+class QPainter;
+
+//class Primitive;
 
 class Node;
 
-class Arrow
+class Arrow : public QObject
 {
+
+    Q_OBJECT
+
 public:
-    Arrow();
-    Arrow(Node* from, Node* to, QString* expression = nullptr);
+    explicit Arrow(QObject* parent = 0);
+    Arrow(Node* from, Node* to, QString* expression = nullptr, QObject* parent = 0);
     ~Arrow();
 
-    void paint(QPainter * painter);
+    void paint(QPainter* painter);
 
     bool contains(const QPoint &point);
 
     Node* from();
     Node* to();
-    QString *expression();
+    QString* expression();
 
 private:
-    QVector<Primitive*> *mPrimitives;
+//    QVector<Primitive*>* mPrimitives;
     bool leadsToSubnet;
     Node* mFrom;
     Node* mTo;
@@ -37,7 +38,7 @@ private:
 
     void calculatePathsAndRect();
 
-    QVector<QRect>* rects;
+    QVector<QRect>* mRects;
     QPoint* drawPath;
     unsigned drawPathLength;
     QPoint* drawHead;

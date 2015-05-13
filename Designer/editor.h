@@ -2,24 +2,20 @@
 #define EDITOR_H
 
 #include <QWidget>
-#include <QVector>
-#include <QPainter>
-#include <QPaintEvent>
-#include <QMouseEvent>
-#include <QPoint>
-#include <QBoxLayout>
-#include <QMessageBox>
-#include <QTextStream>
+
+class QPoint;
+class QPainter;
+class QMouseEvent;
+class QTextStream;
+
+class NetGraph;
+class Node;
+class Arrow;
+
+class AddNode;
+class ArrowButton;
 
 class Canvas;
-#include "NetGraph/node.h"
-#include "NetGraph/arrow.h"
-#include "NetGraph/netgraph.h"
-
-#include "canvas.h"
-#include "addnode.h"
-#include "arrowbutton.h"
-#include "addarrowexpressiondialog.h"
 
 
 class Editor : public QWidget
@@ -27,7 +23,7 @@ class Editor : public QWidget
     Q_OBJECT
 
 private:
-    Canvas* canvas;
+    Canvas* mCanvas;
 
     NetGraph* mNetGraph;
 

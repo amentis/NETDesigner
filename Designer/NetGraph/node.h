@@ -1,29 +1,28 @@
 #ifndef NODE_H
 #define NODE_H
 
-#include <QPoint>
-#include <QPainter>
-#include <QPaintEvent>
-#include <QRect>
-#include <QBrush>
-#include <QColor>
-#include <QPen>
+#include <QObject>
 #include <QVector>
 
-#include "arrow.h"
-
+class QString;
+class QPoint;
+class QRect;
+class QPainter;
 class Arrow;
 
-class Node
+class Node : public QObject
 {
+
+    Q_OBJECT
+
 public:
     enum class NodeType {OrdinaryNode, ProximityNode, CaseNode, StartNode, EndNode};
-    Node();
-    Node(NodeType type, QString* expression);
-    Node(NodeType type, QString&& expression);
+    explicit Node(QObject* parent = 0);
+    Node(NodeType type, QString* expression, QObject* parent = 0);
+    Node(NodeType type, QString&& expression, QObject* parent = 0);
     ~Node();
     void setPosition(QPoint* pos);
-    QPoint *getPosition();
+    QPoint *position();
 
     void paint(QPainter *painter);
 
@@ -41,7 +40,7 @@ public:
     void addArrowOut(Arrow* newArrow);
 
     const QVector<Arrow*>* arrowsIn();
-    const QVector<Arrow *>* arrowsOut();
+    const QVector<Arrow*>* arrowsOut();
 
 private:
     void setRect();
@@ -55,7 +54,7 @@ private:
 
     NodeType mType;
     QString* mExpression;
-    QPoint* position;
+    QPoint* mPosition;
     QVector<Arrow*> *mArrowsIn;
     QVector<Arrow*> *mArrowsOut;
     QRect* mRect; // for placing arrowButton

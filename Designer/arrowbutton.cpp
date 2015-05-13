@@ -1,5 +1,9 @@
 #include "arrowbutton.h"
 
+#include <QtGui>
+
+#include "NetGraph/node.h"
+
 ArrowButton::ArrowButton(QObject *parent) : QObject(parent),
     mRect(nullptr), mSelected(nullptr), mTarget(nullptr),
     mVisible(false), mHovered(false), mActive(false), mHasTarget(false)
@@ -21,7 +25,7 @@ QRect *ArrowButton::rect()
     return mRect;
 }
 
-Node *ArrowButton::getSelected()
+Node *ArrowButton::selected()
 {
     return mSelected;
 }

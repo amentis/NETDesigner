@@ -2,13 +2,11 @@
 #define ARROWBUTTON_H
 
 #include <QObject>
-#include <QRect>
-#include <QPoint>
-#include <QPainter>
-#include <QBrush>
-#include <QPen>
 
-#include "../NetGraph/node.h"
+class Node;
+
+class QPainter;
+class QRect;
 
 class ArrowButton : public QObject
 {
@@ -18,7 +16,7 @@ public:
     ~ArrowButton();
 
     QRect* rect();
-    Node* getSelected();
+    Node* selected();
     void paint(QPainter* painter);
     bool active();
 

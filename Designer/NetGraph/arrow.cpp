@@ -1,15 +1,21 @@
 #include "arrow.h"
 
-Arrow::Arrow() :
-    mPrimitives(new QVector<Primitive*>()), leadsToSubnet(false), mFrom(nullptr), mTo (nullptr),
-    mExpression(nullptr), rects(new QVector<QRect>), drawPath(nullptr), drawHead(nullptr), labelPosition(nullptr)
+#include <QtGui>
+
+#include "node.h"
+
+//#include "primitive.h"
+
+Arrow::Arrow(QObject *parent) : QObject(parent),
+    /*mPrimitives(new QVector<Primitive*>()),*/ leadsToSubnet(false), mFrom(nullptr), mTo (nullptr),
+    mExpression(nullptr), mRects(new QVector<QRect>), drawPath(nullptr), drawHead(nullptr), labelPosition(nullptr)
 {
     calculatePathsAndRect();
 }
 
-Arrow::Arrow(Node *from, Node *to, QString *expression) :
-mPrimitives(new QVector<Primitive*>), leadsToSubnet(false), mFrom(from), mTo(to),
-  mExpression(expression), rects(new QVector<QRect>),drawPath(nullptr), drawHead(nullptr), labelPosition(nullptr)
+Arrow::Arrow(Node *from, Node *to, QString *expression, QObject *parent) : QObject(parent),
+/*mPrimitives(new QVector<Primitive*>),*/ leadsToSubnet(false), mFrom(from), mTo(to),
+  mExpression(expression), mRects(new QVector<QRect>),drawPath(nullptr), drawHead(nullptr), labelPosition(nullptr)
 {
     mFrom->addArrowOut(this);
     mTo->addArrowIn(this);
@@ -18,8 +24,12 @@ mPrimitives(new QVector<Primitive*>), leadsToSubnet(false), mFrom(from), mTo(to)
 
 Arrow::~Arrow()
 {
-    delete mPrimitives;
+//    delete mPrimitives;
     delete mExpression;
+    delete mRects;
+    delete drawPath;
+    delete drawHead;
+    delete labelPosition;
 }
 
 void Arrow::paint(QPainter *painter)
@@ -43,7 +53,7 @@ void Arrow::paint(QPainter *painter)
 
 bool Arrow::contains(const QPoint &point)
 {
-    for (const auto& rect : *rects){
+    for (const auto& rect : *mRects){
         if (rect.contains(point)){
             return true;
         }
@@ -68,8 +78,8 @@ QString *Arrow::expression()
 
 void Arrow::calculatePathsAndRect()
 {
-    if (!rects->isEmpty())
-        rects->clear();
+    if (!mRects->isEmpty())
+        mRects->clear();
     if (drawPath)
         delete drawPath;
     if (drawHead)
@@ -106,11 +116,11 @@ void Arrow::calculatePathsAndRect()
                                  mTo->tightRect()->top() : mTo->tightRect()->bottom());
 
         //rects
-        rects->append(QRect((fromIsLeftFromTo)? drawPath[0].x() : drawPath[1].x(),
+        mRects->append(QRect((fromIsLeftFromTo)? drawPath[0].x() : drawPath[1].x(),
                       drawPath[0].y() - 3,
                 abs(drawPath[0].x() - drawPath[1].x()),
                           6));
-        rects->append(QRect(drawPath[1].x() - 3,
+        mRects->append(QRect(drawPath[1].x() - 3,
                       (fromIsHigherThanTo)? drawPath[1].y() : drawPath[2].y(),
                 6,
                           abs(drawPath[1].y() - drawPath[2].y())));
@@ -131,15 +141,15 @@ void Arrow::calculatePathsAndRect()
             drawPath[3] = QPoint(mTo->tightRect()->center().x(),
                                  mTo->tightRect()->top());
             //rects
-            rects->append(QRect(drawPath[0].x() - 3,
+            mRects->append(QRect(drawPath[0].x() - 3,
                     drawPath[0].y(),
                     6,
                     abs(drawPath[1].y() - drawPath[0].y())));
-            rects->append(QRect((fromIsLeftFromTo)? drawPath[1].x() : drawPath[2].x(),
+            mRects->append(QRect((fromIsLeftFromTo)? drawPath[1].x() : drawPath[2].x(),
                           drawPath[1].y() - 3,
                     abs(drawPath[2].x() - drawPath[1].x()),
                               5));
-            rects->append(QRect(drawPath[2].x() - 3,
+            mRects->append(QRect(drawPath[2].x() - 3,
                     drawPath[2].y(),
                     6,
                     abs(drawPath[3].y() - drawPath[2].y())));
@@ -156,15 +166,15 @@ void Arrow::calculatePathsAndRect()
             drawPath[3] = QPoint(mTo->tightRect()->center().x(),
                                  mTo->tightRect()->bottom());
             //rects
-            rects->append(QRect(drawPath[1].x() - 3,
+            mRects->append(QRect(drawPath[1].x() - 3,
                     drawPath[1].y(),
                     6,
                     abs(drawPath[0].y() - drawPath[1].y())));
-            rects->append(QRect((fromIsLeftFromTo)? drawPath[1].x() : drawPath[2].x(),
+            mRects->append(QRect((fromIsLeftFromTo)? drawPath[1].x() : drawPath[2].x(),
                           drawPath[1].y() - 3,
                     abs(drawPath[2].x() - drawPath[1].x()),
                               6));
-            rects->append(QRect(drawPath[3].x() - 3,
+            mRects->append(QRect(drawPath[3].x() - 3,
                     drawPath[3].y(),
                     6,
                     abs(drawPath[2].y() - drawPath[3].y())));
@@ -183,15 +193,15 @@ void Arrow::calculatePathsAndRect()
         drawPath[3] = QPoint((fromIsLeftFromTo)? mTo->tightRect()->left() : mTo->tightRect()->right(),
                              mTo->tightRect()->center().y());
         //rects
-        rects->append(QRect((fromIsLeftFromTo)? drawPath[0].x() : drawPath[1].x(),
+        mRects->append(QRect((fromIsLeftFromTo)? drawPath[0].x() : drawPath[1].x(),
                       drawPath[0].y() - 2,
                 abs(drawPath[0].x() - drawPath[1].x()),
                           4));
-        rects->append(QRect(drawPath[1].x() - 2,
+        mRects->append(QRect(drawPath[1].x() - 2,
                       (fromIsHigherThanTo)? drawPath[1].y() : drawPath[2].y(),
                 4,
                           abs(drawPath[2].y() - drawPath[1].y())));
-        rects->append(QRect((fromIsLeftFromTo)? drawPath[2].x() : drawPath[3].x(),
+        mRects->append(QRect((fromIsLeftFromTo)? drawPath[2].x() : drawPath[3].x(),
                       drawPath[2].y() - 2,
                 abs(drawPath[2].x() - drawPath[3].x()),
                           4));

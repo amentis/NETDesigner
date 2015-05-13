@@ -1,8 +1,10 @@
 #include "addnode.h"
 #include "ui_addnode.h"
 
+#include <QtGui>
+
 AddNode::AddNode(QWidget *parent) :
-    QDialog(parent), ui(new Ui::AddNode)
+    QDialog(parent), ui(new Ui::AddNode), mResultType(0), mResultExpression(nullptr), mEditMode(false), mEditable(nullptr)
 {
     ui->setupUi(this);
     connect(ui->comboBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &AddNode::checkExpressionField);
@@ -14,6 +16,7 @@ AddNode::AddNode(QWidget *parent) :
 AddNode::~AddNode()
 {
     delete ui;
+    delete mResultExpression;
 }
 
 void AddNode::getResult(Node *&node, Node::NodeType& type, QString*& expression)
@@ -27,7 +30,7 @@ void AddNode::getResult(Node *&node, Node::NodeType& type, QString*& expression)
             }
 
     if (mEditMode){
-        node = editable;
+        node = mEditable;
         expression = new QString(ui->expression->text());
     } else {
         node = new Node(type, ui->expression->text());
@@ -46,7 +49,7 @@ void AddNode::showEditMode(Node *node)
 {
     mEditMode = true;
 
-    editable = node;
+    mEditable = node;
 
     switch (node->type()) {
     case Node::NodeType::OrdinaryNode: ui->comboBox->setCurrentIndex(0);break;
@@ -70,7 +73,7 @@ void AddNode::showAddMode()
     this->show();
 }
 
-bool AddNode::isEditMode()
+bool AddNode::editMode()
 {
     return mEditMode;
 }

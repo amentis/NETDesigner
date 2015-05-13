@@ -10,10 +10,11 @@ class Base
 public:
     Base();
     Base(const string& name);
-    const string *getName();
     ~Base();
+    const string *getName();
+
 private:
-    string* _name;
+    string* mName;
 };
 
 #endif // BASE_H

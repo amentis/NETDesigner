@@ -1,8 +1,13 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <QtGui>
+#include <QtWidgets>
+
+//#include "base.h"
+
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent), ui(new Ui::MainWindow), projectDirectory(nullptr), projectBases(nullptr), netsListModel(new QStringListModel(this)), mModified(false), tabIndex(0)
+    QMainWindow(parent), ui(new Ui::MainWindow), projectDirectory(nullptr), mainNetName(nullptr), /*projectBases(nullptr),*/ netsListModel(new QStringListModel(this)), mModified(false), tabIndex(0)
 
 {
     ui->setupUi(this);
@@ -12,8 +17,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionOpen_Project, &QAction::triggered, this, &MainWindow::openProject);
     connect(ui->actionClose_Project, &QAction::triggered, this, &MainWindow::closeProject);
     connect(ui->actionExit, &QAction::triggered, this, &MainWindow::exit);
-
-    connect(qApp, &QApplication::aboutToQuit, this, &MainWindow::exit);
 
     connect(ui->actionAdd_Net, &QAction::triggered, this, &MainWindow::addNet);
     connect(ui->actionRemove_Net, &QAction::triggered, this, &MainWindow::removeNet);
@@ -45,7 +48,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-    delete netsListModel;
+    delete projectDirectory;
+    delete mainNetName;
+//    delete projectBases;
     delete ui;
 }
 
@@ -94,7 +99,7 @@ void MainWindow::createProject()
             return;
         }
         projectDirectory = new QString(dir.absolutePath());
-        projectBases = new QVector<Base*>();
+//        projectBases = new QVector<Base*>();
         emit projectLoad();
     }
 }
@@ -123,13 +128,14 @@ void MainWindow::openProject()
 
     QTextStream stream(&projectFile);
 
-    mainNetName = stream.readLine();
+    mainNetName = new QString(stream.readLine());
 
-    projectBases = new QVector<Base*>();
+//    projectBases = new QVector<Base*>();
 
-    while (!stream.atEnd()){
-        projectBases->append(new Base(stream.readLine().toStdString()));
-    }
+//    while (!stream.atEnd()){
+//        projectBases->append(new Base(stream.readLine().toStdString()));
+        //TODO: uncommen when Primitives are ready
+//    }
 
     projectFile.close();
 
@@ -147,6 +153,10 @@ void MainWindow::openProject()
         netsList.append(file);
     }
 
+    netsListModel->setStringList(netsList);
+
+    ui->netsListView->setModel(netsListModel);
+
     emit netCountModified();
 
     emit projectLoaded();
@@ -155,7 +165,7 @@ void MainWindow::openProject()
 
 void MainWindow::closeProject()
 {
-    if (ui->actionSave_Project->isEnabled()){
+    if (ui->actionSave_Project->isEnabled() || ui->actionSave_All_Nets->isEnabled()){
         QMessageBox::StandardButton confirm;
         confirm = QMessageBox::question(
                     this, tr("NETDesigner"), tr("You have unsaved data! Do you want to save before you quit?"),
@@ -169,16 +179,12 @@ void MainWindow::closeProject()
         }
     }
 
-    netsList.clear();
-
-    emit netCountModified();
-
     emit projectUnloaded();
 }
 
 void MainWindow::saveProject()
 {
-    QFile projectFile(QString(*projectDirectory + "net.project"));
+    QFile projectFile(QString(*projectDirectory + "/net.project"));
 
     projectFile.open(QFile::WriteOnly | QIODevice::Truncate | QIODevice::Text);
 
@@ -186,9 +192,10 @@ void MainWindow::saveProject()
 
     stream << mainNetName;
 
-    for (const auto& base : *projectBases){
-        stream << QString(base->getName()->c_str());
-    }
+//    for (const auto& base : *projectBases){
+        //stream << QString(base->getName()->c_str());
+        //TODO: uncommen when Primitives are ready
+//    }
 
     projectFile.close();
 
@@ -325,6 +332,14 @@ void MainWindow::saveAllNets()
 void MainWindow::saveNet()
 {
     saveNet((Editor*)ui->editorTabWidget->currentWidget());
+
+    bool unsaved = false;
+    for(int i = 0; i < ui->editorTabWidget->count(); ++i){
+        if (((Editor*)(ui->editorTabWidget->widget(i)))->isModified())
+            unsaved = true;
+    }
+    if (!unsaved)
+        ui->actionSave_All_Nets->setEnabled(false);
 }
 
 void MainWindow::saveNet(Editor *editor)
@@ -341,6 +356,16 @@ void MainWindow::saveNet(Editor *editor)
     file.close();
 
     saved();
+}
+
+void MainWindow::closeEvent(QCloseEvent* event)
+{
+    closeProject();
+
+    if (projectDirectory)
+        event->ignore();
+    else
+        event->accept();
 }
 
 void MainWindow::browsePrimitives()
@@ -372,6 +397,7 @@ void MainWindow::enableOrDisableRemoveNet()
     }
 
     netsListModel->setStringList(netsList);
+    ui->netsListView->setModel(netsListModel);
 }
 
 void MainWindow::projectLoad()
@@ -392,8 +418,8 @@ void MainWindow::projectUnload()
 {
     delete projectDirectory;
     projectDirectory = nullptr;
-    delete projectBases;
-    projectBases = nullptr;
+//    delete projectBases;
+//    projectBases = nullptr;
     ui->actionClose_Project->setEnabled(false);
     ui->menuProject->setEnabled(false);
     ui->actionAdd_Net->setEnabled(false);
@@ -403,6 +429,11 @@ void MainWindow::projectUnload()
     ui->actionBuild->setEnabled(false);
     ui->actionRun->setEnabled(false);
     ui->actionDebug->setEnabled(false);
+
+    ui->editorTabWidget->clear();
+
+    netsList.clear();
+    emit netCountModified();
 }
 
 void MainWindow::help()

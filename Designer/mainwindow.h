@@ -2,24 +2,15 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QFileDialog>
-#include <QString>
-#include <QDir>
-#include <QFile>
-#include <QErrorMessage>
-#include <QMessageBox>
 #include <QVector>
-#include <QIODevice>
-#include <QTextStream>
-#include <QInputDialog>
-#include <QRegularExpression>
-#include <QStringListModel>
-#include <QStringList>
 #include <QModelIndex>
-#include <QVariant>
-#include <QTextStream>
 
-#include "../PrimitivesLoader/base.h"
+class QString;
+class QStringListModel;
+class QStringList;
+class QCloseEvent;
+
+//class Base;
 
 #include "editor.h"
 
@@ -39,8 +30,8 @@ public:
 private:
     Ui::MainWindow *ui;
     QString* projectDirectory;
-    QString mainNetName;
-    QVector<Base*>* projectBases;
+    QString* mainNetName;
+//    QVector<Base*>* projectBases;
     QStringListModel* netsListModel;
     QStringList netsList;
 
@@ -48,6 +39,9 @@ private:
 
     void saveNet(Editor* editor);
     int tabIndex;
+
+protected:
+    void closeEvent(QCloseEvent* event);
 
 private slots:
     void createProject();

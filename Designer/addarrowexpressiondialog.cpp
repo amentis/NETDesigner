@@ -1,6 +1,8 @@
 #include "addarrowexpressiondialog.h"
 #include "ui_addarrowexpressiondialog.h"
 
+#include <QString>
+
 AddArrowExpressionDialog::AddArrowExpressionDialog(bool isCase, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::AddArrowExpressionDialog)
@@ -18,7 +20,7 @@ AddArrowExpressionDialog::~AddArrowExpressionDialog()
     delete ui;
 }
 
-const QString AddArrowExpressionDialog::expression()
+QString* AddArrowExpressionDialog::expression()
 {
-    return ui->inputField->text();
+    return new QString(ui->inputField->text());
 }
