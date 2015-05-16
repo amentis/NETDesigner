@@ -1,4 +1,4 @@
-#include "netgraph.h"
+#include "graph.h"
 
 #include <QtGui>
 
@@ -6,10 +6,10 @@
 
 //#include "primitive.h"
 
-NetGraph::NetGraph(QObject *parent) : QObject(parent),
+Graph::Graph(QObject *parent) : QObject(parent),
     mNodes(new QVector<Node*>), mArrows(new QVector<Arrow*>), mStart(nullptr), mEnd(nullptr) {}
 
-NetGraph::~NetGraph()
+Graph::~Graph()
 {
     delete mNodes;
     delete mArrows;
@@ -17,7 +17,7 @@ NetGraph::~NetGraph()
     delete mEnd;
 }
 
-void NetGraph::addNode(Node *newNode, QPoint *position)
+void Graph::addNode(Node *newNode, QPoint *position)
 {
 
     if (newNode->type() == Node::NodeType::StartNode){
@@ -38,7 +38,7 @@ void NetGraph::addNode(Node *newNode, QPoint *position)
     emit contentModified();
 }
 
-void NetGraph::editNode(Node* target, Node::NodeType newType, QString *expression)
+void Graph::editNode(Node* target, Node::NodeType newType, QString *expression)
 {
     if (newType == Node::NodeType::StartNode){
         if (hasStartNode())
@@ -56,7 +56,7 @@ void NetGraph::editNode(Node* target, Node::NodeType newType, QString *expressio
     emit contentModified();
 }
 
-void NetGraph::removeNode(Node *node)
+void Graph::removeNode(Node *node)
 {
     if (node->type() == Node::NodeType::StartNode)
         mStart = nullptr;
@@ -73,47 +73,47 @@ void NetGraph::removeNode(Node *node)
     emit contentModified();
 }
 
-const QVector<Node*>* NetGraph::nodes()
+const QVector<Node*>* Graph::nodes()
 {
     return mNodes;
 }
 
-void NetGraph::addArrow(Node *from, Node *to, QString *expression)
+void Graph::addArrow(Node *from, Node *to, QString *expression)
 {
     mArrows->append(new Arrow(from, to, expression));
     emit contentModified();
 }
 
-//void NetGraph::editArrow(QVector<Primitive *> added, QVector<Primitive *> removed)
+//void Graph::editArrow(QVector<Primitive *> added, QVector<Primitive *> removed)
 //{
 //    //TODO: implement
 //    (void)added;
 //    (void)removed;
 //}
 
-void NetGraph::removeArrow(Arrow *arrow)
+void Graph::removeArrow(Arrow *arrow)
 {
     arrow->from()->removeArrowOut(arrow);
     arrow->to()->removeArrowIn(arrow);
     mArrows->removeAll(arrow);
 }
 
-const QVector<Arrow *> *NetGraph::arrows()
+const QVector<Arrow *> *Graph::arrows()
 {
     return mArrows;
 }
 
-bool NetGraph::hasStartNode()
+bool Graph::hasStartNode()
 {
     return (mStart);
 }
 
-bool NetGraph::hasEndNode()
+bool Graph::hasEndNode()
 {
     return (mEnd);
 }
 
-void NetGraph::saveToStream(QTextStream &stream)
+void Graph::saveToStream(QTextStream &stream)
 {
     for (const auto& node: *mNodes){
         stream << mNodes->indexOf(node) << ":"
@@ -142,7 +142,7 @@ void NetGraph::saveToStream(QTextStream &stream)
     }
 }
 
-bool NetGraph::loadFromStream(QTextStream &stream)
+bool Graph::loadFromStream(QTextStream &stream)
 {
     QString nodesLine = stream.readLine();
     if (nodesLine.isNull())

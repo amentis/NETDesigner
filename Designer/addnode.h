@@ -3,7 +3,7 @@
 
 #include <QDialog>
 
-#include "NetGraph/node.h"
+#include "NetGraph/node.h.bckp"
 
 namespace Ui
 {

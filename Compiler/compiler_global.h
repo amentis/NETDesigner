@@ -1,0 +1,12 @@
+#ifndef COMPILER_GLOBAL_H
+#define COMPILER_GLOBAL_H
+
+#include <QtCore/qglobal.h>
+
+#if defined(COMPILER_LIBRARY)
+#  define COMPILERSHARED_EXPORT Q_DECL_EXPORT
+#else
+#  define COMPILERSHARED_EXPORT Q_DECL_IMPORT
+#endif
+
+#endif // COMPILER_GLOBAL_H

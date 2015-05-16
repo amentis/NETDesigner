@@ -8,7 +8,7 @@ class QPainter;
 class QMouseEvent;
 class QTextStream;
 
-class NetGraph;
+class Graph;
 class Node;
 class Arrow;
 
@@ -25,7 +25,7 @@ class Editor : public QWidget
 private:
     Canvas* mCanvas;
 
-    NetGraph* mNetGraph;
+    Graph* mNetGraph;
 
     AddNode* addNodeDialog;
     bool addNodeDialogOpened;

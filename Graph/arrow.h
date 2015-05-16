@@ -1,6 +1,8 @@
 #ifndef ARROW_H
 #define ARROW_H
 
+#include "graph_global.h"
+
 #include <QObject>
 #include <QVector>
 
@@ -11,7 +13,7 @@ class QPainter;
 
 class Node;
 
-class Arrow : public QObject
+class GRAPHSHARED_EXPORT Arrow : public QObject
 {
 
     Q_OBJECT

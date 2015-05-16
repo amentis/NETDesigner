@@ -10,6 +10,13 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent), ui(new Ui::MainWindow), projectDirectory(nullptr), mainNetName(nullptr), /*projectBases(nullptr),*/ netsListModel(new QStringListModel(this)), mModified(false), tabIndex(0)
 
 {
+    QLibrary library("libGraph");
+    library.load();
+    if (!library.isLoaded()){
+        qDebug() << "Cannot load Graph library";
+        qApp->exit(1);
+    }
+
     ui->setupUi(this);
     this->showMaximized();
 

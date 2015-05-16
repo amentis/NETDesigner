@@ -16,23 +16,17 @@ TEMPLATE = app
 SOURCES += main.cpp \
     mainwindow.cpp \
     editor.cpp \
-    NetGraph/arrow.cpp \
-    NetGraph/node.cpp \
     canvas.cpp \
     addnode.cpp \
     arrowbutton.cpp \
-    NetGraph/netgraph.cpp \
     addarrowexpressiondialog.cpp
 
 HEADERS  += \
     mainwindow.h \
     editor.h \
-    NetGraph/arrow.h \
-    NetGraph/node.h \
     canvas.h \
     addnode.h \
     arrowbutton.h \
-    NetGraph/netgraph.h \
     addarrowexpressiondialog.h
 
 FORMS    += \
@@ -46,3 +40,10 @@ FORMS    += \
 
 #INCLUDEPATH += $$PWD/../PrimitivesLoader
 #DEPENDPATH += $$PWD/../PrimitivesLoader
+
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../Graph/release/ -lGraph
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../Graph/debug/ -lGraph
+else:unix: LIBS += -L$$OUT_PWD/../Graph/ -lGraph
+
+INCLUDEPATH += $$PWD/../Graph
+DEPENDPATH += $$PWD/../Graph

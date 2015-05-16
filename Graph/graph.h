@@ -1,5 +1,7 @@
-#ifndef NETGRAPH_H
-#define NETGRAPH_H
+#ifndef GRAPH_H
+#define GRAPH_H
+
+#include "graph_global.h"
 
 #include <QObject>
 #include <QVector>
@@ -13,13 +15,13 @@ class QTextStream;
 
 #include "node.h"
 
-class NetGraph : public QObject
+class GRAPHSHARED_EXPORT Graph : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit NetGraph(QObject* parent = 0);
-    ~NetGraph();
+    explicit Graph(QObject* parent = 0);
+    ~Graph();
 
     void editNode(Node* target, Node::NodeType newType, QString* expression);
     void removeNode(Node *node);
@@ -51,4 +53,4 @@ signals:
 
 };
 
-#endif // NETGRAPH_H
+#endif // GRAPH_H

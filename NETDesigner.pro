@@ -1,5 +1,10 @@
 TEMPLATE = subdirs
 
+CONFIG += ordered
+
 SUBDIRS += \
-    Designer \ 
-    PrimitivesLoader
+    Graph \
+    PrimitivesLoader \
+    Compiler \
+    Designer
+

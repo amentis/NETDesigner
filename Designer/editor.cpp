@@ -3,9 +3,9 @@
 #include <QtGui>
 #include <QtWidgets>
 
-#include "NetGraph/node.h"
-#include "NetGraph/arrow.h"
-#include "NetGraph/netgraph.h"
+#include "node.h"
+#include "arrow.h"
+#include "graph.h"
 
 #include "addnode.h"
 #include "arrowbutton.h"
@@ -50,15 +50,16 @@ void Editor::operateDeleteArrowDialog(Arrow *selected)
 }
 
 Editor::Editor(QWidget *parent) : QWidget(parent),
-    mCanvas(new Canvas(this,this)), mNetGraph(new NetGraph(this)), addNodeDialog(new AddNode(this)),
+    mCanvas(new Canvas(this,this)), mNetGraph(new Graph(this)), addNodeDialog(new AddNode(this)),
     addNodeDialogOpened(false), arrowButton(new ArrowButton(this)), nodePosition(nullptr),
     mModified(false)
 {
+
     QBoxLayout* layout = new QBoxLayout(QBoxLayout::TopToBottom, this);
     layout->addWidget(mCanvas);
     setLayout(layout);
 
-    connect(mNetGraph, &NetGraph::contentModified, this, &Editor::modification);
+    connect(mNetGraph, &Graph::contentModified, this, &Editor::modification);
     connect(this, &Editor::modification, this, &Editor::modified);
     connect(this, &Editor::modification, mCanvas, static_cast<void (Canvas::*)()>(&Canvas::repaint));
     connect(addNodeDialog, &AddNode::accepted, this, &Editor::addOrEditNode);
