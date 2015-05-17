@@ -4,17 +4,17 @@
 
 #include "node.h"
 
-//#include "primitive.h"
+#include "primitive.h"
 
 Arrow::Arrow(QObject *parent) : QObject(parent),
-    /*mPrimitives(new QVector<Primitive*>()),*/ leadsToSubnet(false), mFrom(nullptr), mTo (nullptr),
+    mPrimitives(new QVector<Primitive*>()), leadsToSubnet(false), mFrom(nullptr), mTo (nullptr),
     mExpression(nullptr), mRects(new QVector<QRect>), drawPath(nullptr), drawHead(nullptr), labelPosition(nullptr)
 {
     calculatePathsAndRect();
 }
 
 Arrow::Arrow(Node *from, Node *to, QString *expression, QObject *parent) : QObject(parent),
-/*mPrimitives(new QVector<Primitive*>),*/ leadsToSubnet(false), mFrom(from), mTo(to),
+mPrimitives(new QVector<Primitive*>), leadsToSubnet(false), mFrom(from), mTo(to),
   mExpression(expression), mRects(new QVector<QRect>),drawPath(nullptr), drawHead(nullptr), labelPosition(nullptr)
 {
     mFrom->addArrowOut(this);
@@ -24,7 +24,7 @@ Arrow::Arrow(Node *from, Node *to, QString *expression, QObject *parent) : QObje
 
 Arrow::~Arrow()
 {
-//    delete mPrimitives;
+    delete mPrimitives;
     delete mExpression;
     delete mRects;
     delete drawPath;
@@ -73,6 +73,11 @@ Node *Arrow::to()
 QString *Arrow::expression()
 {
     return mExpression;
+}
+
+const QVector<Primitive*>*Arrow::primitives()
+{
+    return mPrimitives;
 }
 
 

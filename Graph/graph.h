@@ -10,8 +10,9 @@ class QPoint;
 class QString;
 class QTextStream;
 
-//class Primitive;
-//class Arrow;
+class Primitive;
+
+class Arrow;
 
 #include "node.h"
 
@@ -27,7 +28,7 @@ public:
     void removeNode(Node *node);
     const QVector<Node*>* nodes();
 
-//    void editArrow(QVector<Primitive*> added, QVector<Primitive*> removed);
+    void editArrow(QVector<Primitive*> added, QVector<Primitive*> removed);
     void removeArrow(Arrow* arrow);
     const QVector<Arrow*>* arrows();
 

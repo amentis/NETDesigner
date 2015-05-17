@@ -1,10 +1,9 @@
 #ifndef PRIMITIVE_H
 #define PRIMITIVE_H
 
-#include <vector>
-#include <string>
+#include <QVector>
 
-using namespace std;
+class QString;
 
 class Base;
 
@@ -14,10 +13,12 @@ public:
     enum class ArgumentType {Int, Real, String, Bool};
     Primitive();
     ~Primitive();
+    Base* base();
+    QString* name();
 private:
-    vector<ArgumentType>* mArguments;
+    QVector<ArgumentType>* mArguments;
     Base* mBase;
-    string* mName;
+    QString* mName;
 };
 
 #endif // PRIMITIVE_H

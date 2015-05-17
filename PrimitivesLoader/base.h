@@ -1,20 +1,24 @@
 #ifndef BASE_H
 #define BASE_H
 
-#include <string>
+class QString;
+#include <QVector>
 
-using namespace std;
+class Primitive;
 
 class Base
 {
 public:
     Base();
-    Base(const string& name);
+    Base(const QString& name);
     ~Base();
-    const string *getName();
+    const QString *getName();
+    const QVector<Primitive*>* primitives();
 
 private:
-    string* mName;
+    QString* mName;
+    QVector<Primitive*>* mPrimitives;
+
 };
 
 #endif // BASE_H

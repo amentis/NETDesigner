@@ -10,7 +10,7 @@ class QStringListModel;
 class QStringList;
 class QCloseEvent;
 
-//class Base;
+class Base;
 
 #include "editor.h"
 
@@ -31,7 +31,7 @@ private:
     Ui::MainWindow *ui;
     QString* projectDirectory;
     QString* mainNetName;
-//    QVector<Base*>* projectBases;
+    QVector<Base*>* projectBases;
     QStringListModel* netsListModel;
     QStringList netsList;
 

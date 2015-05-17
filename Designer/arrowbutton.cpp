@@ -2,7 +2,7 @@
 
 #include <QtGui>
 
-#include "NetGraph/node.h.bckp"
+#include "node.h"
 
 ArrowButton::ArrowButton(QObject *parent) : QObject(parent),
     mRect(nullptr), mSelected(nullptr), mTarget(nullptr),

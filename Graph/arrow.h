@@ -9,7 +9,7 @@
 class QPoint;
 class QPainter;
 
-//class Primitive;
+class Primitive;
 
 class Node;
 
@@ -30,9 +30,10 @@ public:
     Node* from();
     Node* to();
     QString* expression();
+    const QVector<Primitive*>* primitives();
 
 private:
-//    QVector<Primitive*>* mPrimitives;
+    QVector<Primitive*>* mPrimitives;
     bool leadsToSubnet;
     Node* mFrom;
     Node* mTo;

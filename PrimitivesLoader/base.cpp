@@ -1,5 +1,7 @@
 #include "base.h"
 
+#include <QtCore>
+
 Base::Base() : mName(nullptr)
 {
 
@@ -11,12 +13,17 @@ Base::~Base()
 }
 
 
-Base::Base(const string& name)
+Base::Base(const QString& name)
 {
-    mName = new string(name);
+    mName = new QString(name);
 }
 
-const string* Base::getName()
+const QString* Base::getName()
 {
     return mName;
+}
+
+const QVector<Primitive*>*Base::primitives()
+{
+    return mPrimitives;
 }

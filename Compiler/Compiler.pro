@@ -4,6 +4,8 @@
 #
 #-------------------------------------------------
 
+CONFIG += c++11
+
 QT       -= gui
 
 TARGET = Compiler
@@ -20,3 +22,17 @@ unix {
     target.path = /usr/lib
     INSTALLS += target
 }
+
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../Graph/release/ -lGraph
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../Graph/debug/ -lGraph
+else:unix: LIBS += -L$$OUT_PWD/../Graph/ -lGraph
+
+INCLUDEPATH += $$PWD/../Graph
+DEPENDPATH += $$PWD/../Graph
+
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../PrimitivesLoader/release/ -lPrimitivesLoader
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../PrimitivesLoader/debug/ -lPrimitivesLoader
+else:unix: LIBS += -L$$OUT_PWD/../PrimitivesLoader/ -lPrimitivesLoader
+
+INCLUDEPATH += $$PWD/../PrimitivesLoader
+DEPENDPATH += $$PWD/../PrimitivesLoader

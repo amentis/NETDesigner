@@ -4,17 +4,33 @@
 #include <QtGui>
 #include <QtWidgets>
 
-//#include "base.h"
+#include "compiler.h"
+
+#include "base.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent), ui(new Ui::MainWindow), projectDirectory(nullptr), mainNetName(nullptr), /*projectBases(nullptr),*/ netsListModel(new QStringListModel(this)), mModified(false), tabIndex(0)
 
 {
-    QLibrary library("libGraph");
-    library.load();
-    if (!library.isLoaded()){
-        qDebug() << "Cannot load Graph library";
-        qApp->exit(1);
+    QLibrary libGraph("libGraph");
+    libGraph.load();
+    if (!libGraph.isLoaded()){
+        qDebug() << "Cannot load libGraph";
+        qApp->exit(qApp->exec());
+    }
+
+    QLibrary libCompiler("libCompiler");
+    libCompiler.load();
+    if (!libGraph.isLoaded()){
+        qDebug() << "Cannot load libCompiler";
+        qApp->exit(qApp->exec());
+    }
+
+    QLibrary libPrimitivesLoader("libPrimitivesLoader");
+    libPrimitivesLoader.load();
+    if (!libPrimitivesLoader.isLoaded()){
+        qDebug() << "Cannot load libPrimitivesLoader";
+        qApp->exit(qApp->exec());
     }
 
     ui->setupUi(this);
@@ -57,7 +73,7 @@ MainWindow::~MainWindow()
 {
     delete projectDirectory;
     delete mainNetName;
-//    delete projectBases;
+    delete projectBases;
     delete ui;
 }
 
@@ -106,7 +122,7 @@ void MainWindow::createProject()
             return;
         }
         projectDirectory = new QString(dir.absolutePath());
-//        projectBases = new QVector<Base*>();
+        projectBases = new QVector<Base*>();
         emit projectLoad();
     }
 }
@@ -137,12 +153,11 @@ void MainWindow::openProject()
 
     mainNetName = new QString(stream.readLine());
 
-//    projectBases = new QVector<Base*>();
+    projectBases = new QVector<Base*>();
 
-//    while (!stream.atEnd()){
-//        projectBases->append(new Base(stream.readLine().toStdString()));
-        //TODO: uncommen when Primitives are ready
-//    }
+    while (!stream.atEnd()){
+        projectBases->append(new Base(stream.readLine()));
+    }
 
     projectFile.close();
 
@@ -199,10 +214,9 @@ void MainWindow::saveProject()
 
     stream << mainNetName;
 
-//    for (const auto& base : *projectBases){
-        //stream << QString(base->getName()->c_str());
-        //TODO: uncommen when Primitives are ready
-//    }
+    for (const auto& base : *projectBases){
+        stream << base->getName();
+    }
 
     projectFile.close();
 
@@ -382,7 +396,9 @@ void MainWindow::browsePrimitives()
 
 void MainWindow::build()
 {
-
+    Compiler compiler(projectBases, projectDirectory);
+    QTextStream output;
+    compiler.build(output);
 }
 
 void MainWindow::run()
@@ -425,8 +441,8 @@ void MainWindow::projectUnload()
 {
     delete projectDirectory;
     projectDirectory = nullptr;
-//    delete projectBases;
-//    projectBases = nullptr;
+    delete projectBases;
+    projectBases = nullptr;
     ui->actionClose_Project->setEnabled(false);
     ui->menuProject->setEnabled(false);
     ui->actionAdd_Net->setEnabled(false);

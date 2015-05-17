@@ -84,12 +84,12 @@ void Graph::addArrow(Node *from, Node *to, QString *expression)
     emit contentModified();
 }
 
-//void Graph::editArrow(QVector<Primitive *> added, QVector<Primitive *> removed)
-//{
-//    //TODO: implement
-//    (void)added;
-//    (void)removed;
-//}
+void Graph::editArrow(QVector<Primitive *> added, QVector<Primitive *> removed)
+{
+    //TODO: implement
+    (void)added;
+    (void)removed;
+}
 
 void Graph::removeArrow(Arrow *arrow)
 {
