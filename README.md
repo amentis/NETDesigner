@@ -8,7 +8,7 @@ Written in Qt5.4, C++11.
 ### Designer
 Frontend for the IDE
 
-### NetGraph 
+### Graph 
 Programatic representation of the language elements (Nodes, Arrows, Graph)
 
 ## TODO:
