@@ -2,20 +2,19 @@
 
 #include <QtCore>
 
-Base::Base() : mName(nullptr)
-{
-
+Base::Base() : mName(nullptr) {
+    mPrimitives = new QVector<Primitive*>();
 }
 
 Base::~Base()
 {
     delete mName;
+    delete mPrimitives;
 }
 
 
-Base::Base(const QString& name)
-{
-    mName = new QString(name);
+Base::Base(const QString& name) : mName(new QString(name)) {
+    mPrimitives = new QVector<Primitive*>();
 }
 
 const QString* Base::getName()
@@ -26,4 +25,9 @@ const QString* Base::getName()
 const QVector<Primitive*>*Base::primitives()
 {
     return mPrimitives;
+}
+
+void Base::addPrimitive(Primitive* newPrimitive)
+{
+    mPrimitives->append(newPrimitive);
 }

@@ -7,6 +7,9 @@
 #include "compiler.h"
 
 #include "base.h"
+#include "primitivesloader.h"
+
+#include "browseprimitivesdialog.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent), ui(new Ui::MainWindow), projectDirectory(nullptr), mainNetName(nullptr), /*projectBases(nullptr),*/ netsListModel(new QStringListModel(this)), mModified(false), tabIndex(0)
@@ -15,21 +18,21 @@ MainWindow::MainWindow(QWidget *parent) :
     QLibrary libGraph("libGraph");
     libGraph.load();
     if (!libGraph.isLoaded()){
-        qDebug() << "Cannot load libGraph";
+        qCritical("Cannot load libGraph");
         qApp->exit(qApp->exec());
     }
 
     QLibrary libCompiler("libCompiler");
     libCompiler.load();
     if (!libGraph.isLoaded()){
-        qDebug() << "Cannot load libCompiler";
+        qCritical("Cannot load libCompiler");
         qApp->exit(qApp->exec());
     }
 
     QLibrary libPrimitivesLoader("libPrimitivesLoader");
     libPrimitivesLoader.load();
     if (!libPrimitivesLoader.isLoaded()){
-        qDebug() << "Cannot load libPrimitivesLoader";
+        qCritical("Cannot load libPrimitivesLoader");
         qApp->exit(qApp->exec());
     }
 
@@ -67,6 +70,8 @@ MainWindow::MainWindow(QWidget *parent) :
     netsListModel->setStringList(netsList);
     ui->netsListView->setModel(netsListModel);
 
+
+    browsePrimitivesDialog = nullptr;
 }
 
 MainWindow::~MainWindow()
@@ -75,6 +80,14 @@ MainWindow::~MainWindow()
     delete mainNetName;
     delete projectBases;
     delete ui;
+}
+
+void MainWindow::setBases(QVector<Base*>* newBases)
+{
+    QVector<Base*>* tmp = projectBases;
+    projectBases = newBases;
+    delete tmp;
+    qDebug() << projectBases->size();
 }
 
 void MainWindow::createProject()
@@ -155,10 +168,6 @@ void MainWindow::openProject()
 
     projectBases = new QVector<Base*>();
 
-    while (!stream.atEnd()){
-        projectBases->append(new Base(stream.readLine()));
-    }
-
     projectFile.close();
 
     path.remove("/net.project");
@@ -181,6 +190,24 @@ void MainWindow::openProject()
 
     emit netCountModified();
 
+    // load primitive bases
+
+    QDir primitivesDir(*projectDirectory);
+    if (primitivesDir.cd("Primitives")){
+        PrimitivesLoader loader;
+        for (const auto& base : primitivesDir.entryInfoList()){
+            if (base.fileName() == "." || base.fileName() == "..")
+                continue;
+            QString infoPath = base.absoluteFilePath();
+            infoPath.append("/").append(base.fileName()).append(".info");
+            QString srcPath = base.absoluteFilePath();
+            srcPath.append("/").append(base.fileName()).append(".cpp");
+            projectBases->append(loader.loadBase(new QString(base.fileName()), &infoPath, &srcPath));
+        }
+    }
+
+    // all done
+
     emit projectLoaded();
 
 }
@@ -201,6 +228,8 @@ void MainWindow::closeProject()
         }
     }
 
+    delete browsePrimitivesDialog;
+
     emit projectUnloaded();
 }
 
@@ -213,10 +242,6 @@ void MainWindow::saveProject()
     QTextStream stream(&projectFile);
 
     stream << mainNetName;
-
-    for (const auto& base : *projectBases){
-        stream << base->getName();
-    }
 
     projectFile.close();
 
@@ -391,7 +416,10 @@ void MainWindow::closeEvent(QCloseEvent* event)
 
 void MainWindow::browsePrimitives()
 {
-
+    qDebug() << projectBases->size();
+    if (!browsePrimitivesDialog)
+        browsePrimitivesDialog = new BrowsePrimitivesDialog(projectBases, projectDirectory, this);
+    browsePrimitivesDialog->exec();
 }
 
 void MainWindow::build()
@@ -434,7 +462,7 @@ void MainWindow::projectLoad()
     ui->menuBuild_Run->setEnabled(true);
     ui->actionBuild->setEnabled(true);
     ui->actionRun->setEnabled(true);
-    ui->actionDebug->setEnabled(true);
+    //ui->actionDebug->setEnabled(true);
 }
 
 void MainWindow::projectUnload()

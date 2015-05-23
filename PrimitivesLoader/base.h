@@ -1,12 +1,14 @@
 #ifndef BASE_H
 #define BASE_H
 
+#include "primitivesloader_global.h"
+
 class QString;
 #include <QVector>
 
 class Primitive;
 
-class Base
+class PRIMITIVESLOADERSHARED_EXPORT Base
 {
 public:
     Base();
@@ -14,6 +16,7 @@ public:
     ~Base();
     const QString *getName();
     const QVector<Primitive*>* primitives();
+    void addPrimitive(Primitive* newPrimitive);
 
 private:
     QString* mName;

@@ -5,12 +5,21 @@
 
 class Base;
 class Primitive;
+class QString;
+
+#include <QHash>
 
 class PRIMITIVESLOADERSHARED_EXPORT PrimitivesLoader
 {
 
 public:
     PrimitivesLoader();
+
+    Base* loadBase(QString* name, QString* infoFileDir, QString* srcFile);
+    QString* srcFile(QString* baseName);
+
+private:
+    QHash<QString, QString*> mSrcFiles;
 };
 
 #endif // PRIMITIVESLOADER_H

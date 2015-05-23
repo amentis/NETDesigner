@@ -13,14 +13,14 @@ Compiler::Compiler()
     QLibrary libGraph("libGraph");
     libGraph.load();
     if (!libGraph.isLoaded()){
-        qDebug() << "Cannot load libGraph";
+        qCritical("Cannot load libGraph");
         qApp->exit(qApp->exec());
     }
 
     QLibrary libPrimitivesLoader("libPrimitivesLoader");
     libPrimitivesLoader.load();
     if (!libPrimitivesLoader.isLoaded()){
-        qDebug() << "Cannot load libPrimitivesLoader";
+        qCritical("Cannot load libPrimitivesLoader");
         qApp->exit(qApp->exec());
     }
 }

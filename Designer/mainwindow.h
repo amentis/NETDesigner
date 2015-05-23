@@ -14,6 +14,8 @@ class Base;
 
 #include "editor.h"
 
+class BrowsePrimitivesDialog;
+
 namespace Ui
 {
 class MainWindow;
@@ -26,6 +28,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    void setBases(QVector<Base*>* newBases);
 
 private:
     Ui::MainWindow *ui;
@@ -34,6 +37,8 @@ private:
     QVector<Base*>* projectBases;
     QStringListModel* netsListModel;
     QStringList netsList;
+
+    BrowsePrimitivesDialog* browsePrimitivesDialog;
 
     bool mModified;
 

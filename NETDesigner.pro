@@ -3,8 +3,8 @@ TEMPLATE = subdirs
 CONFIG += ordered
 
 SUBDIRS += \
-    Graph \
     PrimitivesLoader \
+    Graph \
     Compiler \
     Designer
 
