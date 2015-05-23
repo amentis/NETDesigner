@@ -11,10 +11,10 @@ Frontend for the IDE
 ### Graph 
 Programatic representation of the language elements (Nodes, Arrows, Graph)
 
-## TODO:
-
 ### PrimitivesLoader
 Subsystem for loading primitives written in lower-level languages in the graph
+
+## TODO:
 
 ### Compiler
 Compiler and linker for the Net language and its primitives
