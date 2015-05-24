@@ -33,7 +33,6 @@ public:
 private:
     Ui::MainWindow *ui;
     QString* projectDirectory;
-    QString* mainNetName;
     QVector<Base*>* projectBases;
     QStringListModel* netsListModel;
     QStringList netsList;
@@ -44,6 +43,17 @@ private:
 
     void saveNet(Editor* editor);
     int tabIndex;
+
+    //options
+    int solutions; // -1 ask after all 0 all
+    int loops; // -1 No 0 Any
+    unsigned recursion; // 0 Any
+    bool strategyBF; //true - bf false - df
+    bool backtracking;
+    unsigned maxPathLength; // 0 - Any
+    bool executeBack;
+    bool oneArrow;
+    QString* mainNetName;
 
 protected:
     void closeEvent(QCloseEvent* event);
@@ -62,6 +72,7 @@ private slots:
     void saveAllNets();
     void saveNet();
     void browsePrimitives();
+    void programOptions();
 
     void build();
     void run();

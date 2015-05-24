@@ -10,9 +10,10 @@
 #include "primitivesloader.h"
 
 #include "browseprimitivesdialog.h"
+#include "programoptionsdialog.h"
 
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent), ui(new Ui::MainWindow), projectDirectory(nullptr), mainNetName(nullptr), /*projectBases(nullptr),*/ netsListModel(new QStringListModel(this)), mModified(false), tabIndex(0)
+    QMainWindow(parent), ui(new Ui::MainWindow), projectDirectory(nullptr), projectBases(nullptr), netsListModel(new QStringListModel(this)), mModified(false), tabIndex(0), mainNetName(nullptr)
 
 {
     QLibrary libGraph("libGraph");
@@ -41,6 +42,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->actionNew_Project, &QAction::triggered, this, &MainWindow::createProject);
     connect(ui->actionOpen_Project, &QAction::triggered, this, &MainWindow::openProject);
+    connect(ui->actionSave_Project, &QAction::triggered, this, &MainWindow::saveProject);
     connect(ui->actionClose_Project, &QAction::triggered, this, &MainWindow::closeProject);
     connect(ui->actionExit, &QAction::triggered, this, &MainWindow::exit);
 
@@ -49,6 +51,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionSave_Current_Net, &QAction::triggered, this, static_cast<void(MainWindow::*)()>(&MainWindow::saveNet));
     connect(ui->actionSave_All_Nets, &QAction::triggered, this, &MainWindow::saveAllNets);
     connect(ui->actionBrowse_Primitives_Bases, &QAction::triggered, this, &MainWindow::browsePrimitives);
+    connect(ui->actionProgram_Options, &QAction::triggered, this, &MainWindow::programOptions);
 
     connect(ui->actionBuild, &QAction::triggered, this, &MainWindow::build);
     connect(ui->actionRun, &QAction::triggered, this, &MainWindow::run);
@@ -87,7 +90,6 @@ void MainWindow::setBases(QVector<Base*>* newBases)
     QVector<Base*>* tmp = projectBases;
     projectBases = newBases;
     delete tmp;
-    qDebug() << projectBases->size();
 }
 
 void MainWindow::createProject()
@@ -136,7 +138,20 @@ void MainWindow::createProject()
         }
         projectDirectory = new QString(dir.absolutePath());
         projectBases = new QVector<Base*>();
-        emit projectLoad();
+
+        solutions = 0;
+        loops = 0;
+        recursion = 0;
+        strategyBF = false;
+        backtracking = true;
+        maxPathLength = 0;
+        executeBack = true;
+        oneArrow = false;
+        mainNetName = new QString();
+
+        saveProject();
+
+        emit projectLoaded();
     }
 }
 
@@ -165,6 +180,18 @@ void MainWindow::openProject()
     QTextStream stream(&projectFile);
 
     mainNetName = new QString(stream.readLine());
+
+    QString optionsStr = stream.readLine();
+    QStringList options = optionsStr.split(":", QString::SkipEmptyParts);
+
+    solutions = options[0].toInt();
+    loops = options[1].toInt();
+    recursion = options[2].toInt();
+    strategyBF = (bool)(options[3].toInt());
+    backtracking = (bool)(options[4].toInt());
+    maxPathLength = options[5].toInt();
+    executeBack = (bool)(options[6].toInt());
+    oneArrow = (bool)(options[7].toInt());
 
     projectBases = new QVector<Base*>();
 
@@ -241,7 +268,10 @@ void MainWindow::saveProject()
 
     QTextStream stream(&projectFile);
 
-    stream << mainNetName;
+    stream << *mainNetName;
+
+    stream << "\n" << solutions << ":" << loops << ":" << recursion << ":" << (int)strategyBF << ":" <<
+              (int)backtracking << ":" << maxPathLength << ":" << (int)executeBack << ":" << (int)oneArrow;
 
     projectFile.close();
 
@@ -416,10 +446,25 @@ void MainWindow::closeEvent(QCloseEvent* event)
 
 void MainWindow::browsePrimitives()
 {
-    qDebug() << projectBases->size();
     if (!browsePrimitivesDialog)
         browsePrimitivesDialog = new BrowsePrimitivesDialog(projectBases, projectDirectory, this);
     browsePrimitivesDialog->exec();
+}
+
+void MainWindow::programOptions()
+{
+    QStringList netsList;
+
+    for (int i = 0; i < ui->netsListView->model()->rowCount(); ++i){
+        netsList << ui->netsListView->model()->index( i, 0).data(Qt::DisplayRole).toString();
+    }
+
+    ProgramOptionsDialog dialog(solutions, loops, recursion, strategyBF, backtracking,maxPathLength, executeBack,
+                                oneArrow, mainNetName, &netsList);
+    if (dialog.exec() == QDialog::Accepted){
+        dialog.getResults(solutions,loops,recursion,strategyBF,backtracking,maxPathLength,executeBack,oneArrow,mainNetName);
+        ui->actionSave_Project->setEnabled(true);
+    }
 }
 
 void MainWindow::build()
@@ -458,6 +503,7 @@ void MainWindow::projectLoad()
     ui->menuProject->setEnabled(true);
     ui->actionAdd_Net->setEnabled(true);
     ui->actionBrowse_Primitives_Bases->setEnabled(true);
+    ui->actionProgram_Options->setEnabled(true);
 
     ui->menuBuild_Run->setEnabled(true);
     ui->actionBuild->setEnabled(true);
@@ -475,6 +521,7 @@ void MainWindow::projectUnload()
     ui->menuProject->setEnabled(false);
     ui->actionAdd_Net->setEnabled(false);
     ui->actionBrowse_Primitives_Bases->setEnabled(false);
+    ui->actionProgram_Options->setEnabled(false);
 
     ui->menuBuild_Run->setEnabled(false);
     ui->actionBuild->setEnabled(false);

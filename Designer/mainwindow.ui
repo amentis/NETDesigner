@@ -65,6 +65,7 @@
     <addaction name="actionSave_All_Nets"/>
     <addaction name="separator"/>
     <addaction name="actionBrowse_Primitives_Bases"/>
+    <addaction name="actionProgram_Options"/>
    </widget>
    <widget class="QMenu" name="menuBuild_Run">
     <property name="enabled">
@@ -250,12 +251,20 @@
   </action>
   <action name="actionHelp">
    <property name="text">
-    <string>Help</string>
+    <string>&amp;Help</string>
    </property>
   </action>
   <action name="actionAbout">
    <property name="text">
-    <string>About</string>
+    <string>&amp;About</string>
+   </property>
+  </action>
+  <action name="actionProgram_Options">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Program Options</string>
    </property>
   </action>
  </widget>
