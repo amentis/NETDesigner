@@ -11,6 +11,7 @@ class QString;
 class QTextStream;
 
 class Primitive;
+class Base;
 
 class Arrow;
 
@@ -28,7 +29,6 @@ public:
     void removeNode(Node *node);
     const QVector<Node*>* nodes();
 
-    void editArrow(QVector<Primitive*> added, QVector<Primitive*> removed);
     void removeArrow(Arrow* arrow);
     const QVector<Arrow*>* arrows();
 
@@ -36,9 +36,10 @@ public:
     bool hasEndNode();
 
     void saveToStream(QTextStream& stream);
-    bool loadFromStream(QTextStream& stream);
+    bool loadFromStream(QTextStream& stream, QVector<Base*>* bases);
 
 private:
+
     QVector<Node*>* mNodes;
     QVector<Arrow*>* mArrows;
 

@@ -17,6 +17,7 @@ public:
 
     Base* loadBase(QString* name, QString* infoFileDir, QString* srcFile);
     QString* srcFile(QString* baseName);
+    static Primitive* findPrimitiveByName(QVector<Base*>* bases, QString* primitiveName);
 
 private:
     QHash<QString, QString*> mSrcFiles;

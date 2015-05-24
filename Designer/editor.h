@@ -2,11 +2,13 @@
 #define EDITOR_H
 
 #include <QWidget>
+#include <QVector>
 
 class QPoint;
 class QPainter;
 class QMouseEvent;
 class QTextStream;
+class QStringList;
 
 class Graph;
 class Node;
@@ -14,6 +16,8 @@ class Arrow;
 
 class AddNode;
 class ArrowButton;
+
+class Base;
 
 class Canvas;
 
@@ -36,12 +40,16 @@ private:
 
     bool mModified;
 
+    QVector<Base*>* mProjectBases;
+    QStringList* mNetsList;
+
     void operateAddNodeDialog(QMouseEvent* event, bool editMode = false, Node *editable = nullptr);
     void operateDeleteNodeDialog(Node* selected);
     void operateDeleteArrowDialog(Arrow* selected);
 
 public:
     explicit Editor(QWidget *parent = 0);
+    Editor(QVector<Base*>* projectBases, QStringList* netsList, QWidget* parent = 0);
     ~Editor();
     bool isModified();
     void save(QTextStream& stream);

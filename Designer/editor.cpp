@@ -10,6 +10,7 @@
 #include "addnode.h"
 #include "arrowbutton.h"
 #include "addarrowexpressiondialog.h"
+#include "editarrowdialog.h"
 
 #include "canvas.h"
 
@@ -67,6 +68,13 @@ Editor::Editor(QWidget *parent) : QWidget(parent),
     connect(arrowButton, &ArrowButton::arrowAddRequest, this, &Editor::checkArrowAddRequest);
 }
 
+Editor::Editor(QVector<Base*>* projectBases, QStringList* netsList, QWidget* parent) :
+    Editor(parent)
+{
+    mProjectBases = projectBases;
+    mNetsList = netsList;
+}
+
 Editor::~Editor()
 {
     delete nodePosition;
@@ -85,7 +93,7 @@ void Editor::save(QTextStream &stream)
 
 void Editor::load(QTextStream &stream)
 {
-    mNetGraph->loadFromStream(stream);
+    mNetGraph->loadFromStream(stream, mProjectBases);
     saved();
 }
 
@@ -173,7 +181,11 @@ void Editor::mousePress(QMouseEvent *event)
     for (const auto& arrow : *mNetGraph->arrows()){
         if (arrow->contains(QWidget::mapToParent(event->pos()))){
             if (event->button() == Qt::LeftButton){
-                //TODO: edit arrow
+                EditArrowDialog dialog(mProjectBases, mNetsList, arrow);
+                if (dialog.exec() == QDialog::Accepted){
+                    dialog.applyResult();
+                    emit modification();
+                }
             } else if (event->button() == Qt::RightButton){
                 operateDeleteArrowDialog(arrow);
             }

@@ -56,3 +56,19 @@ QString*PrimitivesLoader::srcFile(QString* baseName)
 {
     return mSrcFiles.value(*baseName);
 }
+
+Primitive*PrimitivesLoader::findPrimitiveByName(QVector<Base*>* bases, QString* primitiveName)
+{
+    Primitive* primitive = nullptr;
+    for (const auto& base : *bases){
+        for (const auto& pr : *(base->primitives())){
+            if (*(pr->name()) == *primitiveName){
+                primitive = pr;
+                break;
+            }
+        }
+        if (primitive)
+            break;
+    }
+    return primitive;
+}

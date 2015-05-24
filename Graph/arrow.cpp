@@ -8,14 +8,16 @@
 
 Arrow::Arrow(QObject *parent) : QObject(parent),
     mPrimitives(new QVector<Primitive*>()), leadsToSubnet(false), mFrom(nullptr), mTo (nullptr),
-    mExpression(nullptr), mRects(new QVector<QRect>), drawPath(nullptr), drawHead(nullptr), labelPosition(nullptr)
+    mExpression(nullptr), mRects(new QVector<QRect>), drawPath(nullptr), drawHead(nullptr), labelPosition(nullptr),
+    callTo(nullptr), mLoops(0), mRecursion(0), mExecuteBack(true)
 {
     calculatePathsAndRect();
 }
 
 Arrow::Arrow(Node *from, Node *to, QString *expression, QObject *parent) : QObject(parent),
 mPrimitives(new QVector<Primitive*>), leadsToSubnet(false), mFrom(from), mTo(to),
-  mExpression(expression), mRects(new QVector<QRect>),drawPath(nullptr), drawHead(nullptr), labelPosition(nullptr)
+  mExpression(expression), mRects(new QVector<QRect>),drawPath(nullptr), drawHead(nullptr), labelPosition(nullptr),
+callTo(nullptr), mLoops(0), mRecursion(0), mExecuteBack(true)
 {
     mFrom->addArrowOut(this);
     mTo->addArrowIn(this);
@@ -42,6 +44,22 @@ void Arrow::paint(QPainter *painter)
     painter->setPen(pen);
 
     painter->drawPolyline(drawPath, drawPathLength);
+
+    QString primitives;
+    for (Primitive* primitive : *mPrimitives){
+        primitives.append(primitive->name());
+        primitives.append("(");
+        primitives.append(argumentsForPrimitive(primitive->name()));
+        primitives.append(");");
+    }
+
+    if (leadsToSubnet){
+        primitives.append("  CALL(");
+        primitives.append(callTo);
+        primitives.append(")");
+    }
+
+    painter->drawText(*primitivesPosition, primitives);
 
     painter->setBrush(brush);
 
@@ -78,6 +96,51 @@ QString *Arrow::expression()
 const QVector<Primitive*>*Arrow::primitives()
 {
     return mPrimitives;
+}
+
+void Arrow::setOptions(int loops, unsigned recursion, bool executeBack)
+{
+    mLoops = loops;
+    mRecursion = recursion;
+    mExecuteBack = executeBack;
+}
+
+void Arrow::options(int& loops, unsigned& recursion, bool& executeBack)
+{
+    loops = mLoops;
+    recursion = mRecursion;
+    executeBack = mExecuteBack;
+}
+
+void Arrow::setCall(QString* subNet)
+{
+    if (subNet){
+        callTo = subNet;
+        leadsToSubnet = true;
+    } else {
+        leadsToSubnet = false;
+    }
+}
+
+void Arrow::addPrimitive(Primitive* primitive)
+{
+    mPrimitives->append(primitive);
+}
+
+QString*Arrow::argumentsForPrimitive(QString* primitiveName)
+{
+    return mPrimitiveArguments.value(*primitiveName);
+}
+
+void Arrow::setArgumentsForPrimitive(QString* primitiveName, QString* arguments)
+{
+    mPrimitiveArguments.insert(*primitiveName, arguments);
+}
+
+bool Arrow::subnetCalled(QString*& subnetName)
+{
+    subnetName = callTo;
+    return leadsToSubnet;
 }
 
 
@@ -257,6 +320,15 @@ void Arrow::calculatePathsAndRect()
                                            mFrom->tightRect()->top() + 5);
             }
         }
+    }
+
+    //primitives label
+    if (targetIsSide){
+            primitivesPosition = new QPoint((fromIsLeftFromTo)?mFrom->rect()->right() + 5 : mTo->rect()->right() + 5,
+                                            (mRects->size() == 2)? mRects->at(0).top() - 3: mRects->at(1).top() - 3);
+    } else {
+        primitivesPosition = new QPoint(mRects->at(1).left() - 4,
+                                        mRects->at(1).top());
     }
 
 }

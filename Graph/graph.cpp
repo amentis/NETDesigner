@@ -4,7 +4,8 @@
 
 #include "arrow.h"
 
-//#include "primitive.h"
+#include "primitive.h"
+#include "primitivesloader.h"
 
 Graph::Graph(QObject *parent) : QObject(parent),
     mNodes(new QVector<Node*>), mArrows(new QVector<Arrow*>), mStart(nullptr), mEnd(nullptr) {}
@@ -84,13 +85,6 @@ void Graph::addArrow(Node *from, Node *to, QString *expression)
     emit contentModified();
 }
 
-void Graph::editArrow(QVector<Primitive *> added, QVector<Primitive *> removed)
-{
-    //TODO: implement
-    (void)added;
-    (void)removed;
-}
-
 void Graph::removeArrow(Arrow *arrow)
 {
     arrow->from()->removeArrowOut(arrow);
@@ -129,7 +123,7 @@ void Graph::saveToStream(QTextStream &stream)
 
     stream << "\n";
 
-    for (const auto&arrow : *mArrows){
+    for (Arrow* arrow : *mArrows){
         stream << mNodes->indexOf(arrow->from()) << ":"
                << mNodes->indexOf(arrow->to()) << ":";
         if (arrow->expression()){
@@ -137,12 +131,38 @@ void Graph::saveToStream(QTextStream &stream)
         } else {
             stream << " ";
         }
+        stream << ":";
+        QString* subnet;
+        if (arrow->subnetCalled(subnet))
+            stream << *subnet;
+        else
+            stream << "x";
+        stream << ":";
+        int loops;
+        unsigned recursion;
+        bool executeBack;
+        arrow->options(loops, recursion, executeBack);
+        stream << loops;
+        stream << ":";
+        stream << recursion;
+        stream << ":";
+        stream << (int)executeBack;
+        stream << ":";
+        bool first = true;
+        for (const auto& primitive : *(arrow->primitives())){
+            if (first)
+                first = false;
+            else
+                stream << "&";
+            stream << *(primitive->name());
+            stream << "_";
+            stream << *(arrow->argumentsForPrimitive(primitive->name()));
+        }
             stream << ";";
-        //primitives
     }
 }
 
-bool Graph::loadFromStream(QTextStream &stream)
+bool Graph::loadFromStream(QTextStream &stream, QVector<Base*>* bases)
 {
     QString nodesLine = stream.readLine();
     if (nodesLine.isNull())
@@ -164,9 +184,26 @@ bool Graph::loadFromStream(QTextStream &stream)
     }
     for (const auto& string : arrowsLine.split(";", QString::SkipEmptyParts)){
         QStringList element = string.split(":", QString::KeepEmptyParts);
-        mArrows->append(new Arrow(mNodes->at(element.at(0).toInt()),
-                                 mNodes->at(element.at(1).toInt()),
-                                 new QString(element.at(1))));
+        Arrow * arrow = new Arrow(mNodes->at(element.at(0).toInt()),
+                                  mNodes->at(element.at(1).toInt()),
+                                  new QString(element.at(2)),this);
+        if (element.at(3) != "x")
+            arrow->setCall(new QString(element.at(3)));
+        arrow->setOptions(element.at(4).toInt(), element.at(5).toUInt(), (bool)(element.at(6).toInt()));
+        if (element.at(7) != ""){
+            QStringList primitives = element.at(7).split("&", QString::SkipEmptyParts);
+            for (const auto& pr : primitives){
+                QStringList def = pr.split("_", QString::SkipEmptyParts);
+                Primitive* primitive = PrimitivesLoader::findPrimitiveByName(bases, new QString(def[0]));
+                if (!primitive){
+                    qCritical("Cannot find primitive in bases: %s", def[0].toLocal8Bit().constData());
+                    return false;
+                }
+                arrow->addPrimitive(primitive);
+                arrow->setArgumentsForPrimitive(new QString(def[0]), new QString(def[1]));
+            }
+        }
+        mArrows->append(arrow);
     }
     return true;
 }

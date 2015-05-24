@@ -87,9 +87,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::setBases(QVector<Base*>* newBases)
 {
-    QVector<Base*>* tmp = projectBases;
-    projectBases = newBases;
-    delete tmp;
+    projectBases->clear();
+    projectBases->swap(*newBases);
 }
 
 void MainWindow::createProject()
@@ -307,7 +306,13 @@ void MainWindow::addNet()
         return;
     }
 
+    if (netsList.isEmpty())
+        mainNetName = new QString(name);
+
     netsList.append(name);
+
+    mModified = true;
+    ui->actionSave_Project->setEnabled(true);
 
     emit netCountModified();
 }
@@ -325,7 +330,15 @@ void MainWindow::openNet(QModelIndex index)
 
     QString netName = index.data().toString();
 
-    Editor* editor = new Editor(ui->editorTabWidget);
+    QStringList* nets = new QStringList();
+
+    for (QString str : netsList){
+        QString* tmp = new QString(str);
+        tmp->remove("*");
+        nets->append(*tmp);
+    }
+
+    Editor* editor = new Editor(projectBases, nets, ui->editorTabWidget);
 
     QFile file(QString(*projectDirectory + "/" +
                        netName + ".net").remove("&").remove("*"));

@@ -21,7 +21,8 @@ SOURCES += main.cpp \
     arrowbutton.cpp \
     addarrowexpressiondialog.cpp \
     browseprimitivesdialog.cpp \
-    programoptionsdialog.cpp
+    programoptionsdialog.cpp \
+    editarrowdialog.cpp
 
 HEADERS  += \
     mainwindow.h \
@@ -31,14 +32,16 @@ HEADERS  += \
     arrowbutton.h \
     addarrowexpressiondialog.h \
     browseprimitivesdialog.h \
-    programoptionsdialog.h
+    programoptionsdialog.h \
+    editarrowdialog.h
 
 FORMS    += \
     mainwindow.ui \
     addnode.ui \
     addarrowexpressiondialog.ui \
     browseprimitivesdialog.ui \
-    programoptionsdialog.ui
+    programoptionsdialog.ui \
+    editarrowdialog.ui
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../PrimitivesLoader/release/ -lPrimitivesLoader
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../PrimitivesLoader/debug/ -lPrimitivesLoader

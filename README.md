@@ -14,10 +14,10 @@ Programatic representation of the language elements (Nodes, Arrows, Graph)
 ### PrimitivesLoader
 Subsystem for loading primitives written in lower-level languages in the graph
 
-## TODO:
-
 ### Compiler
 Compiler and linker for the Net language and its primitives
+
+## TODO:
 
 ### Debugger
 Debugger for the Net language

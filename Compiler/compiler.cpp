@@ -44,7 +44,7 @@ Compiler::Compiler(QVector<Base*>* bases, QString* projectPath) : Compiler()
         QFile file (fileInfo.absoluteFilePath());
         file.open(QIODevice::ReadOnly);
         QTextStream stream(&file);
-        if (tmp->loadFromStream(stream)){
+        if (tmp->loadFromStream(stream, mBases)){
             mGraphNames->append(fileInfo.fileName());
             mGraphs->append(tmp);
         }
