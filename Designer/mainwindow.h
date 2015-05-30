@@ -77,6 +77,7 @@ private slots:
     void build();
     void run();
     void debug();
+    void clean();
 
     void enableOrDisableRemoveNet();
 

@@ -40,6 +40,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     this->showMaximized();
 
+    ui->dock->close();
+
     connect(ui->actionNew_Project, &QAction::triggered, this, &MainWindow::createProject);
     connect(ui->actionOpen_Project, &QAction::triggered, this, &MainWindow::openProject);
     connect(ui->actionSave_Project, &QAction::triggered, this, &MainWindow::saveProject);
@@ -482,9 +484,18 @@ void MainWindow::programOptions()
 
 void MainWindow::build()
 {
-    Compiler compiler(projectBases, projectDirectory);
-    QTextStream output;
+    QString text;
+
+    QTextStream output(&text, QIODevice::WriteOnly);
+
+    Compiler compiler(projectBases, projectDirectory, mainNetName);
+
     compiler.build(output);
+
+    ui->outputBrowser->append(text);
+
+    ui->dock->show();
+
 }
 
 void MainWindow::run()
@@ -495,6 +506,21 @@ void MainWindow::run()
 void MainWindow::debug()
 {
 
+}
+
+void MainWindow::clean()
+{
+    QString text;
+
+    QTextStream output(&text, QIODevice::WriteOnly);
+
+    Compiler compiler(projectBases, projectDirectory, mainNetName);
+
+    compiler.clean(output, true);
+
+    ui->outputBrowser->append(text);
+
+    ui->dock->show();
 }
 
 void MainWindow::enableOrDisableRemoveNet()
@@ -522,6 +548,7 @@ void MainWindow::projectLoad()
     ui->actionBuild->setEnabled(true);
     ui->actionRun->setEnabled(true);
     //ui->actionDebug->setEnabled(true);
+    ui->actionView_Output_Browser->setEnabled(true);
 }
 
 void MainWindow::projectUnload()
@@ -540,6 +567,7 @@ void MainWindow::projectUnload()
     ui->actionBuild->setEnabled(false);
     ui->actionRun->setEnabled(false);
     ui->actionDebug->setEnabled(false);
+    ui->actionView_Output_Browser->setEnabled(true);
 
     ui->editorTabWidget->clear();
 

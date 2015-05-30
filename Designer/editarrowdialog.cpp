@@ -38,8 +38,12 @@ EditArrowDialog::EditArrowDialog(QVector<Base*>* bases, QStringList* nets, Arrow
     availableModel->setStringList(available);
     ui->availablePrimitivesListView->setModel(availableModel);
 
-    for (const auto& primitive : *(arrow->primitives())){
-        chained.append(*(primitive->name()));
+    for (Primitive* primitive : *(arrow->primitives())){
+        QString item(*(primitive->name()));
+        item.append("(");
+        item.append(arrow->argumentsForPrimitive(primitive->name()));
+        item.append(")");
+        chained.append(item);
     }
 
     emit chainedPrimitivesListChanged();
@@ -60,6 +64,7 @@ void EditArrowDialog::applyResult()
     else
         mArrow->setCall();
 
+    mArrow->clearPrimitives();
     for (const auto& string : chained){
         QStringList strs = string.split("(", QString::SkipEmptyParts);
         QString primitiveName = strs[0].remove(" ");

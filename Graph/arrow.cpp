@@ -122,6 +122,11 @@ void Arrow::setCall(QString* subNet)
     }
 }
 
+void Arrow::clearPrimitives()
+{
+    mPrimitives->clear();
+}
+
 void Arrow::addPrimitive(Primitive* primitive)
 {
     mPrimitives->append(primitive);

@@ -102,9 +102,19 @@ bool Graph::hasStartNode()
     return (mStart);
 }
 
+Node*Graph::startNode()
+{
+    return mStart;
+}
+
 bool Graph::hasEndNode()
 {
     return (mEnd);
+}
+
+Node*Graph::endNode()
+{
+    return mEnd;
 }
 
 void Graph::saveToStream(QTextStream &stream)
@@ -206,4 +216,9 @@ bool Graph::loadFromStream(QTextStream &stream, QVector<Base*>* bases)
         mArrows->append(arrow);
     }
     return true;
+}
+
+unsigned Graph::internalNodeIndex(Node* node)
+{
+    return mNodes->indexOf(node);
 }

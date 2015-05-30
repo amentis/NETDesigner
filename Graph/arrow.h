@@ -35,6 +35,7 @@ public:
     void setOptions(int loops, unsigned recursion, bool executeBack);
     void options(int& loops, unsigned& recursion, bool& executeBack);
     void setCall(QString* subNet = nullptr);
+    void clearPrimitives();
     void addPrimitive(Primitive* primitive);
     QString* argumentsForPrimitive(QString* primitiveName);
     void setArgumentsForPrimitive(QString* primitiveName, QString* arguments);

@@ -33,10 +33,13 @@ public:
     const QVector<Arrow*>* arrows();
 
     bool hasStartNode();
+    Node* startNode();
     bool hasEndNode();
+    Node* endNode();
 
     void saveToStream(QTextStream& stream);
     bool loadFromStream(QTextStream& stream, QVector<Base*>* bases);
+    unsigned internalNodeIndex(Node* node);
 
 private:
 
