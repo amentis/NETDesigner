@@ -10,24 +10,24 @@
 
 Compiler::Compiler()
 {
+#ifdef Q_OS_WIN
+    QLibrary libGraph("Graph.dll");
+#else
     QLibrary libGraph("libGraph");
+#endif
     libGraph.load();
     if (!libGraph.isLoaded()){
         qCritical("Cannot load libGraph");
         qApp->exit(qApp->exec());
     }
-
+#ifdef Q_OS_WIN
+    QLibrary libPrimitivesLoader("PrimitivesLoader.dll");
+#else
     QLibrary libPrimitivesLoader("libPrimitivesLoader");
+#endif
     libPrimitivesLoader.load();
     if (!libPrimitivesLoader.isLoaded()){
         qCritical("Cannot load libPrimitivesLoader");
-        qApp->exit(qApp->exec());
-    }
-
-    QLibrary libclang("libclang");
-    libclang.load();
-    if (!libclang.isLoaded()){
-        qCritical("Cannot load libclang");
         qApp->exit(qApp->exec());
     }
 }

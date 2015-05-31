@@ -16,21 +16,33 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent), ui(new Ui::MainWindow), projectDirectory(nullptr), projectBases(nullptr), netsListModel(new QStringListModel(this)), mModified(false), tabIndex(0), mainNetName(nullptr), lastBuildSuccessful(false)
 
 {
+#ifdef Q_OS_WIN
+    QLibrary libGraph("Graph.dll");
+#else
     QLibrary libGraph("libGraph");
+#endif
     libGraph.load();
     if (!libGraph.isLoaded()){
         qCritical("Cannot load libGraph");
         qApp->exit(qApp->exec());
     }
 
+#ifdef Q_OS_WIN
+    QLibrary libCompiler("Compiler.dll");
+#else
     QLibrary libCompiler("libCompiler");
+#endif
     libCompiler.load();
     if (!libGraph.isLoaded()){
         qCritical("Cannot load libCompiler");
         qApp->exit(qApp->exec());
     }
 
+#ifdef Q_OS_WIN
+    QLibrary libPrimitivesLoader("PrimitivesLoader.dll");
+#else
     QLibrary libPrimitivesLoader("libPrimitivesLoader");
+#endif
     libPrimitivesLoader.load();
     if (!libPrimitivesLoader.isLoaded()){
         qCritical("Cannot load libPrimitivesLoader");
