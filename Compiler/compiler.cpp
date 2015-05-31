@@ -143,9 +143,11 @@ bool Compiler::translate(QTextStream &output)
 bool Compiler::compile(QTextStream &output)
 {
 #ifdef Q_OS_WIN
-    QString executable(qApp->applicationDirPath() + "/clang/clang++");
+    QString executable(qApp->applicationDirPath() + "/clang/clang++.exe");
 #else
-    QString executable("/usr/bin/clang++");
+    QString executable("/bin/clang++");
+    if (!QFile(executable).exists())
+        executable = "/usr/bin/clang++";
 #endif
     if (!QFile(executable).exists()){
         output << "[Critical] Cannot find " << executable << "!\n";

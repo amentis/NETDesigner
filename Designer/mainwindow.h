@@ -55,6 +55,8 @@ private:
     bool oneArrow;
     QString* mainNetName;
 
+    bool lastBuildSuccessful; //used for chaining build and run
+
 protected:
     void closeEvent(QCloseEvent* event);
 

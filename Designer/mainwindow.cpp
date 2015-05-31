@@ -13,7 +13,7 @@
 #include "programoptionsdialog.h"
 
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent), ui(new Ui::MainWindow), projectDirectory(nullptr), projectBases(nullptr), netsListModel(new QStringListModel(this)), mModified(false), tabIndex(0), mainNetName(nullptr)
+    QMainWindow(parent), ui(new Ui::MainWindow), projectDirectory(nullptr), projectBases(nullptr), netsListModel(new QStringListModel(this)), mModified(false), tabIndex(0), mainNetName(nullptr), lastBuildSuccessful(false)
 
 {
     QLibrary libGraph("libGraph");
@@ -485,13 +485,15 @@ void MainWindow::programOptions()
 
 void MainWindow::build()
 {
+    clean();
+
     QString text;
 
     QTextStream output(&text, QIODevice::WriteOnly);
 
     Compiler compiler(projectBases, projectDirectory, mainNetName);
 
-    compiler.build(output);
+    lastBuildSuccessful = compiler.build(output);
 
     ui->outputBrowser->append(text);
 
@@ -501,7 +503,53 @@ void MainWindow::build()
 
 void MainWindow::run()
 {
+    build();
 
+    if (!lastBuildSuccessful){
+        ui->outputBrowser->append("Last build failed. Run cancelled.\n");
+        return;
+    }
+
+    QDir srcDir(*projectDirectory);
+    QString projectName(srcDir.dirName());
+    QDir binDir(*projectDirectory + "/build");
+
+#ifdef Q_OS_WIN
+    QString pathToExecutable = (binDir.absoluteFilePath(projectName) + ".exe");
+
+    QString command = "cmd " + pathToExecutable;
+#else
+    QString pathToExecutable = (binDir.absoluteFilePath(projectName));
+
+    QString command;
+
+    if (QFile("/bin/konsole").exists()){
+        command = "/bin/konsole -e " + pathToExecutable + " --noclose --nofork";
+    } else if (QFile("/usr/bin/konsole").exists()){
+        command = "/usr/bin/konsole -e " + pathToExecutable + " --noclose --nofork";
+    } else if (QFile("/bin/gnome-terminal").exists()){
+        ui->outputBrowser->append("[Note] Gnome terminal does not provide a command line option to hold the terminal after command execution. To make the terminal stay after execution go to go to Edit -> Profile Preferences -> Title. Click the Command tab. Select Hold the terminal from the drop-down menu labelled When command exits.\n");
+        command = "/bin/gnome-terminal -e " + pathToExecutable;
+    } else if (QFile("/usr/bin/gnome-terminal").exists()){
+        ui->outputBrowser->append("[Note] Gnome terminal does not provide a command line option to hold the terminal after command execution. To make the terminal stay after execution go to go to Edit -> Profile Preferences -> Title. Click the Command tab. Select Hold the terminal from the drop-down menu labelled When command exits.\n");
+        command = "/usr/bin/gnome-terminal -e " + pathToExecutable;
+    } else if (QFile("/bin/terminal").exists()){
+        command = "/bin/terminal -e " + pathToExecutable + " --hold";
+    } else if (QFile("/usr/bin/terminal").exists()){
+        command = "/usr/bin/terminal -e " + pathToExecutable + " --hold";
+    } else if (QFile("/bin/xterm").exists()){
+        command = "/bin/xterm -e " + pathToExecutable + " --hold";
+    } else if (QFile("/usr/bin/xterm").exists()){
+        command = "/usr/bin/xterm -e " + pathToExecutable + " --hold";
+    } else {
+        ui->outputBrowser->append("[Error] No terminal emulator found! Path to the executable: " + pathToExecutable + " ./n");
+        return;
+    }
+#endif
+    QProcess program;
+    program.startDetached(command);
+
+        ui->outputBrowser->append("Program executed. \n");
 }
 
 void MainWindow::debug()
