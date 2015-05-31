@@ -23,6 +23,13 @@ Compiler::Compiler()
         qCritical("Cannot load libPrimitivesLoader");
         qApp->exit(qApp->exec());
     }
+
+    QLibrary libclang("libclang");
+    libclang.load();
+    if (!libclang.isLoaded()){
+        qCritical("Cannot load libclang");
+        qApp->exit(qApp->exec());
+    }
 }
 
 Compiler::Compiler(QVector<Base*>* bases, QString* projectPath, QString* mainGraph) : Compiler()
@@ -135,8 +142,43 @@ bool Compiler::translate(QTextStream &output)
 
 bool Compiler::compile(QTextStream &output)
 {
-    (void)output;
-    //TODO: implement
+#ifdef Q_OS_WIN
+    QString executable(qApp->applicationDirPath() + "/clang/clang++");
+#else
+    QString executable("/usr/bin/clang++");
+#endif
+    if (!QFile(executable).exists()){
+        output << "[Critical] Cannot find " << executable << "!\n";
+        return false;
+    }
+    QString inputFile(binDir->absolutePath() + "/" + *(projectName) + ".cpp");
+    QString outputFile(binDir->absolutePath() + "/" + *(projectName));
+
+    QStringList args;
+    args << inputFile << "-I" << binDir->absolutePath() + "/" + "vars.h" << "-o" << outputFile;
+
+    QProcess clang;
+
+    clang.setProcessChannelMode(QProcess::MergedChannels);
+
+    clang.start(executable, args);
+
+    if (!clang.waitForStarted()){
+        output << "[Critical] Failed to start process " << executable << "!\n";
+        return false;
+    }
+
+    QByteArray data;
+
+    while(clang.waitForReadyRead())
+        data.append(clang.readAllStandardOutput());
+
+    output << data;
+
+    if (!QFile(outputFile).exists()){
+        output << "[Critical] Compile failed at executing C++ compiler!\n";
+        return false;
+    }
     return true;
 }
 
@@ -144,7 +186,7 @@ void Compiler::clean(QTextStream& output, bool binary)
 {
     bool fail = false;
     for (const auto& info : binDir->entryInfoList(QDir::Files)){
-        if (!binary || (info.suffix() == "cpp" || info.suffix() == "h")){
+        if (binary || (info.suffix() == "cpp" || info.suffix() == "h")){
             QFile file(info.absoluteFilePath());
             if (!file.remove()){
                 fail = true;
@@ -279,6 +321,10 @@ bool Compiler::generateProject(QTextStream& output)
             includes->append("../Primitives/" + *(base->getName()) + "/" + *(base->getName()) + ".cpp");
     includes->append("vars.h");
 
+#ifdef Q_OS_WIN
+    includes->append("<stdlib.h>");
+#endif
+
     QTextStream stream(&projectFile);
     while (!includes->isEmpty()){
         stream << "#include \"";
@@ -286,10 +332,19 @@ bool Compiler::generateProject(QTextStream& output)
         stream << "\"\n";
     }
     stream << "\nint main (int argc, char** argv){ \n";
+#ifdef Q_OS_WIN
+    stream << "    bool result = ";
+    stream << *mMainGraph;
+    stream << "_net";
+    stream << "();\n";
+    stream << "    system(\"pause\");";
+    stream << "    return (int) result;\n";
+#else
     stream << "    return (int) (!";
     stream << *mMainGraph;
     stream << "_net";
     stream << "());\n";
+#endif
     stream << "}\n";
     projectFile.close();
     return true;

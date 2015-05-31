@@ -36,7 +36,3 @@ else:unix: LIBS += -L$$OUT_PWD/../PrimitivesLoader/ -lPrimitivesLoader
 
 INCLUDEPATH += $$PWD/../PrimitivesLoader
 DEPENDPATH += $$PWD/../PrimitivesLoader
-
-unix|win32: LIBS += -lclang
-
-unix|win32: LIBS += -lLLVM-3.6

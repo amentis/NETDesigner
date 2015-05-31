@@ -58,6 +58,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionBuild, &QAction::triggered, this, &MainWindow::build);
     connect(ui->actionRun, &QAction::triggered, this, &MainWindow::run);
     connect(ui->actionDebug, &QAction::triggered, this, &MainWindow::debug);
+    connect(ui->actionClean, &QAction::triggered, this, &MainWindow::clean);
 
     connect(ui->actionHelp, &QAction::triggered, this, &MainWindow::help);
     connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::about);
@@ -548,6 +549,7 @@ void MainWindow::projectLoad()
     ui->actionBuild->setEnabled(true);
     ui->actionRun->setEnabled(true);
     //ui->actionDebug->setEnabled(true);
+    ui->actionClean->setEnabled(true);
     ui->actionView_Output_Browser->setEnabled(true);
 }
 
@@ -567,6 +569,7 @@ void MainWindow::projectUnload()
     ui->actionBuild->setEnabled(false);
     ui->actionRun->setEnabled(false);
     ui->actionDebug->setEnabled(false);
+    ui->actionClean->setEnabled(false);
     ui->actionView_Output_Browser->setEnabled(true);
 
     ui->editorTabWidget->clear();
