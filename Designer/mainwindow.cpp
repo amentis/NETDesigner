@@ -379,6 +379,14 @@ void MainWindow::closeNet(int index)
         if (confirm == QMessageBox::Cancel)
             return;
     }
+
+    int listViewIndex = netsList.indexOf(ui->editorTabWidget->tabText(index).remove("&"));
+    ui->editorTabWidget->setTabText(index, ui->editorTabWidget->tabText(index).remove("*"));
+    netsList.removeAt(listViewIndex);
+    netsList.insert(listViewIndex, ui->editorTabWidget->tabText(index).remove("&"));
+    netsListModel->setStringList(netsList);
+    ui->netsListView->setModel(netsListModel);
+
     disconnect(editor, &Editor::modification, this, &MainWindow::modified);
     ui->editorTabWidget->removeTab(index);
 
@@ -638,7 +646,6 @@ void MainWindow::about()
 
 void MainWindow::modified()
 {
-    if (!mModified){
         ui->actionSave_All_Nets->setEnabled(true);
         checkTabModified(ui->editorTabWidget->currentIndex());
 
@@ -650,8 +657,6 @@ void MainWindow::modified()
 
         netsListModel->setStringList(netsList);
         ui->netsListView->setModel(netsListModel);
-        mModified = true;
-    }
 }
 
 void MainWindow::saved()
