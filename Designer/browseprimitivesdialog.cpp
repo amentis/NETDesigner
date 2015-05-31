@@ -57,11 +57,14 @@ void BrowsePrimitivesDialog::loadBase()
                 QDir::homePath(),
                 tr("NETDesigner Base Primitives Directories"));
     dialog.setAcceptMode(QFileDialog::AcceptOpen);
-    dialog.setFileMode(QFileDialog::Directory);
-    dialog.setOption(QFileDialog::ShowDirsOnly, true);
-    if (dialog.exec() != QFileDialog::Accepted)
-        return;
-    QString filePath = dialog.selectedFiles()[0];
+//    dialog.setFileMode(QFileDialog::Directory);
+//    dialog.setOption(QFileDialog::ShowDirsOnly, true);
+//    if (dialog.exec() != QFileDialog::Accepted)
+//        return;
+//    QString filePath = dialog.selectedFiles()[0];
+    QString filePath = QFileDialog::getExistingDirectory(this, tr("Load Primitives Base"),
+                                                         QDir::homePath(),
+                                                         QFileDialog::ShowDirsOnly);
     QDir origin(filePath);
     QDir path(*projectPrimitivesPath);
     if (!path.exists())
