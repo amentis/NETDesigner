@@ -662,6 +662,8 @@ void MainWindow::modified()
         checkTabModified(ui->editorTabWidget->currentIndex());
 
         int index = ui->editorTabWidget->currentIndex();
+        if (ui->editorTabWidget->tabText(index).contains("*"))
+            return;
         int listViewIndex = netsList.indexOf(ui->editorTabWidget->tabText(index).remove("&"));
         ui->editorTabWidget->setTabText(index, "*" + ui->editorTabWidget->tabText(index));
         netsList.removeAt(listViewIndex);

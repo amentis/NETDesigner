@@ -143,7 +143,7 @@ bool Compiler::translate(QTextStream &output)
 bool Compiler::compile(QTextStream &output)
 {
 #ifdef Q_OS_WIN
-    QString executable(qApp->applicationDirPath() + "/clang/clang++.exe");
+    QString executable(qApp->applicationDirPath() + "/clang/bin/clang++.exe");
 #else
     QString executable("/bin/clang++");
     if (!QFile(executable).exists())
@@ -157,7 +157,8 @@ bool Compiler::compile(QTextStream &output)
     QString outputFile(binDir->absolutePath() + "/" + *(projectName));
 
     QStringList args;
-    args << inputFile << "-I" << binDir->absolutePath() + "/" + "vars.h" << "-o" << outputFile;
+
+    args << inputFile << "-I " << binDir->absolutePath() + "/" + "vars.h" << "-o" << outputFile;
 
     QProcess clang;
 
@@ -323,11 +324,12 @@ bool Compiler::generateProject(QTextStream& output)
             includes->append("../Primitives/" + *(base->getName()) + "/" + *(base->getName()) + ".cpp");
     includes->append("vars.h");
 
+    QTextStream stream(&projectFile);
+
 #ifdef Q_OS_WIN
-    includes->append("<stdlib.h>");
+    stream << "#include <cstdlib>\n";
 #endif
 
-    QTextStream stream(&projectFile);
     while (!includes->isEmpty()){
         stream << "#include \"";
         stream << includes->pop();
