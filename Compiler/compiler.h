@@ -3,10 +3,9 @@
 
 #include "compiler_global.h"
 
-#include <QVector>
-#include <QStack>
-#include <QHash>
-
+template<typename T>class QVector;
+template<typename T>class QStack;
+template<typename T1, typename T2>class QHash;
 class QTextStream;
 class QString;
 class QDir;

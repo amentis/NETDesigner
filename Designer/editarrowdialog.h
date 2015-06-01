@@ -2,8 +2,7 @@
 #define EDITARROWDIALOG_H
 
 #include <QDialog>
-#include <QVector>
-
+template<typename T>class QVector;
 class Arrow;
 class Base;
 class QStringList;

@@ -2,8 +2,7 @@
 #define EDITOR_H
 
 #include <QWidget>
-#include <QVector>
-
+template<typename T>class QVector;
 class QPoint;
 class QPainter;
 class QMouseEvent;

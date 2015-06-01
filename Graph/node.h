@@ -4,8 +4,7 @@
 #include "graph_global.h"
 
 #include <QObject>
-#include <QVector>
-
+template<typename T>class QVector;
 class QString;
 class QPoint;
 class QRect;

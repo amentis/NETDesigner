@@ -7,6 +7,12 @@
 
 PrimitivesLoader::PrimitivesLoader()
 {
+    mSrcFiles = new QHash<QString, QString*>();
+}
+
+PrimitivesLoader::~PrimitivesLoader()
+{
+    delete mSrcFiles;
 }
 
 Base*PrimitivesLoader::loadBase(QString* name, QString* infoFileDir, QString* srcFile)
@@ -48,13 +54,13 @@ Base*PrimitivesLoader::loadBase(QString* name, QString* infoFileDir, QString* sr
 
     infoFile.close();
 
-    mSrcFiles.insert(*name, srcFile);
+    mSrcFiles->insert(*name, srcFile);
     return base;
 }
 
 QString*PrimitivesLoader::srcFile(QString* baseName)
 {
-    return mSrcFiles.value(*baseName);
+    return mSrcFiles->value(*baseName);
 }
 
 Primitive*PrimitivesLoader::findPrimitiveByName(QVector<Base*>* bases, QString* primitiveName)

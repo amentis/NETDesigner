@@ -2,8 +2,7 @@
 #define BROWSEPRIMITIVESDIALOG_H
 
 #include <QDialog>
-#include <QStringList>
-
+class QStringList;
 class QStringListModel;
 class QAbstractButton;
 class QString;
@@ -34,9 +33,9 @@ private:
     PrimitivesLoader* primitivesLoader;
 
     QStringListModel* basesListModel;
-    QStringList basesList;
+    QStringList* basesList;
     QStringListModel* primitivesListModel;
-    QStringList primitivesList;
+    QStringList* primitivesList;
 
     MainWindow* mParent;
 

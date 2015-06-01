@@ -4,9 +4,8 @@
 #include "graph_global.h"
 
 #include <QObject>
-#include <QVector>
-#include <QHash>
-
+template<typename T>class QVector;
+template<typename T1, typename T2>class QHash;
 class QPoint;
 class QPainter;
 
@@ -44,7 +43,7 @@ public:
 
 private:
     QVector<Primitive*>* mPrimitives;
-    QHash<QString, QString*> mPrimitiveArguments;
+    QHash<QString, QString*>* mPrimitiveArguments;
     bool leadsToSubnet;
     Node* mFrom;
     Node* mTo;

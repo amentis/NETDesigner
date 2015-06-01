@@ -33,16 +33,21 @@ BrowsePrimitivesDialog::BrowsePrimitivesDialog(QVector<Base*>*& bases, QString* 
     projectPrimitivesPath = new QString(*projectDirectory);
     projectPrimitivesPath->append("/Primitives");
 
-    basesList.clear();
+    basesList = new QStringList();
+    basesList->clear();
     for (const auto& base : *mBases){
-        basesList.append(*(base->getName()));
+        basesList->append(*(base->getName()));
     }
     emit basesListChanged();
+
+    primitivesList = new QStringList();
 }
 
 BrowsePrimitivesDialog::~BrowsePrimitivesDialog()
 {
     delete ui;
+    delete basesList;
+    delete primitivesList;
 }
 
 void BrowsePrimitivesDialog::setUnloadEnabled(bool enabled)
@@ -57,11 +62,6 @@ void BrowsePrimitivesDialog::loadBase()
                 QDir::homePath(),
                 tr("NETDesigner Base Primitives Directories"));
     dialog.setAcceptMode(QFileDialog::AcceptOpen);
-//    dialog.setFileMode(QFileDialog::Directory);
-//    dialog.setOption(QFileDialog::ShowDirsOnly, true);
-//    if (dialog.exec() != QFileDialog::Accepted)
-//        return;
-//    QString filePath = dialog.selectedFiles()[0];
     QString filePath = QFileDialog::getExistingDirectory(this, tr("Load Primitives Base"),
                                                          QDir::homePath(),
                                                          QFileDialog::ShowDirsOnly);
@@ -94,7 +94,7 @@ void BrowsePrimitivesDialog::loadBase()
                                               new QString(path.absoluteFilePath(origin.dirName()).append(".info")),
                                               new QString(path.absoluteFilePath(origin.dirName()).append(".cpp"))));
 
-    basesList.append(origin.dirName());
+    basesList->append(origin.dirName());
     emit basesListChanged();
 }
 
@@ -115,13 +115,13 @@ void BrowsePrimitivesDialog::unloadBase()
     }
     mBases->removeAll(toRemove);
 
-    basesList.removeAll(ui->basesListView->currentIndex().data().toString());
+    basesList->removeAll(ui->basesListView->currentIndex().data().toString());
     emit basesListChanged();
 }
 
 void BrowsePrimitivesDialog::setBasesList()
 {
-    basesListModel->setStringList(basesList);
+    basesListModel->setStringList(*basesList);
     ui->basesListView->setModel(basesListModel);
 
     setPrimitivesList(ui->basesListView->currentIndex());
@@ -136,13 +136,13 @@ void BrowsePrimitivesDialog::setPrimitivesList(const QModelIndex& index)
             break;
         }
     }
-    primitivesList.clear();
+    primitivesList->clear();
     if (currentBase){
         for (const auto& primitive : *currentBase->primitives()){
-            primitivesList.append(*primitive->definition());
+            primitivesList->append(*primitive->definition());
         }
     }
-    primitivesListModel->setStringList(primitivesList);
+    primitivesListModel->setStringList(*primitivesList);
     ui->primitivesListView->setModel(primitivesListModel);
 
     if (currentBase)

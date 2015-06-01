@@ -3,7 +3,7 @@
 
 #include "primitivesloader_global.h"
 
-#include <QVector>
+template <typename T>class QVector;
 
 class QString;
 

@@ -4,7 +4,7 @@
 #include "primitivesloader_global.h"
 
 class QString;
-#include <QVector>
+template <typename T> class QVector;
 
 class Primitive;
 

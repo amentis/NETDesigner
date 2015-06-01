@@ -2,9 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QVector>
 #include <QModelIndex>
-
+template<typename T>class QVector;
 class QString;
 class QStringListModel;
 class QStringList;

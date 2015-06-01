@@ -15,8 +15,8 @@ Arrow::Arrow(QObject *parent) : QObject(parent),
 }
 
 Arrow::Arrow(Node *from, Node *to, QString *expression, QObject *parent) : QObject(parent),
-mPrimitives(new QVector<Primitive*>), leadsToSubnet(false), mFrom(from), mTo(to),
-  mExpression(expression), mRects(new QVector<QRect>),drawPath(nullptr), drawHead(nullptr), labelPosition(nullptr),
+mPrimitives(new QVector<Primitive*>), mPrimitiveArguments(new QHash<QString, QString*>), leadsToSubnet(false),
+  mFrom(from), mTo(to), mExpression(expression), mRects(new QVector<QRect>),drawPath(nullptr), drawHead(nullptr), labelPosition(nullptr),
 callTo(nullptr), mLoops(0), mRecursion(0), mExecuteBack(true)
 {
     mFrom->addArrowOut(this);
@@ -27,6 +27,7 @@ callTo(nullptr), mLoops(0), mRecursion(0), mExecuteBack(true)
 Arrow::~Arrow()
 {
     delete mPrimitives;
+    delete mPrimitiveArguments;
     delete mExpression;
     delete mRects;
     delete drawPath;
@@ -134,12 +135,12 @@ void Arrow::addPrimitive(Primitive* primitive)
 
 QString*Arrow::argumentsForPrimitive(QString* primitiveName)
 {
-    return mPrimitiveArguments.value(*primitiveName);
+    return mPrimitiveArguments->value(*primitiveName);
 }
 
 void Arrow::setArgumentsForPrimitive(QString* primitiveName, QString* arguments)
 {
-    mPrimitiveArguments.insert(*primitiveName, arguments);
+    mPrimitiveArguments->insert(*primitiveName, arguments);
 }
 
 bool Arrow::subnetCalled(QString*& subnetName)
