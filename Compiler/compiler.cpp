@@ -156,9 +156,17 @@ bool Compiler::compile(QTextStream &output)
     QString inputFile(binDir->absolutePath() + "/" + *(projectName) + ".cpp");
     QString outputFile(binDir->absolutePath() + "/" + *(projectName));
 
+#ifdef Q_OS_WIN
+    outputFile.append(".exe");
+#endif
+
     QStringList args;
 
-    args << "-v" << "-I" << binDir->absolutePath() + "/" + "vars.h " << inputFile << "-o" << outputFile;
+#ifdef Q_OS_WIN
+    args << "-target=i686-w64-mingw32";
+#endif
+
+    args << "-include" << binDir->absolutePath() + "/" + "vars.h " << inputFile << "-o" << outputFile;
 
     QProcess clang;
 
@@ -327,7 +335,7 @@ bool Compiler::generateProject(QTextStream& output)
     QTextStream stream(&projectFile);
 
 #ifdef Q_OS_WIN
-    stream << "#include <cstdlib>\n";
+    stream << "#include <stdlib.h>\n";
 #endif
 
     while (!includes->isEmpty()){
