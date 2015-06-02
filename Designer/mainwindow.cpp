@@ -537,7 +537,7 @@ void MainWindow::run()
 #ifdef Q_OS_WIN
     QString pathToExecutable = (binDir.absoluteFilePath(projectName) + ".exe");
 
-    QString command = "cmd " + pathToExecutable;
+    QString command = "cmd /C " + pathToExecutable;
 #else
     QString pathToExecutable = (binDir.absoluteFilePath(projectName));
 
