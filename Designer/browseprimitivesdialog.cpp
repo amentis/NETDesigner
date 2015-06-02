@@ -34,13 +34,12 @@ BrowsePrimitivesDialog::BrowsePrimitivesDialog(QVector<Base*>*& bases, QString* 
     projectPrimitivesPath->append("/Primitives");
 
     basesList = new QStringList();
+    primitivesList = new QStringList();
     basesList->clear();
     for (const auto& base : *mBases){
         basesList->append(*(base->getName()));
     }
     emit basesListChanged();
-
-    primitivesList = new QStringList();
 }
 
 BrowsePrimitivesDialog::~BrowsePrimitivesDialog()

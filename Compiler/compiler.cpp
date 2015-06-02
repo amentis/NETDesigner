@@ -158,7 +158,7 @@ bool Compiler::compile(QTextStream &output)
 
     QStringList args;
 
-    args << inputFile << "-I " << binDir->absolutePath() + "/" + "vars.h" << "-o" << outputFile;
+    args << "-v" << "-I" << binDir->absolutePath() + "/" + "vars.h " << inputFile << "-o" << outputFile;
 
     QProcess clang;
 
