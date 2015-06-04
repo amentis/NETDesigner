@@ -29,25 +29,29 @@ Base*PrimitivesLoader::loadBase(QString* name, QString* infoFileDir, QString* sr
     while(!stream.atEnd()){
         QString str = stream.readLine();
 
-        QStringList line = str.split(":");
+        QStringList line = str.split(":", QString::SkipEmptyParts);
         QString primitiveName = line[0].remove(" ");
         Primitive* primitive = new Primitive(base, new QString(primitiveName));
-        QStringList arguments = line[1].split(",");
-        for (const auto& argument : arguments){
-            QString argType = argument.split(" ", QString::SkipEmptyParts)[0].toLower().remove("*").remove("&");
-            QString* argName = new QString(argument.split(" ", QString::SkipEmptyParts)[1]);
-            if (argType == "int"){
-                primitive->addArgument(Primitive::ArgumentType::Int, argName);
-            } else if (argType == "float" || argType == "real") {
-                primitive->addArgument(Primitive::ArgumentType::Real, argName);
-            } else if (argType == "bool" || argType == "boolean") {
-                primitive->addArgument(Primitive::ArgumentType::Bool, argName);
-            } else if (argType == "string" || argType == "char") {
-                primitive->addArgument(Primitive::ArgumentType::String, argName);
-            } else {
-                qCritical("Critical error loading primitive %s : invalid argument type %s!",
-                          str.toLocal8Bit().constData(), argType.toLocal8Bit().constData());
-                return nullptr;
+        if (line.size() > 1){
+            QStringList arguments = line[1].split(",");
+            for (const auto& argument : arguments){
+                if (QString(argument).remove(" ") == "")
+                    continue;
+                QString argType = argument.split(" ", QString::SkipEmptyParts)[0].toLower().remove("*").remove("&");
+                QString* argName = new QString(argument.split(" ", QString::SkipEmptyParts)[1]);
+                if (argType == "int"){
+                    primitive->addArgument(Primitive::ArgumentType::Int, argName);
+                } else if (argType == "float" || argType == "real") {
+                    primitive->addArgument(Primitive::ArgumentType::Real, argName);
+                } else if (argType == "bool" || argType == "boolean") {
+                    primitive->addArgument(Primitive::ArgumentType::Bool, argName);
+                } else if (argType == "string" || argType == "char") {
+                    primitive->addArgument(Primitive::ArgumentType::String, argName);
+                } else {
+                    qCritical("Critical error loading primitive %s : invalid argument type %s!",
+                              str.toLocal8Bit().constData(), argType.toLocal8Bit().constData());
+                    return nullptr;
+                }
             }
         }
     }

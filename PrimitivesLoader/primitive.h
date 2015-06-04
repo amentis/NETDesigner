@@ -21,6 +21,7 @@ public:
     Base* base();
     QString* name();
     QString* definition();
+    bool hasArguments();
     void addArgument(ArgumentType type, QString* name);
 private:
     QVector<Argument*>* mArguments;

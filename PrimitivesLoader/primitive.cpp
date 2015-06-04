@@ -52,6 +52,11 @@ QString*Primitive::definition()
     return result;
 }
 
+bool Primitive::hasArguments()
+{
+    return (!(mArguments->size() == 0));
+}
+
 void Primitive::addArgument(Primitive::ArgumentType type, QString* name)
 {
     mArguments->append(new Argument{type, name});

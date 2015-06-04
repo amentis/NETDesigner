@@ -210,7 +210,8 @@ bool Graph::loadFromStream(QTextStream &stream, QVector<Base*>* bases)
                     return false;
                 }
                 arrow->addPrimitive(primitive);
-                arrow->setArgumentsForPrimitive(new QString(def[0]), new QString(def[1]));
+                if (def.length() > 1)
+                    arrow->setArgumentsForPrimitive(new QString(def[0]), new QString(def[1]));
             }
         }
         mArrows->append(arrow);

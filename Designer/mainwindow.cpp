@@ -544,9 +544,9 @@ void MainWindow::run()
     QString command;
 
     if (QFile("/bin/konsole").exists()){
-        command = "/bin/konsole -e " + pathToExecutable + " --noclose --nofork";
+        command = "/bin/konsole -e " + pathToExecutable + " --hold --nofork";
     } else if (QFile("/usr/bin/konsole").exists()){
-        command = "/usr/bin/konsole -e " + pathToExecutable + " --noclose --nofork";
+        command = "/usr/bin/konsole -e " + pathToExecutable + " --hold --nofork";
     } else if (QFile("/bin/gnome-terminal").exists()){
         ui->outputBrowser->append("[Note] Gnome terminal does not provide a command line option to hold the terminal after command execution. To make the terminal stay after execution go to go to Edit -> Profile Preferences -> Title. Click the Command tab. Select Hold the terminal from the drop-down menu labelled When command exits.\n");
         command = "/bin/gnome-terminal -e " + pathToExecutable;

@@ -108,13 +108,17 @@ void EditArrowDialog::addPrimitive()
     if (primitive == nullptr)
         return;
     bool ok;
-    QString text = QInputDialog::getText(this, tr("Primitive Arguments"),
-                                         tr("Enter comma-separated arguments for primitive %1").
-                                         arg(*(primitive->definition())),
-                                         QLineEdit::Normal, "", &ok);
-    if (!ok || text.isEmpty())
-        return;
-    chained.append(primitiveName + "(" + text + ")");
+    if (primitive->hasArguments()){
+        QString text = QInputDialog::getText(this, tr("Primitive Arguments"),
+                                             tr("Enter comma-separated arguments for primitive %1").
+                                             arg(*(primitive->definition())),
+                                             QLineEdit::Normal, "", &ok);
+        if (!ok || text.isEmpty())
+            return;
+        chained.append(primitiveName + "(" + text + ")");
+    } else {
+        chained.append(primitiveName + "()");
+    }
     emit chainedPrimitivesListChanged();
 }
 

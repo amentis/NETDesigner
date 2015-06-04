@@ -166,7 +166,7 @@ bool Compiler::compile(QTextStream &output)
     args << "-target=i686-w64-mingw32";
 #endif
 
-    args << "-include" << binDir->absolutePath() + "/" + "vars.h " << inputFile << "-o" << outputFile;
+    args << "-I" << binDir->absolutePath() << inputFile << "-o" << outputFile;
 
     QProcess clang;
 
@@ -218,7 +218,7 @@ bool Compiler::build(QTextStream &output)
     if (checkForErrors(output)){
             if (translate(output)){
                 if (compile(output)){
-                    clean(output);
+                    //clean(output);
                     output << "[Build] Success \n";
                     return true;
                 }
@@ -565,9 +565,9 @@ bool Compiler::generateArrow(Arrow* arrow, Graph* graph, QTextStream& output)
     stream << fileName;
     stream << "(bool _FORW){\n";
     stream << "    FORW = _FORW;\n\n";
-    stream << "    int progress = (FORW)? ";
+    stream << "    int progress = (FORW)? 0 : ";
     stream << arrow->primitives()->size() - 1;
-    stream << ": 0;\n\n";
+    stream << " ;\n\n";
 
     if (subnetCalled){
         stream << "    if (FORW)\n";
@@ -583,7 +583,8 @@ bool Compiler::generateArrow(Arrow* arrow, Graph* graph, QTextStream& output)
         stream << "::";
         stream << *(primitive->name());
         stream << "(";
-        stream << *(arrow->argumentsForPrimitive(primitive->name()));
+        if (primitive->hasArguments())
+            stream << *(arrow->argumentsForPrimitive(primitive->name()));
         stream << ")){\n";
         stream << "            progress ++;\n        } else {\n            FORW = false;\n        }\n    }\n";
     }
@@ -597,7 +598,8 @@ bool Compiler::generateArrow(Arrow* arrow, Graph* graph, QTextStream& output)
         stream << "::";
         stream << *(arrow->primitives()->at(i)->name());
         stream << "(";
-        stream << *(arrow->argumentsForPrimitive(arrow->primitives()->at(i)->name()));
+        if (arrow->primitives()->at(i)->hasArguments())
+            stream << *(arrow->argumentsForPrimitive(arrow->primitives()->at(i)->name()));
         stream << ");\n";
     }
     stream << "        }\n        return false;\n    }\nreturn ";
@@ -653,6 +655,9 @@ bool Compiler::calculateVars(Graph* net, QTextStream& output)
                     primitive->definition()->split("(", QString::SkipEmptyParts)[1].remove(")");
             QStringList primitiveArgs = primitiveArgsString.split(",",QString::SkipEmptyParts);
 
+            if (primitiveArgs.size() == 0)
+                continue;
+
             QString arrowPrimitiveArgsString(*(arrow->argumentsForPrimitive(&name)));
             QStringList arrowPrimitiveArgs = arrowPrimitiveArgsString.split(",");
 
@@ -669,8 +674,11 @@ bool Compiler::calculateVars(Graph* net, QTextStream& output)
 
             for (int i = 0; i<arrowPrimitiveArgs.size(); ++i){
                 QString arrowPrimitiveArg = arrowPrimitiveArgs[i].remove(" ");
-                QRegExp regexp("\\d*");
-                if (regexp.exactMatch(arrowPrimitiveArg))
+                QRegExp regExpD("\\d*");
+                QRegExp regExpF("\\d+\\.?\\d*");
+                if (regExpD.exactMatch(arrowPrimitiveArg) || regExpF.exactMatch(arrowPrimitiveArg)
+                        || arrowPrimitiveArg.compare("true", Qt::CaseInsensitive) == 0
+                        || arrowPrimitiveArg.compare("false", Qt::CaseInsensitive) == 0)
                     continue;
                 QString primitiveArg = primitiveArgs[i];
                 VarType argType;
