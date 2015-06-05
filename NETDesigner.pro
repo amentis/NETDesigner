@@ -6,5 +6,6 @@ SUBDIRS += \
     PrimitivesLoader \
     Graph \
     Compiler \
-    Designer
+    Designer \
+    Tests
 
