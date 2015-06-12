@@ -659,7 +659,15 @@ void MainWindow::projectUnload()
 
 void MainWindow::help()
 {
-    QMessageBox::about(this, tr("NETDesigner help"), tr("Left mouse button anywhere on the canvas creates a node. Left-clicking that node again edits that node. Right-click to delete. Hover on any node to make the add-arrow button show. Click it and click on another node to create an arrow. Right-click the arrow to delete it, left-click to edit"));
+#ifdef QT_NO_DEBUG
+#ifndef QT_OS_WIN
+    QDesktopServices::openUrl(QUrl("file:///usr/share/NETDesigner/Manual.pdf"));
+#else
+    QDesktopServices::openUrl(QUrl("file://" + qApp->applicationDirPath() + "/Manual.pdf"));
+#endif
+#else
+    QDesktopServices::openUrl(QUrl("file://" + qApp->applicationDirPath() + "/Manual.pdf"));
+#endif
 }
 
 void MainWindow::about()
@@ -670,6 +678,7 @@ void MainWindow::about()
 void MainWindow::modified()
 {
         ui->actionSave_All_Nets->setEnabled(true);
+        ui->actionSave_Project->setEnabled(true);
         checkTabModified(ui->editorTabWidget->currentIndex());
 
         int index = ui->editorTabWidget->currentIndex();
@@ -682,6 +691,8 @@ void MainWindow::modified()
 
         netsListModel->setStringList(netsList);
         ui->netsListView->setModel(netsListModel);
+
+        mModified = true;
 }
 
 void MainWindow::saved()
@@ -691,7 +702,7 @@ void MainWindow::saved()
         int listViewIndex = netsList.indexOf(ui->editorTabWidget->tabText(index).remove("&"));
         ui->editorTabWidget->setTabText(index, ui->editorTabWidget->tabText(index).remove("*"));
         netsList.removeAt(listViewIndex);
-        netsList.insert(listViewIndex, ui->editorTabWidget->tabText(index).remove("&"));
+        netsList.insert(listViewIndex, ui->editorTabWidget->tabText(index).remove("&").remove("*"));
 
         netsListModel->setStringList(netsList);
         ui->netsListView->setModel(netsListModel);
