@@ -42,6 +42,9 @@ public:
 
     const QVector<Arrow*>* arrowsIn();
     const QVector<Arrow*>* arrowsOut();
+    int arrowInInternalIndex(Arrow* arrow);
+    int arrowOutInternalIndex(Arrow* arrow);
+    QVector<Arrow*>* arrowsLeadingToOtherNode(Node* node);
 
 private:
     void setRect();

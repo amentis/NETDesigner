@@ -1,5 +1,7 @@
 #include "arrow.h"
 
+#include <qmath.h>
+
 #include <QtGui>
 
 #include "node.h"
@@ -172,22 +174,87 @@ void Arrow::calculatePathsAndRect()
     int xDistance = abs(mFrom->tightRect()->center().x() - mTo->tightRect()->center().x());
     int yDistance = abs(mFrom->tightRect()->center().y() - mTo->tightRect()->center().y());
 
+    int xFrom;
+    int yFrom;
+    int xTo;
+    int yTo;
+
     //arrow body
+
 
     if (abs(xDistance - yDistance) < 50){
         //side of from, top/bottom of to
         targetIsSide = false;
 
+        //calculate arrow position relative to from
+
+        QVector<Arrow*> arrowsDrawnAtFrom(*(mFrom->arrowsOut()));
+        for (const auto& arrow : *(mTo->arrowsLeadingToOtherNode(mFrom))){
+            arrowsDrawnAtFrom.append(arrow);
+        }
+
+        // divide the side of the rect into even parts
+        unsigned segmentSize = mFrom->tightRect()->height() / (arrowsDrawnAtFrom.size() + 2);
+
+        // determine index of the arrow relative to from
+
+        unsigned idx = arrowsDrawnAtFrom.indexOf(this);
+
+        unsigned index;
+
+        if ((arrowsDrawnAtFrom.size()%2) && idx == 0)
+            index = qFloor(((float)(arrowsDrawnAtFrom.size())) / 2);
+        else
+            index = (!(idx%2))? idx/2 :
+                                  ((arrowsDrawnAtFrom.size()%2)? qFloor(((float)(arrowsDrawnAtFrom.size())) / 2) :
+                                                                 arrowsDrawnAtFrom.size() / 2) +
+                                (arrowsDrawnAtFrom.size() - qCeil(idx/2));
+
+        // determine offset from edge of rect
+
+        unsigned offset = (index == 0)? (qAbs(mFrom->tightRect()->center().y() - mFrom->tightRect()->bottom())) :
+                                        (index * segmentSize);
+
+        yFrom = mFrom->tightRect()->bottom() - offset; // y coordinate to draw from
+
+        //calculate arrows position relatice to to
+
+        QVector<Arrow*> arrowsDrawnAtTo(*(mTo->arrowsIn()));
+        for (const auto& arrow : *(mTo->arrowsLeadingToOtherNode(mFrom))){
+            arrowsDrawnAtTo.append(arrow);
+        }
+
+        // divide the side of the rect into even parts
+        segmentSize = mTo->tightRect()->width() / (arrowsDrawnAtTo.size() + 2);
+
+        // determine index of the arrow relative to to
+
+        idx = arrowsDrawnAtTo.indexOf(this);
+
+        if ((arrowsDrawnAtTo.size()%2) && idx == 0)
+            index = qFloor(((float)arrowsDrawnAtTo.size()) / 2);
+        else
+            index = (!(idx%2))? idx/2 :
+                                  ((arrowsDrawnAtTo.size()%2)? qFloor(((float)(arrowsDrawnAtTo.size())) / 2) :
+                                                               arrowsDrawnAtTo.size() / 2) +
+                                  (arrowsDrawnAtTo.size() - qCeil(idx/2));
+
+        // determine offset from edge of rect
+
+        offset = (index == 0)? (qAbs(mTo->tightRect()->center().x() - mTo->tightRect()->left())) : (index * segmentSize);
+
+        xTo = mTo->tightRect()->left() + offset; // x coordinate to draw from
+
         drawPath = new QPoint[3];
         drawPathLength = 3;
 
-        drawPath[0] = QPoint((fromIsLeftFromTo)? mFrom->tightRect()->right() : mFrom->tightRect()->left(),
-                              mFrom->tightRect()->center().y());
-        drawPath[1] = QPoint(mTo->tightRect()->center().x(),
-                             mFrom->tightRect()->center().y());
-        drawPath[2] = QPoint(mTo->tightRect()->center().x(),
-                             (mFrom->tightRect()->center().y() < mTo->tightRect()->center().y())?
-                                 mTo->tightRect()->top() : mTo->tightRect()->bottom());
+        xFrom = (fromIsLeftFromTo)? mFrom->tightRect()->right() : mFrom->tightRect()->left();
+        yTo = (yFrom < mTo->tightRect()->center().y())?
+                    mTo->tightRect()->top() : mTo->tightRect()->bottom();
+
+        drawPath[0] = QPoint(xFrom, yFrom);
+        drawPath[1] = QPoint(xTo, yFrom);
+        drawPath[2] = QPoint(xTo, yTo);
 
         //rects
         mRects->append(QRect((fromIsLeftFromTo)? drawPath[0].x() : drawPath[1].x(),
@@ -202,18 +269,78 @@ void Arrow::calculatePathsAndRect()
     } else if (xDistance < yDistance){
         //top to bottom
         targetIsSide = false;
+
+        //calculate arrow position relative to from
+
+        QVector<Arrow*> arrowsDrawnAtFrom(*(mFrom->arrowsOut()));
+        for (const auto& arrow : *(mTo->arrowsLeadingToOtherNode(mFrom))){
+            arrowsDrawnAtFrom.append(arrow);
+        }
+
+        // divide the side of the rect into even parts
+        unsigned segmentSize = mFrom->tightRect()->width() / (arrowsDrawnAtFrom.size() + 2);
+
+        // determine index of the arrow relative to from
+
+        unsigned idx = arrowsDrawnAtFrom.indexOf(this);
+
+        unsigned index;
+
+        if ((arrowsDrawnAtFrom.size()%2) && idx == 0)
+            index = qFloor(((float)(arrowsDrawnAtFrom.size())) / 2);
+        else
+            index = (!(idx%2))? idx/2 :
+                                  ((arrowsDrawnAtFrom.size()%2)? qFloor(((float)(arrowsDrawnAtFrom.size())) / 2) :
+                                                                 arrowsDrawnAtFrom.size() / 2) +
+                                (arrowsDrawnAtFrom.size() - qCeil(idx/2));
+
+        // determine offset from edge of rect
+
+        unsigned offset = (index == 0)? (qAbs(mFrom->tightRect()->center().x() - mFrom->tightRect()->left())) :
+                                        (index * segmentSize);
+
+        xFrom = mFrom->tightRect()->left() + offset; // x coordinate to draw from
+
+        //calculate arrows position relative to to
+
+        QVector<Arrow*> arrowsDrawnAtTo(*(mTo->arrowsIn()));
+        for (const auto& arrow : *(mTo->arrowsLeadingToOtherNode(mFrom))){
+            arrowsDrawnAtTo.append(arrow);
+        }
+
+        // divide the side of the rect into even parts
+        segmentSize = mTo->tightRect()->width() / (arrowsDrawnAtTo.size() + 2);
+
+        // determine index of the arrow relative to to
+
+        idx = arrowsDrawnAtTo.indexOf(this);
+
+        if ((arrowsDrawnAtTo.size()%2) && idx == 0)
+            index = qFloor(((float)arrowsDrawnAtTo.size()) / 2);
+        else
+            index = (!(idx%2))? idx/2 :
+                                  ((arrowsDrawnAtTo.size()%2)? qFloor(((float)(arrowsDrawnAtTo.size())) / 2) :
+                                                               arrowsDrawnAtTo.size() / 2) +
+                                  (arrowsDrawnAtTo.size() - qCeil(idx/2));
+
+        // determine offset from edge of rect
+
+        offset = (index == 0)? (qAbs(mTo->tightRect()->center().x() - mTo->tightRect()->left())) : (index * segmentSize);
+
+        xTo = mTo->tightRect()->left() + offset; // x coordinate to draw from
+
         if (fromIsHigherThanTo){
             drawPath = new QPoint[4];
             drawPathLength = 4;
-            drawPath[0] = QPoint(mFrom->tightRect()->center().x(),
-                                 mFrom->tightRect()->bottom());
-            drawPath[1] = QPoint(mFrom->tightRect()->center().x(),
-                                 mTo->tightRect()->top() + (mFrom->tightRect()->bottom() - mTo->tightRect()->top())/2);
+            yFrom = mFrom->tightRect()->bottom();
+            yTo = mTo->tightRect()->top();
+            drawPath[0] = QPoint(xFrom, yFrom);
+            drawPath[1] = QPoint(xFrom,
+                                 mTo->tightRect()->top() - offset/2 + (mFrom->tightRect()->bottom() - mTo->tightRect()->top())/2);
 
-            drawPath[2] = QPoint(mTo->tightRect()->center().x(),
-                                 mTo->tightRect()->top() + (mFrom->tightRect()->bottom() - mTo->tightRect()->top())/2);
-            drawPath[3] = QPoint(mTo->tightRect()->center().x(),
-                                 mTo->tightRect()->top());
+            drawPath[2] = QPoint(xTo,
+                                 mTo->tightRect()->top() - offset/2 + (mFrom->tightRect()->bottom() - mTo->tightRect()->top())/2);
+            drawPath[3] = QPoint(xTo, yTo);
             //rects
             mRects->append(QRect(drawPath[0].x() - 3,
                     drawPath[0].y(),
@@ -229,16 +356,18 @@ void Arrow::calculatePathsAndRect()
                     abs(drawPath[3].y() - drawPath[2].y())));
 
         } else {
+            yFrom = mFrom->tightRect()->top();
+            yTo = mTo->tightRect()->bottom();
             drawPath = new QPoint[4];
             drawPathLength = 4;
-            drawPath[0] = QPoint(mFrom->tightRect()->center().x(),
-                                mFrom->tightRect()->top());
-            drawPath[1] = QPoint(mFrom->tightRect()->center().x(),
-                                 mTo->tightRect()->bottom() + (mFrom->tightRect()->top() - mTo->tightRect()->bottom())/2);
-            drawPath[2] = QPoint(mTo->tightRect()->center().x(),
-                                 mTo->tightRect()->bottom() + (mFrom->tightRect()->top() - mTo->tightRect()->bottom())/2);
-            drawPath[3] = QPoint(mTo->tightRect()->center().x(),
-                                 mTo->tightRect()->bottom());
+            drawPath[0] = QPoint(xFrom, yFrom);
+            drawPath[1] = QPoint(xFrom,
+                                 mTo->tightRect()->bottom() - offset/2 +
+                                 (mFrom->tightRect()->top() - mTo->tightRect()->bottom())/2);
+            drawPath[2] = QPoint(xTo,
+                                 mTo->tightRect()->bottom() - offset/2 +
+                                 (mFrom->tightRect()->top() - mTo->tightRect()->bottom())/2);
+            drawPath[3] = QPoint(xTo, yTo);
             //rects
             mRects->append(QRect(drawPath[1].x() - 3,
                     drawPath[1].y(),
@@ -256,16 +385,77 @@ void Arrow::calculatePathsAndRect()
     } else {
         //side of from, side of to
         targetIsSide = true;
+
+        //calculate arrow position relative to from
+
+        QVector<Arrow*> arrowsDrawnAtFrom(*(mFrom->arrowsOut()));
+        for (const auto& arrow : *(mTo->arrowsLeadingToOtherNode(mFrom))){
+            arrowsDrawnAtFrom.append(arrow);
+        }
+
+        // divide the side of the rect into even parts
+        unsigned segmentSize = mFrom->tightRect()->height() / (arrowsDrawnAtFrom.size() + 2);
+
+        // determine index of the arrow relative to from
+
+        unsigned idx = arrowsDrawnAtFrom.indexOf(this);
+
+        unsigned index;
+
+        if ((arrowsDrawnAtFrom.size()%2) && idx == 0)
+            index = qFloor(((float)(arrowsDrawnAtFrom.size())) / 2);
+        else
+            index = (!(idx%2))? idx/2 :
+                                  ((arrowsDrawnAtFrom.size()%2)? qFloor(((float)(arrowsDrawnAtFrom.size())) / 2) :
+                                                                 arrowsDrawnAtFrom.size() / 2) +
+                                (arrowsDrawnAtFrom.size() - qCeil(idx/2));
+
+        // determine offset from edge of rect
+
+        unsigned offset = (index == 0)? (qAbs(mFrom->tightRect()->center().y() - mFrom->tightRect()->bottom())) :
+                                        (index * segmentSize);
+
+        yFrom = mFrom->tightRect()->bottom() - offset; // x coordinate to draw from
+
+        //calculate arrows position relatice to to
+
+        QVector<Arrow*> arrowsDrawnAtTo(*(mTo->arrowsIn()));
+        for (const auto& arrow : *(mTo->arrowsLeadingToOtherNode(mFrom))){
+            arrowsDrawnAtTo.append(arrow);
+        }
+
+        // divide the side of the rect into even parts
+        segmentSize = mTo->tightRect()->height() / (arrowsDrawnAtTo.size() + 2);
+
+        // determine index of the arrow relative to to
+
+        idx = arrowsDrawnAtTo.indexOf(this);
+
+        if ((arrowsDrawnAtTo.size()%2) && idx == 0)
+            index = qFloor(((float)arrowsDrawnAtTo.size()) / 2);
+        else
+            index = (!(idx%2))? idx/2 :
+                                  ((arrowsDrawnAtTo.size()%2)? qFloor(((float)(arrowsDrawnAtTo.size())) / 2) :
+                                                               arrowsDrawnAtTo.size() / 2) +
+                                  (arrowsDrawnAtTo.size() - qCeil(idx/2));
+
+        // determine offset from edge of rect
+
+        offset = (index == 0)? (qAbs(mTo->tightRect()->center().y() - mTo->tightRect()->bottom())) : (index * segmentSize);
+
+        yTo = mTo->tightRect()->bottom() - offset; // x coordinate to draw from
+
+
         drawPath = new QPoint[4];
         drawPathLength = 4;
-        drawPath[0] = QPoint((fromIsLeftFromTo)? mFrom->tightRect()->right() : mFrom->tightRect()->left(),
-                             mFrom->tightRect()->center().y());
-        drawPath[1] = QPoint(mFrom->tightRect()->right() + (mTo->tightRect()->left() - mFrom->tightRect()->right())/2,
-                             mFrom->tightRect()->center().y());
-        drawPath[2] = QPoint(mFrom->tightRect()->right() + (mTo->tightRect()->left() - mFrom->tightRect()->right())/2,
-                             mTo->tightRect()->center().y());
-        drawPath[3] = QPoint((fromIsLeftFromTo)? mTo->tightRect()->left() : mTo->tightRect()->right(),
-                             mTo->tightRect()->center().y());
+        xFrom = (fromIsLeftFromTo)? mFrom->tightRect()->right() : mFrom->tightRect()->left();
+        xTo = (fromIsLeftFromTo)? mTo->tightRect()->left() : mTo->tightRect()->right();
+        drawPath[0] = QPoint(xFrom, yFrom);
+        drawPath[1] = QPoint(mFrom->tightRect()->right() - offset/2 + (mTo->tightRect()->left() - mFrom->tightRect()->right())/2,
+                             yFrom);
+        drawPath[2] = QPoint(mFrom->tightRect()->right() - offset/2 + (mTo->tightRect()->left() - mFrom->tightRect()->right())/2,
+                             yTo);
+        drawPath[3] = QPoint(xTo, yTo);
         //rects
         mRects->append(QRect((fromIsLeftFromTo)? drawPath[0].x() : drawPath[1].x(),
                       drawPath[0].y() - 2,
@@ -287,23 +477,23 @@ void Arrow::calculatePathsAndRect()
 
     if (targetIsSide){
         if (fromIsLeftFromTo){
-            drawHead[0] = QPoint(mTo->tightRect()->left() - 6, mTo->tightRect()->center().y() + 3);
-            drawHead[1] = QPoint(mTo->tightRect()->left(), mTo->tightRect()->center().y());
-            drawHead[2] = QPoint(mTo->tightRect()->left() - 6, mTo->tightRect()->center().y() - 3);
+            drawHead[0] = QPoint(xTo - 6, yTo + 3);
+            drawHead[1] = QPoint(xTo, yTo);
+            drawHead[2] = QPoint(xTo - 6, yTo - 3);
         } else {
-            drawHead[0] = QPoint(mTo->tightRect()->right() + 6, mTo->tightRect()->center().y() + 3);
-            drawHead[1] = QPoint(mTo->tightRect()->right(), mTo->tightRect()->center().y());
-            drawHead[2] = QPoint(mTo->tightRect()->right() + 6, mTo->tightRect()->center().y() - 3);
+            drawHead[0] = QPoint(xTo + 6, yTo + 3);
+            drawHead[1] = QPoint(xTo, yTo);
+            drawHead[2] = QPoint(xTo + 6, yTo - 3);
         }
     } else {
         if (fromIsHigherThanTo){
-            drawHead[0] = QPoint(mTo->tightRect()->center().x() + 3, mTo->tightRect()->top() - 6);
-            drawHead[1] = QPoint(mTo->tightRect()->center().x(), mTo->tightRect()->top());
-            drawHead[2] = QPoint(mTo->tightRect()->center().x() - 3, mTo->tightRect()->top() - 6);
+            drawHead[0] = QPoint(xTo + 3, yTo - 6);
+            drawHead[1] = QPoint(xTo, yTo);
+            drawHead[2] = QPoint(xTo - 3, yTo - 6);
         } else {
-            drawHead[0] = QPoint(mTo->tightRect()->center().x() + 3, mTo->tightRect()->bottom() + 6);
-            drawHead[1] = QPoint(mTo->tightRect()->center().x(), mTo->tightRect()->bottom());
-            drawHead[2] = QPoint(mTo->tightRect()->center().x() - 3, mTo->tightRect()->bottom() + 6);
+            drawHead[0] = QPoint(xTo + 3, yTo + 6);
+            drawHead[1] = QPoint(xTo, yTo);
+            drawHead[2] = QPoint(xTo - 3, yTo + 6);
         }
     }
 

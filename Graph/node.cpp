@@ -106,6 +106,40 @@ const QVector<Arrow *> *Node::arrowsOut()
     return mArrowsOut;
 }
 
+int Node::arrowInInternalIndex(Arrow* arrow)
+{
+    int result = -1;
+    for (int i = 0; i < mArrowsIn->size(); ++i){
+        if (mArrowsIn->at(i) == arrow){
+            result = i;
+            break;
+        }
+    }
+    return result;
+}
+
+int Node::arrowOutInternalIndex(Arrow* arrow)
+{
+    int result = -1;
+    for (int i = 0; i < mArrowsOut->size(); ++i){
+        if (mArrowsOut->at(i) == arrow){
+            result = i;
+            break;
+        }
+    }
+    return result;
+}
+
+QVector<Arrow*>* Node::arrowsLeadingToOtherNode(Node* node)
+{
+    QVector<Arrow*>* result = new QVector<Arrow*>();
+    for (const auto& arrow : *mArrowsOut){
+        if (arrow->to() == node)
+            result->append(arrow);
+    }
+    return result;
+}
+
 void Node::setRect()
 {
     switch (mType) {
