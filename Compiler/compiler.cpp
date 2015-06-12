@@ -432,7 +432,7 @@ bool Compiler::generateNode(Node* node, Graph* graph, QTextStream& output)
         return false;
     }
     if (node->type() == Node::NodeType::CaseNode || node->type() == Node::NodeType::ProximityNode){
-        stream << "#include <stdlib.h>\n#include <limits.h>\n\n";
+        stream << "#include <math.h>\n#include <limits.h>\n\n";
         stream << "using namespace ";
         stream << mGraphNames->at(mGraphs->indexOf(graph));
         stream << ";\n\n";
@@ -449,11 +449,11 @@ bool Compiler::generateNode(Node* node, Graph* graph, QTextStream& output)
     stream << ";\n";
 
     if (node->type() == Node::NodeType::CaseNode || node->type() == Node::NodeType::ProximityNode){
-        stream << "double res = ";
-        stream << node->expression();
-        stream << ";";
+        stream << "    double res = ";
+        stream << *(node->expression());
+        stream << ";\n";
 
-        stream << "double consts[] =  {";
+        stream << "    double consts[] =  {";
         bool first = true;
         for (const auto& arrow : *(node->arrowsOut())){
             if (first){
@@ -465,9 +465,9 @@ bool Compiler::generateNode(Node* node, Graph* graph, QTextStream& output)
         }
         stream << "};\n\n";
 
-        stream << "int arrIndex = 0;\n\n";
+        stream << "    int arrIndex = 0;\n\n";
 
-        stream << "arrow unsorted[] = {";
+        stream << "    arrow unsorted[] = {";
 
         first = true;
         for (const auto& arrow : *(node->arrowsOut())){
@@ -488,31 +488,31 @@ bool Compiler::generateNode(Node* node, Graph* graph, QTextStream& output)
         stream << "};\n";
 
         if (node->arrowsOut()->size() == 1){
-            stream << "arrow arrs[2];\n";
-            stream << "arrs[1] = 0;\n";
+            stream << "    arrow arrs[2];\n";
+            stream << "    arrs[1] = 0;\n";
         } else {
-            stream << "arrow arrs[";
+            stream << "    arrow arrs[";
             stream << node->arrowsOut()->size();
             stream << "];\n";
         }
 
-        stream << "for (int i = 0; i < ";
+        stream << "    for (int i = 0; i < ";
         stream << node->arrowsOut()->size();
         stream << "; ++i){\n";
-        stream << "int distance = abs(consts[0] - res);\n";
-        stream << "int idx = 0;\n";
-        stream << "for (int c = 1; c < ";
+        stream << "        double distance = fabs(consts[0] - res);\n";
+        stream << "        int idx = 0;\n";
+        stream << "        for (int c = 1; c < ";
         stream << node->arrowsOut()->size();
         stream << "; ++c){\n";
-        stream << "int cdistance = abs(consts[c] - res);\n";
-        stream << "if (cdistance < distance){\n";
-        stream << "idx = c;\n";
-        stream << "distance = cdistance;\n";
-        stream << "}\n}\n";
-        stream << "arrs[arrsIndex] = unsorted[idx];\n";
-        stream << "arrsIndex++;\n";
-        stream << "consts[idx] = INT_MAX;\n";
-        stream << "}\n";
+        stream << "            double cdistance = fabs(consts[c] - res);\n";
+        stream << "            if (cdistance < distance){\n";
+        stream << "                idx = c;\n";
+        stream << "                distance = cdistance;\n";
+        stream << "            }\n        }\n";
+        stream << "        arrs[arrIndex] = unsorted[idx];\n";
+        stream << "        arrIndex++;\n";
+        stream << "        consts[idx] = INT_MAX;\n";
+        stream << "    }\n";
     } else {
         stream << "    arrow arrs[] = {";
 
