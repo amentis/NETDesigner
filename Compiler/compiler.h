@@ -49,6 +49,8 @@ private:
     QString* mMainGraph;
     QStack<QString>* includes;
 
+    QStringList* basesFailedLoading;
+
     QDir* srcDir;
     QDir* binDir;
 };

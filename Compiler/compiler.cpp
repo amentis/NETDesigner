@@ -54,9 +54,12 @@ Compiler::Compiler(QVector<Base*>* bases, QString* projectPath, QString* mainGra
         QFile file (fileInfo.absoluteFilePath());
         file.open(QIODevice::ReadOnly);
         QTextStream stream(&file);
+        basesFailedLoading = new QStringList();
         if (tmp->loadFromStream(stream, mBases)){
             mGraphNames->append(fileInfo.baseName());
             mGraphs->append(tmp);
+        } else {
+            basesFailedLoading->append(fileInfo.fileName());
         }
         file.close();
     }
@@ -79,7 +82,18 @@ bool Compiler::checkForErrors(QTextStream &output)
         return false;
     }
 
+    if (!basesFailedLoading->isEmpty()){
+        for (const auto& str : *basesFailedLoading)
+            output << "[Error] Failed loading base " << str << "! Check if base is valid!\n";
+        return false;
+    }
+
     bool fail = false;
+
+    if (mMainGraph->remove(" ") == ""){
+        output << "[Error] No main net selected!\n";
+        return false;
+    }
 
     QDir primitivesDir(srcDir->absolutePath() + "/Primitives");
     QFileInfoList files = primitivesDir.entryInfoList();
@@ -99,6 +113,11 @@ bool Compiler::checkForErrors(QTextStream &output)
 
     if (fail){
         output << "Failed to compile due to errors in code.\n";
+        return false;
+    }
+
+    if (mGraphs->isEmpty()){
+        output << "[Error] No graphs to compile!\n";
         return false;
     }
 
