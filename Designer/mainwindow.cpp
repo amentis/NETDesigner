@@ -103,7 +103,8 @@ MainWindow::~MainWindow()
 void MainWindow::setBases(QVector<Base*>* newBases)
 {
     projectBases->clear();
-    projectBases->swap(*newBases);
+    for (const auto& base: *newBases)
+        projectBases->append(base);
 }
 
 void MainWindow::createProject()

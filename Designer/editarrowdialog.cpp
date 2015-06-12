@@ -48,7 +48,7 @@ EditArrowDialog::EditArrowDialog(QVector<Base*>* bases, QStringList* nets, Arrow
 
     emit chainedPrimitivesListChanged();
 
-    QStringListModel* netsModel = new QStringListModel(QStringList(*nets), this);
+    QStringListModel* netsModel = new QStringListModel(QStringList(nets->replaceInStrings("*","")), this);
     ui->subnetComboBox->setModel(netsModel);
 }
 

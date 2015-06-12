@@ -25,7 +25,7 @@ ProgramOptionsDialog::ProgramOptionsDialog(int solutions, int loops, unsigned re
     ui->setupUi(this);
     connect(ui->buttonBox, &QDialogButtonBox::clicked, this, &ProgramOptionsDialog::handleExit);
 
-    QStringListModel* listModel = new QStringListModel(QStringList(*nets));
+    QStringListModel* listModel = new QStringListModel(QStringList(nets->replaceInStrings("*", "")));
     ui->selectMainNetcomboBox->setModel(listModel);
     if (mainNetName)
         ui->selectMainNetcomboBox->setCurrentText(*mainNetName);
