@@ -47,7 +47,7 @@ void TestGraph::testCallToSubnet()
     //TODO
 }
 
-void TestGraph::clearPrimitives()
+void TestGraph::testClearPrimitives()
 {
     //TODO
 }

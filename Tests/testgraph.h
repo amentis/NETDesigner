@@ -27,7 +27,7 @@ private slots:
     //Arrow
     void testOptions();
     void testCallToSubnet();
-    void clearPrimitives();
+    void testClearPrimitives();
     void testArgumentsAndPrimitives();
 
 };

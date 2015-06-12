@@ -537,37 +537,48 @@ void MainWindow::run()
 #ifdef Q_OS_WIN
     QString pathToExecutable = (binDir.absoluteFilePath(projectName) + ".exe");
 
-    QString command = "cmd /C " + pathToExecutable;
+    QString command = "cmd";
+    QStringList args;
+    args << "/C" << pathToExecutable;
 #else
     QString pathToExecutable = (binDir.absoluteFilePath(projectName));
 
     QString command;
+    QStringList args;
 
     if (QFile("/bin/konsole").exists()){
-        command = "/bin/konsole -e " + pathToExecutable + " --hold --nofork";
+        command = "/bin/konsole";
+        args << "--noclose" << "-e" << pathToExecutable;
     } else if (QFile("/usr/bin/konsole").exists()){
-        command = "/usr/bin/konsole -e " + pathToExecutable + " --hold --nofork";
+        command = "/usr/bin/konsole";
+        args << "--noclose" << "-e" << pathToExecutable;
     } else if (QFile("/bin/gnome-terminal").exists()){
         ui->outputBrowser->append("[Note] Gnome terminal does not provide a command line option to hold the terminal after command execution. To make the terminal stay after execution go to go to Edit -> Profile Preferences -> Title. Click the Command tab. Select Hold the terminal from the drop-down menu labelled When command exits.\n");
-        command = "/bin/gnome-terminal -e " + pathToExecutable;
+        command = "/bin/gnome-terminal";
+        args << "--noclose" << "-e" << pathToExecutable;
     } else if (QFile("/usr/bin/gnome-terminal").exists()){
         ui->outputBrowser->append("[Note] Gnome terminal does not provide a command line option to hold the terminal after command execution. To make the terminal stay after execution go to go to Edit -> Profile Preferences -> Title. Click the Command tab. Select Hold the terminal from the drop-down menu labelled When command exits.\n");
-        command = "/usr/bin/gnome-terminal -e " + pathToExecutable;
+        command = "/usr/bin/gnome-terminal";
+        args << pathToExecutable << "-e";
     } else if (QFile("/bin/terminal").exists()){
-        command = "/bin/terminal -e " + pathToExecutable + " --hold";
+        command = "/bin/terminal";
+        args << "--hold" << "-e" << pathToExecutable;
     } else if (QFile("/usr/bin/terminal").exists()){
-        command = "/usr/bin/terminal -e " + pathToExecutable + " --hold";
+        command = "/usr/bin/terminal";
+        args << "--hold" << "-e" << pathToExecutable;
     } else if (QFile("/bin/xterm").exists()){
-        command = "/bin/xterm -e " + pathToExecutable + " --hold";
+        command = "/bin/xterm";
+        args << "--hold" << "-e" << pathToExecutable;
     } else if (QFile("/usr/bin/xterm").exists()){
-        command = "/usr/bin/xterm -e " + pathToExecutable + " --hold";
+        command = "/usr/bin/xterm";
+        args << "--hold" << "-e" << pathToExecutable;
     } else {
         ui->outputBrowser->append("[Error] No terminal emulator found! Path to the executable: " + pathToExecutable + " ./n");
         return;
     }
 #endif
     QProcess program;
-    program.startDetached(command);
+    program.startDetached(command, args);
 
         ui->outputBrowser->append("Program executed. \n");
 }

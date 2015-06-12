@@ -12,6 +12,10 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = NETDesigner
 TEMPLATE = app
 
+unix {
+    target.path = /usr/bin
+    INSTALLS += target
+}
 
 SOURCES += main.cpp \
     mainwindow.cpp \

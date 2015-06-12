@@ -218,7 +218,7 @@ bool Compiler::build(QTextStream &output)
     if (checkForErrors(output)){
             if (translate(output)){
                 if (compile(output)){
-                    //clean(output);
+                    clean(output);
                     output << "[Build] Success \n";
                     return true;
                 }
@@ -269,7 +269,7 @@ bool Compiler::checkGraphForErrors(Graph* graph, QTextStream& output)
         } else {
             if (node->arrowsIn()->isEmpty())
                 output << "[Warning] Node at position " << node->position()->x() << "x" << node->position()->y() <<
-                            " has no ingoing arrows. The node and all arrows starting from it will be ignored. \n";
+                            " has no incoming arrows. The node and all arrows starting from it will be ignored. \n";
             if (node->arrowsOut()->isEmpty()){
                 output << "[Error] Node at position " << node->position()->x() << "x" << node->position()->y() <<
                           " has no outgoing arrows! Did you intend it to be an end node? \n";
@@ -566,7 +566,7 @@ bool Compiler::generateArrow(Arrow* arrow, Graph* graph, QTextStream& output)
     stream << "(bool _FORW){\n";
     stream << "    FORW = _FORW;\n\n";
     stream << "    int progress = (FORW)? 0 : ";
-    stream << arrow->primitives()->size() - 1;
+    stream << (arrow->primitives()->size() - 1);
     stream << " ;\n\n";
 
     if (subnetCalled){
@@ -589,7 +589,7 @@ bool Compiler::generateArrow(Arrow* arrow, Graph* graph, QTextStream& output)
         stream << "            progress ++;\n        } else {\n            FORW = false;\n        }\n    }\n";
     }
 
-    stream << "    if (!FORW){\n        switch(progress){\n";
+    stream << "    if (!FORW){\n        progress--;\n        switch(progress){\n";
     for (int i = arrow->primitives()->size() - 1; i >= 0; --i){
         stream << "            case ";
         stream << i;
