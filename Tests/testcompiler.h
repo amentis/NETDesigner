@@ -1,8 +1,15 @@
 #ifndef TESTCOMPILER_H
 #define TESTCOMPILER_H
 
-#include <QtTest>
+#include <QObject>
+
+class QDir;
+template<typename T>class QVector;
+class QString;
+
 class Compiler;
+
+class Base;
 
 class TestCompiler : public QObject
 {
@@ -11,6 +18,9 @@ public:
     Q_OBJECT
 private:
     Compiler* compiler;
+    QDir* projectDir;
+    QVector<Base*>* bases;
+    QString* mainNetName;
 private slots:
     void initTestCase();
 

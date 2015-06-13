@@ -1,7 +1,7 @@
 #ifndef TESTDESIGNER_H
 #define TESTDESIGNER_H
 
-#include <QtTest>
+#include <QObject>
 
 class AddArrowExpressionDialog;
 class AddNode;
@@ -26,8 +26,6 @@ private:
     MainWindow* mainWindow;
 
 private slots:
-    void initTestCase();
-
     void testAddArrowExpressionDialog();
     void testAddNode();
     void testBrowsePrimitivesDialog();

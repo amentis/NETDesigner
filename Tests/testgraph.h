@@ -1,7 +1,7 @@
 #ifndef TESTGRAPH_H
 #define TESTGRAPH_H
 
-#include <QtTest>
+#include <QObject>
 
 class Graph;
 class Arrow;
@@ -25,7 +25,6 @@ private slots:
     void testSaveToLoadFromStream();
 
     //Arrow
-    void testOptions();
     void testCallToSubnet();
     void testClearPrimitives();
     void testArgumentsAndPrimitives();

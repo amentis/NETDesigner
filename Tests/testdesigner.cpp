@@ -8,21 +8,20 @@
 #include "editor.h"
 #include "mainwindow.h"
 
+#include <QtTest>
+#include <QtWidgets>
 
 TestDesigner::TestDesigner(){}
 
-void TestDesigner::initTestCase()
+void TestDesigner::testAddArrowExpressionDialog()
 {
     int argc = 0;
     char **argv = new char*;
     QApplication app(argc, argv);
-    addNode = new AddNode();
-    mainWindow = new MainWindow();
-}
+    addArrowExpressionDialog = new AddArrowExpressionDialog(true);
+    addArrowExpressionDialog->show();
+    QTest::keyClick(addArrowExpressionDialog, Qt::Key::Key_3);
 
-void TestDesigner::testAddArrowExpressionDialog()
-{
-    //TODO
 }
 
 void TestDesigner::testAddNode()

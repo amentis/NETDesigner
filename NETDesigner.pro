@@ -8,7 +8,8 @@ SUBDIRS += \
     PrimitivesLoader \
     Graph \
     Compiler \
-    Designer
+    Designer \
+    Tests
 
 unix {
     debug {
@@ -31,8 +32,4 @@ win32 {
        export(first.depends)
        export(copymanual)
        QMAKE_EXTRA_TARGETS += first copymanual
-}
-
-debug {
-    SUBDIRS += Tests
 }

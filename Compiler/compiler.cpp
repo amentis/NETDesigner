@@ -46,6 +46,7 @@ Compiler::Compiler(QVector<Base*>* bases, QString* projectPath, QString* mainGra
 
     vars = new QHash<QString,QHash<QString, VarType>*>();
 
+    basesFailedLoading = new QStringList();
     QStringList filters;
     filters.append("*.net");
     QFileInfoList files = srcDir->entryInfoList(filters);
@@ -54,7 +55,6 @@ Compiler::Compiler(QVector<Base*>* bases, QString* projectPath, QString* mainGra
         QFile file (fileInfo.absoluteFilePath());
         file.open(QIODevice::ReadOnly);
         QTextStream stream(&file);
-        basesFailedLoading = new QStringList();
         if (tmp->loadFromStream(stream, mBases)){
             mGraphNames->append(fileInfo.baseName());
             mGraphs->append(tmp);
